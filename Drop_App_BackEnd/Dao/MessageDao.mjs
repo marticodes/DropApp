@@ -13,7 +13,7 @@ import Message from '../Models/Message.js';
 const MessageDAO = {
     async insertNewMessage(chatId, message_time, content, image, sender_id){   //inserts new message into the db (image is nullable)
         const sql = 'INSERT INTO Message (chatId, message_time, content, image, sender_id) VALUES (?,?,?,?, ?)';
-        return db.run(sql, [chatId, message_time, content, image]);
+        return db.run(sql, [chatId, message_time, content, image, sender_id]);
     },
     
     async getMessagesByChatId(chatId){  //gets all messages from the chat

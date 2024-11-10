@@ -198,15 +198,46 @@ const insertChat = async (userID1, userID2, product_id, type, sproduct_id) => {
         throw new UnauthorizedError('Unauthorized access');
     } else {
         const errorText = await response.text();
-        console.error(`Error status: ${response.status}, message: ${errorText}`);
+        console.error(`FE: Error status: ${response.status}, message: ${errorText}`);
     }
 };
 
 //MESSAGE API
+const getMessagesByChatId = async (chat_id) => {
+    const response = await fetch(SERVER_URL + `/api/messages/${chat_id}`, {
+        method: 'GET',
+    });
+    if (response.ok) {
+        const userCategJson = await response.json();
+        return userCategJson.map(mex => new Message(mex.chatId, mex.message_time, mex.content, mex.image, mex.sender_id));
+    } else {
+        throw new Error('FE: Error getting messages of a chat');
+    }
+};
+
+const insertMessage = async (chatId, message_time, content, image, sender_id) => {
+    const response = await fetch(SERVER_URL + '/api/messages/insert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({chatId, message_time, content, image, sender_id}),
+        //credentials: 'include'
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        return data.message_id;
+    } else if (response.status === 401) {
+        throw new UnauthorizedError('Unauthorized access');
+    } else {
+        const errorText = await response.text();
+        console.error(`FE: Error status: ${response.status}, message: ${errorText}`);
+    }
+};
+
 //DONATION API 
 //SHARE API
 
 const API = { logIn, getUserInfo, logOut, handleInvalidResponse, getCategoriesList, getAllCategoriesByUserId, getSingleCategoryByUserId, insertUserCategory, deleteUserCategory,
-    getChatUsers, getChatProduct, getChatType, insertChat};
+    getChatUsers, getChatProduct, getChatType, insertChat, getMessagesByChatId, insertMessage};
 export default API;
 export { UnauthorizedError };
