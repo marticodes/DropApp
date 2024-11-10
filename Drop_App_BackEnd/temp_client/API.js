@@ -1,6 +1,10 @@
-/*
-import from client models
-*/
+import Categories from "./models/categories.mjs"
+import UserCategories from "./models/userCategories.mjs"
+import Chat from "./models/chat.mjs"
+import Donation from "./models/donation.mjs"
+import Message from "./models/message.mjs"
+import Share from "./models/share.mjs"
+import User from "./models/user.mjs"
 
 const SERVER_URL = 'http://localhost:3001';
 
@@ -63,12 +67,146 @@ const logOut = async () => {
 }
 
 //CATEORIES API 
+const getCategoriesList = async () => {
+    const response = await fetch(SERVER_URL + `/api/categories/list`, {
+        method: 'GET',
+    });
+    if (response.ok) {
+        const categJson = await response.json();
+        return categJson.map(category => new Categories(category.category_name));
+        return categoryList;
+    } else {
+        throw new Error('Error getting categories list');
+    }
+};
+
 //USERCATEGORIES API
-//CHAT API 
+const getAllCategoriesByUserId = async (user_id) => {
+    const response = await fetch(SERVER_URL + `/api/user_categories/all/${user_id}`, {
+        method: 'GET',
+    });
+    if (response.ok) {
+        const userCategJson = await response.json();
+        return userCategJson.map(category => new UserCategories(category.user_id, category.category_name));
+    } else {
+        throw new Error('Error getting user categories (all)');
+    }
+};
+
+const getSingleCategoryByUserId = async (user_id, category_name) => {
+    const response = await fetch(SERVER_URL + `/api/user_categories/one/${user_id}/${category_name}`, {
+        method: 'GET',
+    });
+    if (response.ok) {
+        const userCategJson = await response.json();
+        const userCategoryOne = new UserCategories(userCategJson.user_id, userCategJson.category_name);
+        return userCategoryOne;
+    } else {
+        throw new Error('Error getting user categories (one)');
+    }
+};
+
+const insertUserCategory = async (user_id, category_name) => {
+    const response = await fetch(SERVER_URL + '/api/user_categories/insert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id, category_name}),
+        //credentials: 'include'
+    });
+
+    if (response.ok) {
+        return await response.json();
+    } else if (response.status === 401) {
+        throw new UnauthorizedError('Unauthorized access');
+    } else {
+        const errorText = await response.text();
+        console.error(`Error status: ${response.status}, message: ${errorText}`);
+    }
+};
+
+const deleteUserCategory = async (user_id, category_name) => {
+    const response = await fetch(SERVER_URL + `/api/user_categories/delete`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id, category_name }),
+        //credentials: 'include'
+    });
+
+    if (response.ok) {
+        return await response.json();
+    } else if (response.status === 401) {
+        throw new UnauthorizedError('Unauthorized access');
+    } else {
+        const errorText = await response.text();
+        console.error(`Error status: ${response.status}, message: ${errorText}`);
+    }
+};
+
+//CHAT API
+const getChatUsers = async (chat_id) => {   //list of both Id's
+    const response = await fetch(SERVER_URL + `/api/chat/${chat_id}/users`, {
+        method: 'GET',
+    });
+    if (response.ok) {
+        const chatJson = await response.json();
+        const { user1_id, user2_id } = chatJson;
+        return { user1_id, user2_id };
+    } else {
+        throw new Error('Error getting chat users');
+    }
+};
+
+/*read DAO in Backend for more info */
+const getChatProduct = async (chat_id) => {   //2 values where one is null (one if it's product from donation and one if it's sproduct from sharing)
+    const response = await fetch(SERVER_URL + `/api/chat/${chat_id}/product`, {
+        method: 'GET',
+    });
+    if (response.ok) {
+        const chatJson = await response.json();
+        const { product_id, sproduct_id } = chatJson;
+        return { product_id, sproduct_id };
+    } else {
+        throw new Error('Error getting chat product');
+    }
+};
+
+const getChatType = async (chat_id) => { //0=donation, 1=sharing
+    const response = await fetch(SERVER_URL + `/api/chat/${chat_id}/type`, {
+        method: 'GET',
+    });
+    if (response.ok) {
+        const chatJson = await response.json();
+        const chatType = chatJson.type;
+        return chatType;
+    } else {
+        throw new Error('Error getting chat type');
+    }
+};
+
+const insertChat = async (userID1, userID2, product_id, type, sproduct_id) => {
+    const response = await fetch(SERVER_URL + '/api/chats/insert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userID1, userID2, product_id, type, sproduct_id}),
+        //credentials: 'include'
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        return data.chat_id;
+    } else if (response.status === 401) {
+        throw new UnauthorizedError('Unauthorized access');
+    } else {
+        const errorText = await response.text();
+        console.error(`Error status: ${response.status}, message: ${errorText}`);
+    }
+};
+
 //MESSAGE API
 //DONATION API 
 //SHARE API
 
-const API = { logIn, getUserInfo, logOut, handleInvalidResponse};
+const API = { logIn, getUserInfo, logOut, handleInvalidResponse, getCategoriesList, getAllCategoriesByUserId, getSingleCategoryByUserId, insertUserCategory, deleteUserCategory,
+    getChatUsers, getChatProduct, getChatType, insertChat};
 export default API;
 export { UnauthorizedError };

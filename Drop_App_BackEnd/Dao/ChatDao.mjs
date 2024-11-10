@@ -27,6 +27,8 @@ const ChatDAO = {
         const sql = 'SELECT type FROM Chat WHERE chat_id = ?';
         return db.get(sql, [chatId]);
     }
+
+    //get chat_id from users and product ?
 };
 
 export default ChatDAO;
