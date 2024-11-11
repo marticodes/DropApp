@@ -117,7 +117,7 @@ class ItemDetailPage extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              onPressed: () {},
+              onPressed: () {}, //ADD HERE
               child: Center(child: Text('Chat', style: TextStyle(fontSize: 18))),
             ),
           ),

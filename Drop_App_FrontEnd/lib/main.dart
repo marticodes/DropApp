@@ -1,8 +1,6 @@
+import 'package:drop_app/pages/sign_up.dart';
 import 'package:flutter/material.dart';
-import 'package:drop_app/top_bar/top_bar_search.dart'; 
-import 'package:drop_app/filter_menu.dart'; 
-//import 'package:drop_app/top_bar_go_back.dart';
-import 'package:drop_app/donation_item.dart';
+import 'package:drop_app/pages/log_in.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,68 +16,102 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: WelcomeScreen(), // Set WelcomeScreen as the initial screen
     );
   }
 }
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
+class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: FilterMenu(),
-      appBar: CustomTopBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // Two columns
-            crossAxisSpacing: 8.0,
-            mainAxisSpacing: 8.0,
-            childAspectRatio: 0.7, // Adjusts the height of each card
-          ),
-          itemCount: 5, // Number of items to display   ALL ITEMS
-          itemBuilder: (context, index) {
-            return PostCard(
-              user_id: 'Kim Namjoon',
-              itemName: 'Air Fryer',
-              picture: 'https://via.placeholder.com/150', // Replace with actual image URL
-              coin_value: 4,
-            );
-          },
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Image.asset(
+                'lib/testpic/welcome_image.jpg', // Add your image in the assets folder and update pubspec.yaml
+                height: 300,
+              ),
+            ),
+            SizedBox(height: 30),
+            Text(
+              'Hello!',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Welcome to Drop!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+            ),
+            Text(
+              'Share and Donate CHANGE',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+            ),
+            SizedBox(height: 40),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: ElevatedButton(
+                onPressed: () {
+                  // Navigate to HomePage when login is pressed
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 108, 106, 157),
+                  minimumSize: Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  'Login',
+                  style: TextStyle(fontSize: 18, color: const Color.fromARGB(255, 255, 255, 255)),
+                ),
+              ),
+            ),
+            SizedBox(height: 15),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: OutlinedButton(
+                onPressed: () {
+                   Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SignUpPage()),
+                  );
+                },
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: const Color.fromARGB(255, 108, 106, 157)),
+                  minimumSize: Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  'Sign Up',
+                  style: TextStyle(fontSize: 18, color: const Color.fromARGB(255, 108, 106, 157)),
+                ),
+              ),
+            ),
+          ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Business',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'School',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
-        onTap: _onItemTapped,
       ),
     );
   }
