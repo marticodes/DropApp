@@ -36,7 +36,7 @@ class LoginPage extends StatelessWidget {
               TextField(
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.person),
-                  hintText: 'Username',
+                  hintText: 'Student ID',
                   filled: true,
                   fillColor: const Color.fromARGB(255, 230, 229, 246),
                   border: OutlineInputBorder(

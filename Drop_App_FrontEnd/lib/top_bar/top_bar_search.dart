@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:drop_app/filter_menu.dart';
 
-class CustomTopBar extends StatelessWidget implements PreferredSizeWidget {
+class CustomTopBar extends StatefulWidget implements PreferredSizeWidget {
   final int moneyCount;
 
   @override
@@ -10,6 +10,14 @@ class CustomTopBar extends StatelessWidget implements PreferredSizeWidget {
   CustomTopBar({Key? key, this.moneyCount = 7}) // Set default to 7 for now
       : preferredSize = const Size.fromHeight(64.0),
         super(key: key);
+
+  @override
+  _CustomTopBarState createState() => _CustomTopBarState();
+}
+
+class _CustomTopBarState extends State<CustomTopBar> {
+  bool _isSearching = false;
+  TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -36,12 +44,35 @@ class CustomTopBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: Text(
-                'Search Item',
-                style: TextStyle(color: Colors.grey[700], fontSize: 16),
-              ),
+              child: _isSearching
+                  ? TextField(
+                      controller: _searchController,
+                      autofocus: true,
+                      decoration: InputDecoration(
+                        hintText: 'Search Item...',
+                        border: InputBorder.none,
+                      ),
+                      onSubmitted: (value) {
+                        // Optionally trigger search when user presses enter
+                        print("Search query: $value");
+                      },
+                    )
+                  : Text(
+                      'Search Item',
+                      style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                    ),
             ),
-            Icon(Icons.search, color: Colors.grey[700]),
+            InkWell(
+              onTap: () {
+                setState(() {
+                  _isSearching = !_isSearching;
+                  if (!_isSearching) {
+                    _searchController.clear(); // Clear text when switching back
+                  }
+                });
+              },
+              child: Icon(Icons.search, color: Colors.grey[700]),
+            ),
           ],
         ),
       ),
@@ -62,7 +93,7 @@ class CustomTopBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             const SizedBox(width: 4),
             Text(
-              '$moneyCount', // Use the dynamic value here
+              '${widget.moneyCount}', // Use the dynamic value here
               style: TextStyle(color: Colors.black, fontSize: 16),
             ),
             const SizedBox(width: 16),
@@ -72,3 +103,4 @@ class CustomTopBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
+
