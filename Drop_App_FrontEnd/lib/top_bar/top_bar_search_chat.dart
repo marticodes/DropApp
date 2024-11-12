@@ -1,9 +1,11 @@
+//the only different is that this one has no filter working
+
 import 'package:flutter/material.dart';
 import 'package:drop_app/elements/filter_menu_donation.dart';
 
 class CustomTopBar extends StatefulWidget implements PreferredSizeWidget {
   final int moneyCount;
-  final Function(String) onSearchChanged;
+  final Function(String) onSearchChanged; // Callback for search input changes
 
   @override
   final Size preferredSize;
@@ -20,16 +22,6 @@ class _CustomTopBarState extends State<CustomTopBar> {
   bool _isSearching = false;
   TextEditingController _searchController = TextEditingController();
 
-  void _toggleSearch() {
-    setState(() {
-      _isSearching = !_isSearching;
-      if (!_isSearching) {
-        _searchController.clear();
-        widget.onSearchChanged(''); // Clear search when search mode is off
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -45,12 +37,6 @@ class _CustomTopBarState extends State<CustomTopBar> {
         ),
         child: Row(
           children: [
-            InkWell(
-              onTap: () {
-                Scaffold.of(context).openDrawer();
-              },
-              child: Icon(Icons.menu, color: Colors.grey[700]),
-            ),
             const SizedBox(width: 8),
             Expanded(
               child: _isSearching
@@ -58,21 +44,26 @@ class _CustomTopBarState extends State<CustomTopBar> {
                       controller: _searchController,
                       autofocus: true,
                       decoration: InputDecoration(
-                        hintText: 'Search Item...',
+                        hintText: 'Search Chat...',
                         border: InputBorder.none,
                       ),
-                      onChanged: widget.onSearchChanged,
+                      onChanged: widget.onSearchChanged, // Trigger callback on text change
                     )
-                  : InkWell(
-                      onTap: _toggleSearch, // Toggle search mode when tapping the text
-                      child: Text(
-                        'Search Item',
-                        style: TextStyle(color: Colors.grey[700], fontSize: 16),
-                      ),
+                  : Text(
+                      'Search Chat',
+                      style: TextStyle(color: Colors.grey[700], fontSize: 16),
                     ),
             ),
             InkWell(
-              onTap: _toggleSearch, // Toggle search mode when tapping the search icon
+              onTap: () {
+                setState(() {
+                  _isSearching = !_isSearching;
+                  if (!_isSearching) {
+                    _searchController.clear();
+                    widget.onSearchChanged(''); // Clear search when search mode is off
+                  }
+                });
+              },
               child: Icon(Icons.search, color: Colors.grey[700]),
             ),
           ],

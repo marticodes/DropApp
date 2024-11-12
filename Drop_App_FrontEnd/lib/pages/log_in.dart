@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:drop_app/homepage.dart'; // Import the HomePage file
+import 'package:drop_app/pages/homepage.dart'; // Import the HomePage file
 import 'package:drop_app/pages/sign_up.dart';
 
 class LoginPage extends StatelessWidget {

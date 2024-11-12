@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:drop_app/top_bar/top_bar_go_back.dart';
-
+import 'package:drop_app/elements/user_review_name_row.dart';
 
 class ItemDetailPage extends StatelessWidget {
+  final int rating = 4;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,39 +12,10 @@ class ItemDetailPage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // User profile row
-          Container(
-            color: const Color.fromARGB(255, 108, 106, 157),
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.grey[300],
-                  radius: 25,
-                  child: Icon(Icons.person, color: Colors.white, size: 30),
-                ),
-                SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Sabrina Millies',  //CHANGE
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                         color: Colors.white,
-                      ),
-                    ),
-                    Row(
-                      children: List.generate(
-                        5,
-                        (index) => Icon(Icons.star, color: Colors.amber, size: 12),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+          // Using the UserProfileRow widget
+          UserProfileRow(
+            userName: 'Sabrina Millies', // Change the name as needed
+            rating: rating,
           ),
 
           // Item image
@@ -52,7 +25,7 @@ class ItemDetailPage extends StatelessWidget {
             height: 300,
             fit: BoxFit.cover,
           ),
-          
+
           // Item details section
           Padding(
             padding: const EdgeInsets.all(24.0),
@@ -75,18 +48,18 @@ class ItemDetailPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         CircleAvatar(
-                        backgroundColor: const Color.fromARGB(255, 251, 124, 45),
-                        radius: 16.5,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.yellow[700],
-                          radius: 14.5,
+                          backgroundColor: const Color.fromARGB(255, 251, 124, 45),
+                          radius: 16.5,
                           child: CircleAvatar(
-                            backgroundColor: const Color.fromARGB(255, 234, 157, 42),
-                            radius: 10,
+                            backgroundColor: Colors.yellow[700],
+                            radius: 14.5,
+                            child: CircleAvatar(
+                              backgroundColor: const Color.fromARGB(255, 234, 157, 42),
+                              radius: 10,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 100),
+                        const SizedBox(width: 100),
                         Text('1 Coin', style: TextStyle(fontSize: 16, color: Colors.yellow[700], fontWeight: FontWeight.bold)),
                       ],
                     ),
@@ -104,7 +77,7 @@ class ItemDetailPage extends StatelessWidget {
               ],
             ),
           ),
-          
+
           Spacer(),
 
           // Chat button above the navigation bar
@@ -124,7 +97,7 @@ class ItemDetailPage extends StatelessWidget {
 
           SizedBox(height: 10), // Space between Chat button and NavBar
 
-          // REPLACE Navigation bar
+          // Navigation bar
           BackTopBar(),
         ],
       ),

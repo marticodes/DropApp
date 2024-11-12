@@ -8,7 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:drop_app/homepage.dart';
+import 'package:drop_app/pages/homepage.dart';
 import 'package:drop_app/main.dart';
 
 void main() {
