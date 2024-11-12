@@ -4,6 +4,7 @@ import 'package:drop_app/tabs/share.dart';
 import 'package:drop_app/tabs/chat.dart';
 import 'package:drop_app/tabs/profile.dart';
 
+
 void main() {
   runApp(const MyApp());
 }
@@ -59,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       ),
       body: TabBarView(
         controller: navbarcontroller,
-        children: const <Widget> [Donate(), const Share(), Chat(), Profile()],
+        children:  <Widget> [Donate(),  Share(), Chat(), Profile()],
       ),
 
   bottomNavigationBar: Material(
@@ -115,3 +116,5 @@ Tab makeTab( String location, String tabName){
           ),
         );
 }
+
+
