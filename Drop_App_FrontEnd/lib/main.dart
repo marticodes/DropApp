@@ -9,6 +9,8 @@ void main() {
   runApp(const MyApp());
 }
 
+ShareQuest example = ShareQuest(userName: 'Conan Gray', itemName: 'Multipot', itemDescription: 'Electric multi-pot for cooking pasta', coins: 1, timeRemaining: '30 Min', date: '17 Oct');
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -60,7 +62,8 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       ),
       body: TabBarView(
         controller: navbarcontroller,
-        children:  <Widget> [Donate(),  Share(), Chat(), Profile()],
+        children:  <Widget> [Donate(),  ShareQuestList(shareQuests: [example,example,example,example,example, example, example, example, example, example
+        ],), Profile() ],
       ),
 
   bottomNavigationBar: Material(

@@ -28,23 +28,33 @@ class ShareQuestItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            backgroundColor: Colors.blue, // Placeholder for user image color
-            radius: 25,
-            child: Text(
-              userName[0], // Use the first letter of the user name as avatar
-              style: const TextStyle(color: Colors.white, fontSize: 20),
-            ),
-          ),
-          const SizedBox(width: 10),
+         CircleAvatar(
+                backgroundColor: Colors.blue, // Placeholder for user image color
+                radius: 10,
+                child: Center(
+                  child: Text(
+                    userName[0], // Use the first letter of the user name as avatar
+                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+          const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('$userName is looking for...',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 14)),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('$userName is looking for...',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 14)),
+                  ],
+                ),
+                const SizedBox(height: 2),
                 Text(itemName,
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 18)),
@@ -58,7 +68,18 @@ class ShareQuestItem extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.circle, color: Colors.amber),
+                  CircleAvatar(
+                    backgroundColor: const Color.fromARGB(255, 251, 124, 45),
+                    radius: 9,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.yellow[700],
+                      radius: 6,
+                      child: const CircleAvatar(
+                        backgroundColor: Color.fromARGB(255, 234, 157, 42),
+                        radius: 3,
+                      ),
+                    ),
+                  ),
                   const SizedBox(width: 4),
                   Text('$coins'),
                 ],
