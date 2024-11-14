@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:drop_app/pages/category_selection_page.dart';
+import 'package:drop_app/top_bar/top_bar_go_back.dart';
 
 class UserProfilePage extends StatelessWidget {
   final String name = "John";
@@ -13,10 +14,7 @@ class UserProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("User Profile"),
-        backgroundColor: const Color.fromARGB(255, 108, 106, 157),
-      ),
+      appBar: BackTopBar(),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -131,23 +129,6 @@ class UserProfilePage extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Business',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'School',
-          ),
-        ],
-        selectedItemColor: Colors.blue,
       ),
     );
   }

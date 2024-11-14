@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:drop_app/top_bar/top_bar_go_back.dart';
-import 'package:drop_app/elements/user_review_name_row.dart';
+import 'package:drop_app/components/user_review_name_row.dart';
 
 class ItemDetailPage extends StatelessWidget {
   final int rating = 4;

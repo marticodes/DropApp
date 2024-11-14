@@ -1,3 +1,4 @@
+import 'package:drop_app/tabs/chat.dart';
 import 'package:flutter/material.dart';
 
 class BackTopBar extends StatelessWidget implements PreferredSizeWidget {
@@ -18,7 +19,7 @@ class BackTopBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         icon: Icon(Icons.arrow_back, color: const Color.fromARGB(255, 30, 30, 30)),
         onPressed: () {
-          GO BACK TO CHAT PAGE; // CHANGE THIS
+          ChatListPage();
         },
       ),
       actions: [

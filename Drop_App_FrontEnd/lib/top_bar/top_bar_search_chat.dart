@@ -1,7 +1,6 @@
 //the only different is that this one has no filter working
 
 import 'package:flutter/material.dart';
-import 'package:drop_app/elements/filter_menu_donation.dart';
 
 class CustomTopBar extends StatefulWidget implements PreferredSizeWidget {
   final int moneyCount;

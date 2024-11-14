@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:drop_app/pages/user_profile.dart'; // Import the UserProfilePage
+import 'package:drop_app/tabs/profile.dart'; // Import the UserProfilePage
 
 class CategorySelectionPage extends StatefulWidget {
   @override

@@ -1,3 +1,4 @@
+import 'package:drop_app/tabs/donate.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_app/pages/homepage.dart'; // Import the HomePage file
 import 'package:drop_app/pages/sign_up.dart';
@@ -67,7 +68,7 @@ class LoginPage extends StatelessWidget {
                   // Navigate to HomePage when login is pressed
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => HomePage()),
+                    MaterialPageRoute(builder: (context) => MyHomePage(title: "Yes")),
                   );
                 },
                 style: ElevatedButton.styleFrom(
