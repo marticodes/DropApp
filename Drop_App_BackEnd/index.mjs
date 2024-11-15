@@ -10,13 +10,12 @@ import LocalStrategy from 'passport-local';
 /** Creating the session */
 import session from 'express-session';
 
-import CategoriesDAO from "./Dao/CategoriesDAO.mjs"
-import ChatDAO from "./Dao/ChatDAO.mjs"
-import DonationDAO from "./Dao/DonationDAO.mjs"
-import MessageDAO from "./Dao/MemeDAO.mjs"
-import ShareDAO from "./Dao/ShareDAO.mjs"
+import CategoriesDAO from "./Dao/CategoriesDao.mjs"
+import ChatDAO from "./Dao/ChatDao.mjs"
+import DonationDAO from "./Dao/DonationDao.mjs"
+import ShareDAO from "./Dao/ShareDao.mjs"
 import UserCategoriesDAO from "./Dao/UserCategoriesDao.mjs"
-import UserDAO from "./Dao/UserDAO.mjs"
+import UserDAO from "./Dao/UserDao.mjs"
 
 const categoriesDao = CategoriesDAO;
 const chatDao = ChatDAO;
@@ -246,7 +245,174 @@ app.post('/api/messages/insert', /* [], */
   
 
 //DONATION API 
+app.post('/api/donation/insert', /* [], */
+  async (req, res) => {
+    try {
+      const {product_name, product_description, product_category, product_picture, donor_id} = req.body;
+      const product_id = await donationDao.insertDonation(req.body.product_name, req.body.product_description, req.body.product_category, req.body.product_picture,req.body.donor_id);
+      res.status(201).json({product_id});
+    } catch (err) {
+      res.status(503).json({ error: `BE: Error inserting new donation ${err}` });
+    }
+  });
+
+
+app.delete('/api/donation/delete', 
+  async (req, res) => {
+    try {
+      const {product_id } = req.body;
+      const del = await donationDao.deleteDonation(req.body.product_id);
+      res.status(200).json({ del });
+    } catch (err) {
+      res.status(503).json({ error: `BE: Error deleting donation: ${err}` });
+    }
+  });
+
+app.post('/api/donation/inactive', /* [], */
+  async (req, res) => {
+    try {
+      const {product_id} = req.body;
+      const ina = await donationDao.inactiveDonation(req.body.product_id);
+      res.status(201).json({ina});
+    } catch (err) {
+      res.status(503).json({ error: `BE: Error inactiving donation ${err}` });
+    }
+  });
+
+app.get('/api/donation/all/active',
+  async (req, res) => {
+    try {
+      const activeDonations = await donationDao.listActiveDonations();
+      res.status(200).json(activeDonations);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error listing all active donations ${err}` });
+    }
+  });
+
+app.get('/api/donation/:user_id/active',
+  async (req, res) => {
+    try {
+      const myActiveDonations = await donationDao.listMyActiveDonations(user_id);
+      res.status(200).json(myActiveDonations);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error listing all my active donations ${err}` });
+    }
+  });
+
+app.get('/api/donation/:user_id',
+  async (req, res) => {
+    try {
+      const myDonations = await donationDao.listAllMyDonations(user_id);
+      res.status(200).json(myDonations);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error listing all my donations ${err}` });
+    }
+  });
+
+app.get('/api/donation/:min/:max',
+  async (req, res) => {
+    try {
+      const filtDonations = await donationDao.filterDonationByCoin(min, max);
+      res.status(200).json(filtDonations);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error filtering donations by coin value ${err}` });
+    }
+  });
+
+app.get('/api/donation/:categories',
+  async (req, res) => {
+    try {
+      const filtDonations = await donationDao.filterDonationsByCategories(categories);
+      res.status(200).json(filtDonations);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error filtering donations by categories ${err}` });
+    }
+  });
+  
 //SHARE API
+app.post('/api/sharing/insert', /* [], */
+  async (req, res) => {
+    try {
+      const {sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id} = req.body;
+      const sproduct_id = await shareDao.insertSharingQuest(req.body.sproduct_name, req.body.sproduct_category, req.body.sproduct_start_time, req.body.sproduct_end_time,req.body.borrower_id);
+      res.status(201).json({sproduct_id});
+    } catch (err) {
+      res.status(503).json({ error: `BE: Error inserting new sharing quest ${err}` });
+    }
+  });
+
+
+app.delete('/api/sharing/delete', 
+  async (req, res) => {
+    try {
+      const {sproduct_id} = req.body;
+      const del = await shareDao.deleteSharingQuest(req.body.sproduct_id);
+      res.status(200).json({ del });
+    } catch (err) {
+      res.status(503).json({ error: `BE: Error deleting sharing quest: ${err}` });
+    }
+  });
+
+app.post('/api/sharing/inactive', /* [], */
+  async (req, res) => {
+    try {
+      const {sproduct_id} = req.body;
+      const ina = await shareDao.inactiveSharingQuest(req.body.sproduct_id);
+      res.status(201).json({ina});
+    } catch (err) {
+      res.status(503).json({ error: `BE: Error inactiving sharing quest ${err}` });
+    }
+  });
+
+app.get('/api/sharing/all/active',
+  async (req, res) => {
+    try {
+      const activeSharing = await shareDao.listAllSharingQuest();
+      res.status(200).json(activeSharing);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error listing all active sharing quests ${err}` });
+    }
+  });
+
+app.get('/api/sharing/:user_id/active',
+  async (req, res) => {
+    try {
+      const myActiveSharing = await shareDao.listMyActiveSharingQuests(user_id);
+      res.status(200).json(myActiveSharing);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error listing all my active sharing quests ${err}` });
+    }
+  });
+
+app.get('/api/sharing/:user_id',
+  async (req, res) => {
+    try {
+      const mySharing = await shareDao.listAllMySharingQuests(user_id);
+      res.status(200).json(mySharing);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error listing all my sharing quests ${err}` });
+    }
+  });
+
+app.get('/api/sharing/:min/:max',
+  async (req, res) => {
+    try {
+      const filtSharing = await shareDao.filterSharingByCoin(min, max);
+      res.status(200).json(filtSharing);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error filtering sharing quests by coin value ${err}` });
+    }
+  });
+
+app.get('/api/sharing/:categories',
+  async (req, res) => {
+    try {
+      const filtSharing = await shareDao.filterSharingByCategories(categories);
+      res.status(200).json(filtSharing);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error filtering sharing quests by categories ${err}` });
+    }
+  });
 
 
 // start the server

@@ -28,7 +28,8 @@ const ChatDAO = {
         return db.get(sql, [chatId]);
     }
 
-    //get chat_id from users and product ?
+    //TO DO: get chat history
+    //TO DO: chat_id from users and product_id and type
 };
 
 export default ChatDAO;

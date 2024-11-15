@@ -1,4 +1,4 @@
-export default function User(user_id, user_name, user_surname, user_cardnum, coins_num, user_picture, user_rating, user_location, user_graduated) {
+export default function User(user_id, user_name, user_surname, user_cardnum, coins_num, user_picture, user_rating, user_location, user_graduated, active) {
     this.user_id = user_id;
     this.user_name = user_name;
     this.user_surname = user_surname;
@@ -8,4 +8,5 @@ export default function User(user_id, user_name, user_surname, user_cardnum, coi
     this.user_rating = user_rating;
     this.user_location = user_location;
     this.user_graduated = user_graduated;
+    this.active=active;
 }

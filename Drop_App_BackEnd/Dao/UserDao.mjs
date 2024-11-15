@@ -1,25 +1,30 @@
 import db from '../db.mjs';
-import User from '../models/User.js';
 import crypto from "crypto";
 
 export default function UserDao() {
-    //are we allowing to change info?
     this.setUserAsGraduate = (user_id) => { //0= not graduated 1=graduated
         const sql = 'UPDATE User SET user_graduated=? WHERE user_id=?';
-        return db.run(sql, [1, product_id]);
+        return db.run(sql, [1, user_id]);
     };
 
-    this.getUserInfo=() => {
+    this.getUserInfo=(user_id) => {
         const sql = 'SELECT * FROM User WHERE user_id = ?';
         return db.get(sql, [user_id]);
     };
 
-    this.deleteUser=() => { //this will cascade to all the chats that have the user
-        const sql = 'DELETE * FROM User WHERE user_id = ?';
-        return db.run(sql, [user_id]);
+    this.inactiveUser=(user_id) => { 
+        const sql = 'UPDATE User SET active=? WHERE user_id=?';
+        return db.run(sql, [0, user_id]);
     };
     
-    
+    this.isUserActive=(user_id) => {
+        const sql = 'SELECT active FROM User WHERE user_id=?';
+        return db.run(sql, [user_id]);
+    }
+
+    //TO DO: insert user
+
+
     //this 2 following functions are from my old project - I will leave them since they are required for the login
     this.getUserById = (id) => {
         return new Promise((resolve, reject) => {
@@ -66,4 +71,10 @@ export default function UserDao() {
         });
     }
 
+    /*
+    this.deleteUser=() => { //this will cascade to all the chats that have the user
+        const sql = 'DELETE * FROM User WHERE user_id = ?';
+        return db.run(sql, [user_id]);
+    };
+    */
 }

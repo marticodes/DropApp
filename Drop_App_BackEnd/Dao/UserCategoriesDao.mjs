@@ -8,15 +8,15 @@ const UserCategoriesDAO = {
         return db.run(sql, [userId, newCategoryName]);
     },
     async deleteCategory(userId, CategoryName) { //removes specific category for specific user
-        const sql = 'DELETE category_name FROM UserCategories WHERE user_id = ? and category_name = ?';
+        const sql = 'DELETE FROM UserCategories WHERE user_id = ? and category_name = ?';
         return db.run(sql, [userId, CategoryName]);
     },
     async getAllCategoriesByUserId(userId){ //returns all the categories for the specific user
         const sql = 'SELECT category_name FROM UserCategories WHERE user_id = ?';
         return db.all(sql, [userId]);
     },
-    async getSingleCategoryByUserId(userId, CategoryName){ //returns if the user has that specific category
-        const sql = 'SELECT category_name FROM UserCategories WHERE user_id = ? AND category_name=?';
+    async getSingleCategoryByUserId(userId, CategoryName){ //returns if the user has that specific category or not
+        const sql = 'SELECT COUNT(*) FROM UserCategories WHERE user_id = ? AND category_name=?';
         return db.get(sql, [userId, CategoryName]);
     }
 };

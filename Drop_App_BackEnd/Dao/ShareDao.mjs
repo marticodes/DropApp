@@ -13,26 +13,22 @@ import Share from '../Models/Share.js';
 */
 
 const ShareDAO = {
-    async insertSharingQuest(sproduct_name, sproduct_category, sproduct_description, sproduct_end_time, borrower_id) {
+    async insertSharingQuest(sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, status) {
         const coin_value=get_coin_value(sproduct_name);
-        const sproduct_start_time= new Date().toISOString();
-        const sql = 'INSERT INTO Share (sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, coin_value, active) values (?, ?, ?, ?, ?, ?, ?, 1))';
-        return db.run(sql, [sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, coin_value, 1]);
+        const posting_time= new Date().toISOString();
+        const sql = 'INSERT INTO Share (sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, coin_value, active, posting_time, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        return db.run(sql, [sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, coin_value, 1, posting_time, status]);
     },
-    async deleteSharingQuest(sproduct_id){ //don't use it unless you want also the related chats to be removed
-        const sql = 'DELETE * FROM Share WHERE sproduct_id'; 
-        return db.run(sql, [sproduct_id]);
-    },
-    async inactiveSharingQuest(sproduct_id){ //this changes just the active flag (1=active, 0=inactive)
-        const sql = 'UPDATE Donation SET active=? WHERE sproduct_id=?';
+    /*
+    this changes just the active flag (1=active, 0=inactive)
+    an inactive product is similar to deleted but without consequences
+    */
+    async inactiveSharingQuest(sproduct_id){
+        const sql = 'UPDATE Share SET active=? WHERE sproduct_id=?';
         return db.run(sql, [0, sproduct_id]);
     },
     async listActiveSharingQuest(){
         const sql = 'SELECT * FROM Share WHERE active = ?';
-        return db.all(sql, [1]);
-    },
-    async listAllSharingQuest(){
-        const sql = 'SELECT * FROM Share';
         return db.all(sql, [1]);
     },
     async listMyActiveSharingQuests(user_id){
@@ -47,12 +43,26 @@ const ShareDAO = {
     Categories should be a list that is updated every time the users clicks a filter
     If the filter is pressed add the name of the category, otherwise remove it and pass again the list as input
     */
-    async filterDonationsByCategories(categories) { 
+    async filterSharingByCategories(categories) { 
         const placeholders = categories.map(() => '?').join(', ');
-        const sql = `SELECT * FROM Share WHERE sproduct_category IN (${placeholders})`;
+        const sql = `SELECT * FROM Share WHERE sproduct_category IN (${placeholders})`; //TO DO: check
         return db.all(sql, categories);
+    },
+    async filterSharingByCoin(min, max){
+        const sql = `SELECT * FROM Share WHERE coin_value>=? AND coin_value<=?`;
+        return db.all(sql, [min,max]);
     }
-    //we are not allowing edits for the post right?
+
+    /*
+    async deleteSharingQuest(sproduct_id){ 
+        const sql = 'DELETE * FROM Share WHERE sproduct_id'; 
+        return db.run(sql, [sproduct_id]);
+    },
+    async listAllSharingQuest(){
+        const sql = 'SELECT * FROM Share';
+        return db.all(sql, [1]);
+    },
+    */
 }
 
 export default ShareDAO;
