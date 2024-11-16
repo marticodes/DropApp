@@ -64,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       body: TabBarView(
         controller: navbarcontroller,
         children:  <Widget> [Donate(),  ShareQuestList(shareQuests: [example,example,example,example,example, example, example, example, example, example
-        ],), ChatListPage() ],
+        ],), ChatListPage(), ChatPage() ],
       ),
 
   bottomNavigationBar: Material(

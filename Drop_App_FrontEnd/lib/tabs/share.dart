@@ -26,19 +26,21 @@ class ShareQuestList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: shareQuests.length,
-      itemBuilder: (context, index) {
-        final quest = shareQuests[index];
-        return ShareQuestItem(
-          userName: quest.userName,
-          itemName: quest.itemName,
-          itemDescription: quest.itemDescription,
-          coins: quest.coins,
-          timeRemaining: quest.timeRemaining,
-          date: quest.date,
-        );
-      },
+    return Scaffold(
+      body: ListView.builder(
+        itemCount: shareQuests.length,
+        itemBuilder: (context, index) {
+          final quest = shareQuests[index];
+          return ShareQuestItem(
+            userName: quest.userName,
+            itemName: quest.itemName,
+            itemDescription: quest.itemDescription,
+            coins: quest.coins,
+            timeRemaining: quest.timeRemaining,
+            date: quest.date,
+          );
+        },
+      ),
     );
   }
 }
