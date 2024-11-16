@@ -1,3 +1,4 @@
+import 'package:drop_app/pages/message_page.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_app/top_bar/top_bar_search.dart'; 
 import 'package:drop_app/components/filter_menu_donation.dart'; 
@@ -8,7 +9,6 @@ import 'package:drop_app/tabs/donate.dart';
 import 'package:drop_app/tabs/share.dart';
 import 'package:drop_app/tabs/chat.dart';
 import 'package:drop_app/tabs/profile.dart';
-import 'package:drop_app/tabs/chatwork.dart';
 
 
 ShareQuest example = ShareQuest(userName: 'Conan Gray', itemName: 'Multipot', itemDescription: 'Electric multi-pot for cooking pasta', coins: 1, timeRemaining: '30 Min', date: '17 Oct');
@@ -45,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       body: TabBarView(
         controller: navbarcontroller,
         children:  <Widget> [DonatePage(),  ShareQuestList(shareQuests: [example,example,example,example,example, example, example, example, example, example
-        ],), ChatListPage(), ChatPage() ],
+        ],), ChatListPage(), UserProfilePage() ],
       ),
 
   bottomNavigationBar: Material(

@@ -1,3 +1,4 @@
+import 'package:drop_app/pages/message_page.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_app/components/single_chat.dart';
 import 'package:drop_app/top_bar/top_bar_search_chat.dart';
@@ -102,12 +103,21 @@ class _ChatListPageState extends State<ChatListPage> {
               itemCount: filteredChatItems.length,
               itemBuilder: (context, index) {
                 final chat = filteredChatItems[index];
-                return ChatItem(
-                  userName: chat['userName']!,
-                  itemName: chat['itemName']!,
-                  date: chat['date']!,
-                  userAvatarUrl: chat['avatarUrl']!,
-                  category: chat['category']!,
+                return GestureDetector(
+                  onTap: () {
+                      // Navigate to the placeholder page on tap
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MessagePage()),
+                      );
+                    },
+                  child: ChatItem(
+                    userName: chat['userName']!,
+                    itemName: chat['itemName']!,
+                    date: chat['date']!,
+                    userAvatarUrl: chat['avatarUrl']!,
+                    category: chat['category']!,
+                  ),
                 );
               },
             ),

@@ -3,12 +3,12 @@ import 'package:drop_app/top_bar/top_bar_go_back.dart';
 import 'package:drop_app/components/rating.dart';
 
 
-class ChatPage extends StatefulWidget {
+class MessagePage extends StatefulWidget {
   @override
-  _ChatPageState createState() => _ChatPageState();
+  _MessagePageState createState() => _MessagePageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _MessagePageState extends State<MessagePage> {
   final TextEditingController _messageController = TextEditingController();
   final List<Map<String, dynamic>> _messages = [
     {'message': 'I have the pot you are looking for. Should we meet at W2 in ten?', 'sender': 'user', 'time': '08:15 AM'},
