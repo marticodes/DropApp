@@ -27,7 +27,80 @@ class UnauthorizedError extends Error {
 }
 
 //USER-----------------------------------------------------------------------
+const setUserAsGraduate = async (user_id) => {
+    const response = await fetch(SERVER_URL + '/api/user/graduate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({user_id}),
+        //credentials: 'include'
+    });
+    if (response.ok) {
+        return await response.json();
+    } else if (response.status === 401) {
+        throw new UnauthorizedError('Unauthorized access');
+    } else {
+        const errorText = await response.text();
+        console.error(`FE: Error status: ${response.status}, message: ${errorText}`);
+    }
+};
 
+const getUserProfileInfo = async () => {
+    const response = await fetch(SERVER_URL + `/api/${user_id}/info`, {
+        method: 'GET',
+    });
+    if (response.ok) {
+        const userJson = await response.json();
+        return userJson.map(category => new User(category.category_name));
+    } else {
+        throw new Error('FE: Error getting user profile info');
+    }
+};
+
+const isUserActive = async () => {
+    const response = await fetch(SERVER_URL + `/api/${user_id}/active`, {
+        method: 'GET',
+    });
+    if (response.ok) {
+        const userJson = await response.json();
+        return userJson.active;
+    } else {
+        throw new Error('FE: Error getting user info (active)');
+    }
+};
+
+const setUserAsInactive = async (user_id) => {
+    const response = await fetch(SERVER_URL + '/api/user/inactive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({user_id}),
+        //credentials: 'include'
+    });
+    if (response.ok) {
+        return await response.json();
+    } else if (response.status === 401) {
+        throw new UnauthorizedError('Unauthorized access');
+    } else {
+        const errorText = await response.text();
+        console.error(`FE: Error status: ${response.status}, message: ${errorText}`);
+    }
+};
+
+const insertUser = async (user_name, user_surname, user_cardnum, user_picture, user_location) => {
+    const response = await fetch(SERVER_URL + '/api/user/insert', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({user_name, user_surname, user_cardnum, user_picture, user_location}),
+        //credentials: 'include'
+    });
+    if (response.ok) {
+        return await response.json();
+    } else if (response.status === 401) {
+        throw new UnauthorizedError('Unauthorized access');
+    } else {
+        const errorText = await response.text();
+        console.error(`FE: Error status: ${response.status}, message: ${errorText}`);
+    }
+};
 /* This function wants username and password inside a "credentials" object.
 * It executes the log-in.
 */
@@ -74,9 +147,8 @@ const getCategoriesList = async () => {
     if (response.ok) {
         const categJson = await response.json();
         return categJson.map(category => new Categories(category.category_name));
-        return categoryList;
     } else {
-        throw new Error('Error getting categories list');
+        throw new Error('FE: Error getting categories list');
     }
 };
 
@@ -89,7 +161,7 @@ const getAllCategoriesByUserId = async (user_id) => {
         const userCategJson = await response.json();
         return userCategJson.map(category => new UserCategories(category.user_id, category.category_name));
     } else {
-        throw new Error('Error getting user categories (all)');
+        throw new Error('FE: Error getting user categories (all)');
     }
 };
 
@@ -102,7 +174,7 @@ const getSingleCategoryByUserId = async (user_id, category_name) => {
         const userCategoryOne = new UserCategories(userCategJson.user_id, userCategJson.category_name);
         return userCategoryOne;
     } else {
-        throw new Error('Error getting user categories (one)');
+        throw new Error('FE: Error getting user categories (one)');
     }
 };
 
@@ -120,7 +192,7 @@ const insertUserCategory = async (user_id, category_name) => {
         throw new UnauthorizedError('Unauthorized access');
     } else {
         const errorText = await response.text();
-        console.error(`Error status: ${response.status}, message: ${errorText}`);
+        console.error(`FE: Error status: ${response.status}, message: ${errorText}`);
     }
 };
 
@@ -138,7 +210,7 @@ const deleteUserCategory = async (user_id, category_name) => {
         throw new UnauthorizedError('Unauthorized access');
     } else {
         const errorText = await response.text();
-        console.error(`Error status: ${response.status}, message: ${errorText}`);
+        console.error(`FE: Error status: ${response.status}, message: ${errorText}`);
     }
 };
 
@@ -152,7 +224,7 @@ const getChatUsers = async (chat_id) => {   //list of both Id's
         const { user1_id, user2_id } = chatJson;
         return { user1_id, user2_id };
     } else {
-        throw new Error('Error getting chat users');
+        throw new Error('FE: Error getting chat users');
     }
 };
 
@@ -166,7 +238,7 @@ const getChatProduct = async (chat_id) => {   //2 values where one is null (one 
         const { product_id, sproduct_id } = chatJson;
         return { product_id, sproduct_id };
     } else {
-        throw new Error('Error getting chat product');
+        throw new Error('FE: Error getting chat product');
     }
 };
 
@@ -179,7 +251,7 @@ const getChatType = async (chat_id) => { //0=donation, 1=sharing
         const chatType = chatJson.type;
         return chatType;
     } else {
-        throw new Error('Error getting chat type');
+        throw new Error('FE: Error getting chat type');
     }
 };
 
@@ -235,11 +307,11 @@ const insertMessage = async (chatId, message_time, content, image, sender_id) =>
 };
 
 //DONATION API 
-const insertDonation = async (product_name, product_description, product_category, product_picture, donor_id) => {
+const insertDonation = async (product_name, product_description, product_category, product_picture, donor_id, status) => {
     const response = await fetch(SERVER_URL + '/api/donation/insert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({product_name, product_description, product_category, product_picture, donor_id}),
+        body: JSON.stringify({product_name, product_description, product_category, product_picture, donor_id, status}),
         //credentials: 'include'
     });
 
@@ -351,11 +423,11 @@ const filterDonationsByCategory = async (categories) => {
 };
 
 //SHARE API
-const insertSharing = async (sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id) => {
+const insertSharing = async (sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, status) => {
     const response = await fetch(SERVER_URL + '/api/sharing/insert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id}),
+        body: JSON.stringify({sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, status}),
         //credentials: 'include'
     });
 

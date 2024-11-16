@@ -26,10 +26,17 @@ const ChatDAO = {
     async getChatTypeByChatId(chatId){  //0=donation, 1=sharing
         const sql = 'SELECT type FROM Chat WHERE chat_id = ?';
         return db.get(sql, [chatId]);
-    }
+    },
 
-    //TO DO: get chat history
-    //TO DO: chat_id from users and product_id and type
+    async getAllChatsByUser(user_id){
+        const sql = 'SELECT * FROM Chat WHERE user_id_1 = ? OR user_id_2=?';
+        return db.all(sql, [user_id_1, user_id_2]);
+    },
+    
+    async getChatIdByUserAndProduct(user_id_1, user_id_2, product_id, sproduct_id){ //put null iin the incorrect product id
+        const sql = 'SELECT * FROM Chat WHERE user_id_1 = ? AND user_id_2 AND product_id= ? AND sproduct_id=?'
+        return db.all(sql, [user_id_1, user_id_2, product_id, sproduct_id]);
+    }
 };
 
 export default ChatDAO;

@@ -1,5 +1,5 @@
 class Share {
-    constructor(sproduct_id, sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, coin_value, active) {
+    constructor(sproduct_id, sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, coin_value, active, posting_time, status) {
         this.sproduct_id = sproduct_id;
         this.sproduct_name = sproduct_name;
         this.sproduct_category = sproduct_category;
@@ -9,6 +9,8 @@ class Share {
         this.borrower_id = borrower_id;  
         this.coin_value = coin_value;
         this.active=active;
+        this.posting_time=posting_time;
+        this.status=status;
     }
 }
 

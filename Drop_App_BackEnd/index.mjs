@@ -1,3 +1,4 @@
+
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -86,6 +87,58 @@ app.use((req, res, next) => {
 });
 
 //USER API
+app.post('/api/user/graduate', /* [], */
+  async (req, res) => {
+    try {
+      const {user_id} = req.body;
+      const set = await userDao.setUserAsGraduate(req.body.user_id);
+      res.status(201).json({set});
+    } catch (err) {
+      res.status(503).json({ error: `BE: Error setting user as graduate${err}` });
+    }
+});
+
+app.get('/api/:user_id/info',
+  async (req, res) => {
+    try {
+      const user = await userDao.getUserInfo(req.params.user_id);
+      res.status(200).json(user);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error getting user info ${err}` });
+    }
+});
+
+app.get('/api/:user_id/active',
+  async (req, res) => {
+    try {
+      const user = await userDao.isUserActive(req.params.user_id);
+      res.status(200).json(user);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error getting user info ${err}` });
+    }
+});
+
+app.post('/api/user/inactive', /* [], */
+  async (req, res) => {
+    try {
+      const {user_id} = req.body;
+      const set = await userDao.inactiveUser(req.body.user_id);
+      res.status(201).json({set});
+    } catch (err) {
+      res.status(503).json({ error: `BE: Error setting user as inactive${err}` });
+    }
+});
+
+app.post('/api/user/insert', /* [], */
+  async (req, res) => {
+    try {
+      const {user_name, user_surname, user_cardnum, user_picture, user_location} = req.body;
+      const set = await userDao.insertUser(request.body.user_name, request.body.user_surname, request.body.user_cardnum, request.body.user_picture, request.body.user_location);
+      res.status(201).json({set});
+    } catch (err) {
+      res.status(503).json({ error: `BE: Error inserting user${err}` });
+    }
+});
 
 app.post('/api/sessions', function (req, res, next) {
   passport.authenticate('local', (err, user, info) => {
@@ -212,7 +265,7 @@ app.post('/api/chats/insert', /* [], */
   async (req, res) => {
     try {
       const {userID1, userID2, product_id, type, sproduct_id} = req.body;
-      const chat_id = await userCategoriesDao.insertChat(req.body.userID1, req.body.userID2, req.body.product_id, req.body.type,req.body.sproduct_id); //TO DO: shoul return chat id
+      const chat_id = await userCategoriesDao.insertChat(req.body.userID1, req.body.userID2, req.body.product_id, req.body.type,req.body.sproduct_id); 
       res.status(201).json({chat_id});
     } catch (err) {
       res.status(503).json({ error: `BE: Error inserting new chat ${err}` });
@@ -236,7 +289,7 @@ app.post('/api/messages/insert', /* [], */
   async (req, res) => {
     try {
       const {chatId, message_time, content, image, sender_id} = req.body;
-      const message_id = await userCategoriesDao.insertNewMessage(req.body.chatId, req.body.message_time, req.body.content, req.body.image,req.body.sender_id); //TO DO: shoul return message id
+      const message_id = await userCategoriesDao.insertNewMessage(req.body.chatId, req.body.message_time, req.body.content, req.body.image,req.body.sender_id);
       res.status(201).json({message_id});
     } catch (err) {
       res.status(503).json({ error: `BE: Error inserting new message ${err}` });
@@ -248,8 +301,8 @@ app.post('/api/messages/insert', /* [], */
 app.post('/api/donation/insert', /* [], */
   async (req, res) => {
     try {
-      const {product_name, product_description, product_category, product_picture, donor_id} = req.body;
-      const product_id = await donationDao.insertDonation(req.body.product_name, req.body.product_description, req.body.product_category, req.body.product_picture,req.body.donor_id);
+      const {product_name, product_description, product_category, product_picture, donor_id, status} = req.body;
+      const product_id = await donationDao.insertDonation(req.body.product_name, req.body.product_description, req.body.product_category, req.body.product_picture,req.body.donor_id, request.body.body);
       res.status(201).json({product_id});
     } catch (err) {
       res.status(503).json({ error: `BE: Error inserting new donation ${err}` });
@@ -333,8 +386,8 @@ app.get('/api/donation/:categories',
 app.post('/api/sharing/insert', /* [], */
   async (req, res) => {
     try {
-      const {sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id} = req.body;
-      const sproduct_id = await shareDao.insertSharingQuest(req.body.sproduct_name, req.body.sproduct_category, req.body.sproduct_start_time, req.body.sproduct_end_time,req.body.borrower_id);
+      const {sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, status} = req.body;
+      const sproduct_id = await shareDao.insertSharingQuest(req.body.sproduct_name, req.body.sproduct_category, req.body.sproduct_start_time, req.body.sproduct_end_time,req.body.borrower_id, req.body.status);
       res.status(201).json({sproduct_id});
     } catch (err) {
       res.status(503).json({ error: `BE: Error inserting new sharing quest ${err}` });
@@ -367,7 +420,7 @@ app.post('/api/sharing/inactive', /* [], */
 app.get('/api/sharing/all/active',
   async (req, res) => {
     try {
-      const activeSharing = await shareDao.listAllSharingQuest();
+      const activeSharing = await shareDao.listActiveSharingQuest();
       res.status(200).json(activeSharing);
     } catch (err) {
       res.status(500).json({ error: `BE: Error listing all active sharing quests ${err}` });

@@ -8,5 +8,7 @@ export default function User(user_id, user_name, user_surname, user_cardnum, coi
     this.user_rating = user_rating;
     this.user_location = user_location;
     this.user_graduated = user_graduated;
+    this.hash=hash;
+    this.salt=salt;
     this.active=active;
 }
