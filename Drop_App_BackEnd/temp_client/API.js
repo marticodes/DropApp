@@ -165,20 +165,18 @@ const getAllCategoriesByUserId = async (user_id) => {
     }
 };
 
-const getSingleCategoryByUserId = async (user_id, category_name) => {
+const getSingleCategoryByUserId = async (user_id, category_name) => {   //does this user have this specific category?
     const response = await fetch(SERVER_URL + `/api/user_categories/one/${user_id}/${category_name}`, {
         method: 'GET',
     });
     if (response.ok) {
-        const userCategJson = await response.json();
-        const userCategoryOne = new UserCategories(userCategJson.user_id, userCategJson.category_name);
-        return userCategoryOne;
+        return count = await response.json(); //1= there is, 0=there isn't
     } else {
         throw new Error('FE: Error getting user categories (one)');
     }
 };
 
-const insertUserCategory = async (user_id, category_name) => {
+const insertUserCategory = async (user_id, category_name) => {  //true if it went well
     const response = await fetch(SERVER_URL + '/api/user_categories/insert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -196,7 +194,7 @@ const insertUserCategory = async (user_id, category_name) => {
     }
 };
 
-const deleteUserCategory = async (user_id, category_name) => {
+const deleteUserCategory = async (user_id, category_name) => {  //true if it went well
     const response = await fetch(SERVER_URL + `/api/user_categories/delete`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
@@ -539,10 +537,10 @@ const filterSharingByCategory = async (categories) => {
 };
 
 
-const API = { logIn, getUserInfo, logOut, handleInvalidResponse, getCategoriesList, getAllCategoriesByUserId, getSingleCategoryByUserId, insertUserCategory, deleteUserCategory,
+const API = {logIn, getUserInfo, logOut, handleInvalidResponse, getCategoriesList, getAllCategoriesByUserId, getSingleCategoryByUserId, insertUserCategory, deleteUserCategory,
     getChatUsers, getChatProduct, getChatType, insertChat, getMessagesByChatId, insertMessage, insertDonation, deleteDonation, inactiveDonation, listActiveDonations, listMyActiveDonations,
     listAllMyDonations, filterDonationsByCoin, filterDonationsByCategory, insertSharing, deleteSharing, inactiveSharing, listActiveSharing, listMyActiveSharing, listAllMySharing,
-    filterSharingByCoin, filterSharingByCategory};
+    filterSharingByCoin, filterSharingByCategory, setUserAsGraduate, getUserProfileInfo, isUserActive, setUserAsInactive, insertUser};
 
 export default API;
 export { UnauthorizedError };

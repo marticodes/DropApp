@@ -202,8 +202,8 @@ app.get('/api/user_categories/all/:user_id',
 app.get('/api/user_categories/one/:user_id/:category_name',
   async (req, res) => {
     try {
-      const oneUsercategory = await userCategoriesDao.getSingleCategoryByUserId(req.params.user_id, req.params.category_name);
-      res.status(200).json(oneUsercategory);
+      const count = await userCategoriesDao.getSingleCategoryByUserId(req.params.user_id, req.params.category_name); 
+      res.status(200).json(count);
     } catch (err) {
       res.status(500).json({ error: `BE: Error retrieving one category of a user ${err}` });
     }
@@ -213,7 +213,7 @@ app.post('/api/user_categories/insert', /* [], */
   async (req, res) => {
     try {
       const {user_id, category_name} = req.body;
-      const ins = await userCategoriesDao.insertCategory(req.body.user_id, req.body.category_name); //check what should be returned here
+      const ins = await userCategoriesDao.insertCategory(req.body.user_id, req.body.category_name);
       res.status(201).json({ins});
     } catch (err) {
       res.status(503).json({ error: `BE: Error inserting user category ${err}` });
@@ -224,7 +224,7 @@ app.delete('/api/user_categories/delete',
   async (req, res) => {
     try {
       const { user_id, category_name } = req.body;
-      const del = await userCategoriesDao.deleteCategory(user_id, category_name); //check what should be returned here
+      const del = await userCategoriesDao.deleteCategory(user_id, category_name);
       res.status(200).json({ del });
     } catch (err) {
       res.status(503).json({ error: `BE: Error deleting user category: ${err}` });
