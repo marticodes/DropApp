@@ -4,7 +4,7 @@ import User from "../Models/User_model.mjs"
 
 export default function UserDao() {
     //TO DO: add add_rating
-    this.setUserAsGraduate = (user_id) => { //V //V0= not graduated 1=graduated
+    this.setUserAsGraduate = (user_id) => {//V0= not graduated 1=graduated
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'UPDATE User SET user_graduated=? WHERE user_id=?';
@@ -21,7 +21,7 @@ export default function UserDao() {
         });
     };
 
-    this.getUserInfo=(user_id) => { //V
+    this.getUserInfo=(user_id) => {
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'SELECT * FROM User WHERE user_id = ?';
@@ -31,7 +31,7 @@ export default function UserDao() {
                     } else if (row.length === 0) {
                         resolve(false);
                     } else {
-                        const user = new User(user_id, user_name, user_surname, user_cardnum, coins_num, user_picture, user_rating, user_location, user_graduated, active);
+                        const user = new User(row.user_id, row.user_name, row.user_surname, row.user_cardnum, row.coins_num, row.user_picture, row.user_rating, row.user_location, row.user_graduated, row.hash, row.salt, row.active);
                         resolve(user);
                     }
                 });
@@ -41,7 +41,7 @@ export default function UserDao() {
         });
     };
 
-    this.inactiveUser=(user_id) => {    //V
+    this.inactiveUser=(user_id) => {
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'UPDATE User SET active=? WHERE user_id=?';
@@ -58,18 +58,27 @@ export default function UserDao() {
         });
     };
       
-    this.insertUser=(user_name, user_surname, user_cardnum, user_picture, user_location)=>{ //V
+    this.insertUser = (user_name, user_surname, user_cardnum, user_picture, user_location) => {
         return new Promise((resolve, reject) => {
-            coins_num= user_coins(user_cardnum);
+            const currentYear = new Date().getFullYear().toString();
+            let coins_num = 0;
+            if (user_cardnum.toString().startsWith(currentYear)) {
+                coins_num = 5;
+                console.log("a");
+            } else {
+                coins_num = 3;
+                console.log("b");
+            }
+    
             try {
                 const sql = 'INSERT INTO User (user_name, user_surname, user_cardnum, coins_num, user_picture, user_rating, user_location, user_graduated, hash, salt, active) VALUES (?,?,?,?,?,?,?,?,?,?,?)';
-                db.run(sql, [user_name, user_surname, user_cardnum, coins_num, user_picture, 0, user_location, 0, x, x, 1], (err, row) => {
+                db.run(sql, [user_name, user_surname, user_cardnum, coins_num, user_picture, 0, user_location, 0, "x", "x", 1], function(err) { // Notice the use of function to get access to `this`
                     if (err) {
                         reject(err);
-                    } else if (row.length === 0) {
+                    } else if (this.changes === 0) { 
                         resolve(false);
                     } else {
-                        const id = row.user_id;
+                        const id = this.lastID; 
                         resolve(id);
                     }
                 });
@@ -78,26 +87,27 @@ export default function UserDao() {
             }
         });
     };
+    
 
-    this.isUserActive=(user_id) => {    //V
+    this.isUserActive = (user_id) => {
         return new Promise((resolve, reject) => {
             try {
-                const sql = 'SELECT active FROM User WHERE user_id=?';
-                return db.run(sql, [user_id], (err, row) => {
+                const sql = 'SELECT active FROM User WHERE user_id = ?';
+                db.get(sql, [user_id], (err, row) => {
                     if (err) {
-                        reject(err);
-                    } else if (row.length === 0) {
+                        reject(err); 
+                    } else if (!row) { 
                         resolve(false);
                     } else {
-                        const active = row;
-                        resolve(active);
+                        resolve(row.active); 
                     }
                 });
             } catch (error) {
-                reject(error);
+                reject(error); 
             }
         });
     };
+    
 
     //this 2 following functions are from my old project - I will leave them since they are required for the login
     this.getUserById = (id) => {
@@ -153,11 +163,3 @@ export default function UserDao() {
     */
 }
 
-function user_coins(user_cardnum) {
-    const currentYear = new Date().getFullYear().toString();
-    if(user_cardnum.toString().startsWith(currentYear)){
-        return 5;
-    }else{
-        return 3;
-    }
-}

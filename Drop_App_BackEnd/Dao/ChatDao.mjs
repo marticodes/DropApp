@@ -1,5 +1,5 @@
 import db from '../db.mjs';
-import Chat from '../Models/Chat.js';
+import Chat from '../Models/Chat_model.mjs';
 
 const ChatDAO = {
     /*

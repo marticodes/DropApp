@@ -45,19 +45,19 @@ const setUserAsGraduate = async (user_id) => {
 };
 
 const getUserProfileInfo = async () => {
-    const response = await fetch(SERVER_URL + `/api/${user_id}/info`, {
+    const response = await fetch(SERVER_URL + `/api/info/${user_id}`, {
         method: 'GET',
     });
     if (response.ok) {
         const userJson = await response.json();
-        return userJson.map(category => new User(category.category_name));
+        return userJson.map(u => new User(u.user_id, u.user_name, u.user_surname, u.user_cardnum, u.coins_num, u.user_picture, u.user_rating, u.user_location, u.user_graduated, u.hash, u.salt, u.active));
     } else {
         throw new Error('FE: Error getting user profile info');
     }
 };
 
 const isUserActive = async () => {
-    const response = await fetch(SERVER_URL + `/api/${user_id}/active`, {
+    const response = await fetch(SERVER_URL + `/api/active/${user_id}`, {
         method: 'GET',
     });
     if (response.ok) {

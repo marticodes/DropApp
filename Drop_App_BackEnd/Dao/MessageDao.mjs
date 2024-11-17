@@ -1,5 +1,5 @@
 import db from '../db.mjs';
-import Message from '../Models/Message.js';
+import Message from '../Models/Message_model.mjs';
 
 /*
 - chat_id: id of the chat (PK - FK) 

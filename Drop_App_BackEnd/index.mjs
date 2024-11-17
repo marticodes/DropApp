@@ -17,6 +17,7 @@ import DonationDAO from "./Dao/DonationDao.mjs"
 import ShareDAO from "./Dao/ShareDao.mjs"
 import UserCategoriesDAO from "./Dao/UserCategoriesDao.mjs"
 import UserDAO from "./Dao/UserDao.mjs"
+import MessageDAO from "./Dao/MessageDao.mjs"
 
 const categoriesDao = CategoriesDAO;
 const chatDao = ChatDAO;
@@ -98,7 +99,7 @@ app.post('/api/user/graduate', /* [], */
     }
 });
 
-app.get('/api/:user_id/info',
+app.get('/api/info/:user_id',
   async (req, res) => {
     try {
       const user = await userDao.getUserInfo(req.params.user_id);
@@ -108,7 +109,7 @@ app.get('/api/:user_id/info',
     }
 });
 
-app.get('/api/:user_id/active',
+app.get('/api/active/:user_id',
   async (req, res) => {
     try {
       const user = await userDao.isUserActive(req.params.user_id);
@@ -133,8 +134,8 @@ app.post('/api/user/insert', /* [], */
   async (req, res) => {
     try {
       const {user_name, user_surname, user_cardnum, user_picture, user_location} = req.body;
-      const set = await userDao.insertUser(request.body.user_name, request.body.user_surname, request.body.user_cardnum, request.body.user_picture, request.body.user_location);
-      res.status(201).json({set});
+      const user_id = await userDao.insertUser(req.body.user_name, req.body.user_surname, req.body.user_cardnum, req.body.user_picture, req.body.user_location);
+      res.status(201).json({user_id});
     } catch (err) {
       res.status(503).json({ error: `BE: Error inserting user${err}` });
     }
