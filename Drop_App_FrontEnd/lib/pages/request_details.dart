@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:drop_app/top_bar/top_bar_go_back.dart';
+
 
 class ShareDetailPage extends StatelessWidget {
   const ShareDetailPage({super.key});
@@ -6,6 +8,7 @@ class ShareDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: BackTopBar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
