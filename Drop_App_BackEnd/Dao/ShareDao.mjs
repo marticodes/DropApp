@@ -13,20 +13,19 @@ import Share from '../Models/Share_model.mjs';
 */
 
 const ShareDAO = {
-    async insertSharingQuest(sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, status) { //V
+    async insertSharingQuest(sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, status) { //Vv
         return new Promise((resolve, reject) => {
             try {
-                const coin_value=get_coin_value(sproduct_name, status);
-                const posting_time= new Date().toISOString();
+                const coin_value = get_coin_value(sproduct_name, status);
+                const posting_time = new Date().toISOString();
                 const sql = 'INSERT INTO Share (sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, coin_value, active, posting_time, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-                db.run(sql, [sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, 5, 1, posting_time, status], (err, row) => {  //TO DO: change coin value
+                
+                db.run(sql, [sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, 5, 1, posting_time, status], function(err) {
                     if (err) {
                         reject(err);
-                    } else if (row.length === 0) {
-                        resolve(false);
                     } else {
-                        const id = row.sproduct_id;
-                        resolve(id);
+                        const id = this.lastID; 
+                        resolve(id); 
                     }
                 });
             } catch (error) {
@@ -34,11 +33,12 @@ const ShareDAO = {
             }
         });
     },
+    
     /*
     this changes just the active flag (1=active, 0=inactive)
     an inactive product is similar to deleted but without consequences
     */
-    async inactiveSharingQuest(sproduct_id){    //V
+    async inactiveSharingQuest(sproduct_id){    //Vv
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'UPDATE Share SET active=? WHERE sproduct_id=?';
@@ -54,7 +54,7 @@ const ShareDAO = {
             }
         });
     },
-    async listActiveSharingQuest(){ //V
+    async listActiveSharingQuest(){ //Vv
         return new Promise((resolve, reject) => {
             try { 
                 const sql = 'SELECT * FROM Share WHERE active = ?';
@@ -64,7 +64,7 @@ const ShareDAO = {
                     } else if (rows.length === 0) {
                         resolve(false);
                     } else {
-                        const sharing= rows.map(row => new Share(row.product_id, row.product_name, row.product_description, row.product_picture, row.donor_id, row.coin_value, row.product_category, row.active, row.posting_time, row.status));
+                        const sharing= rows.map(d => new Share(d.sproduct_id, d.sproduct_name, d.sproduct_category, d.sproduct_description, d.sproduct_start_time, d.sproduct_end_time, d.borrower_id, d.coin_value, d.active, d.posting_time, d.status));
                         resolve(sharing);
                     }
                 });
@@ -73,7 +73,7 @@ const ShareDAO = {
             }
         });
     },
-    async listMyActiveSharingQuests(user_id){   //V
+    async listMyActiveSharingQuests(user_id){   //Vv
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'SELECT * FROM Share WHERE borrower_id=? AND active=?';
@@ -83,7 +83,7 @@ const ShareDAO = {
                     } else if (rows.length === 0) {
                         resolve(false);
                     } else {
-                        const sharing= rows.map(row => new Share(row.product_id, row.product_name, row.product_description, row.product_picture, row.donor_id, row.coin_value, row.product_category, row.active, row.posting_time, row.status));
+                        const sharing= rows.map(d => new Share(d.sproduct_id, d.sproduct_name, d.sproduct_category, d.sproduct_description, d.sproduct_start_time, d.sproduct_end_time, d.borrower_id, d.coin_value, d.active, d.posting_time, d.status));
                         resolve(sharing);
                     }
                 });
@@ -102,7 +102,7 @@ const ShareDAO = {
                     } else if (rows.length === 0) {
                         resolve(false);
                     } else {
-                        const sharing= rows.map(row => new Share(row.product_id, row.product_name, row.product_description, row.product_picture, row.donor_id, row.coin_value, row.product_category, row.active, row.posting_time, row.status));
+                        const sharing= rows.map(d => new Share(d.sproduct_id, d.sproduct_name, d.sproduct_category, d.sproduct_description, d.sproduct_start_time, d.sproduct_end_time, d.borrower_id, d.coin_value, d.active, d.posting_time, d.status));
                         resolve(sharing);
                     }
                 });
@@ -115,26 +115,44 @@ const ShareDAO = {
     Categories should be a list that is updated every time the users clicks a filter
     If the filter is pressed add the name of the category, otherwise remove it and pass again the list as input
     */
-    async filterSharingByCategories(categories) { //V
+    async filterSharingByCategories(categories) {
         return new Promise((resolve, reject) => {
             try {
+                // Costruzione dinamica dei segnaposti per ogni categoria
                 const placeholders = categories.map(() => '?').join(', ');
-                const sql = `SELECT * FROM Share WHERE sproduct_category IN (${placeholders})`; //TO DO: check
-                db.all(sql, [categories], (err, rows) => {
+    
+                // Query SQL con placeholders
+                const sql = `SELECT * FROM Share WHERE sproduct_category IN (${placeholders})`;
+    
+                // Esegui la query, passando l'array 'categories' come parametri
+                db.all(sql, categories, (err, rows) => {
                     if (err) {
-                        reject(err);
+                        reject(err);  // Se c'è un errore nel database
                     } else if (rows.length === 0) {
-                        resolve(false);
+                        resolve([]);  // Se non ci sono risultati, restituisci un array vuoto
                     } else {
-                        const sharing= rows.map(row => new Share(row.product_id, row.product_name, row.product_description, row.product_picture, row.donor_id, row.coin_value, row.product_category, row.active, row.posting_time, row.status));
-                        resolve(sharing);
+                        // Se ci sono righe, mappale in oggetti 'Share'
+                        const sharing = rows.map(d => new Share(
+                            d.sproduct_id, 
+                            d.sproduct_name, 
+                            d.sproduct_category, 
+                            d.sproduct_description, 
+                            d.sproduct_start_time, 
+                            d.sproduct_end_time, 
+                            d.borrower_id, 
+                            d.coin_value, 
+                            d.active, 
+                            d.posting_time, 
+                            d.status
+                        ));
+                        resolve(sharing);  // Risolvi con gli oggetti Share
                     }
                 });
             } catch (error) {
-                reject(error);
+                reject(error);  // Gestisci eventuali errori
             }
         });
-    },
+    },     
     async filterSharingByCoin(min, max){    //V
         return new Promise((resolve, reject) => {
             try {
@@ -145,7 +163,7 @@ const ShareDAO = {
                     } else if (rows.length === 0) {
                         resolve(false);
                     } else {
-                        const sharing= rows.map(row => new Share(row.product_id, row.product_name, row.product_description, row.product_picture, row.donor_id, row.coin_value, row.product_category, row.active, row.posting_time, row.status));
+                        const sharing= rows.map(d => new Share(d.sproduct_id, d.sproduct_name, d.sproduct_category, d.sproduct_description, d.sproduct_start_time, d.sproduct_end_time, d.borrower_id, d.coin_value, d.active, d.posting_time, d.status));
                         resolve(sharing);
                     }
                 });

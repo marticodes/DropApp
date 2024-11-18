@@ -446,7 +446,7 @@ const filterDonationsByCoin = async (min, max) => {
     }
 };
 
-const filterDonationsByCategory = async (categories) => {
+const filterDonationsByCategory = async (categories) => { //TO DO
     const response = await fetch(SERVER_URL + `/api/donations/${categories}`, {
         method: 'GET',
     });
@@ -477,7 +477,7 @@ const insertSharing = async (sproduct_name, sproduct_category, sproduct_descript
         console.error(`FE: Error status: ${response.status}, message: ${errorText}`);
     }
 };
-
+/*
 const deleteSharing = async (sproduct_id) => {
     const response = await fetch(SERVER_URL + `/sharing/delete`, {
         method: 'DELETE',
@@ -495,7 +495,7 @@ const deleteSharing = async (sproduct_id) => {
         console.error(`Error status: ${response.status}, message: ${errorText}`);
     }
 };
-
+*/
 const inactiveSharing = async (sproduct_id) => {
     const response = await fetch(SERVER_URL + `/api/sharing/inactive`, {
         method: 'POST',
@@ -515,12 +515,12 @@ const inactiveSharing = async (sproduct_id) => {
 };
 
 const listActiveSharing = async () => {
-    const response = await fetch(SERVER_URL + `/api/sharing/all/active`, {
+    const response = await fetch(SERVER_URL + `/api/sharing/all/active`, { 
         method: 'GET',
     });
     if (response.ok) {
         const donationsJson = await response.json();
-        return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time));
+        return donationsJson.map(d => new Share(d.sproduct_id, d.sproduct_name, d.sproduct_category, d.sproduct_description, d.sproduct_start_time, d.sproduct_end_time, d.borrower_id, d.coin_value, d.active, d.posting_time, d.status));
     } else {
         throw new Error('FE: Error listing all active sharing');
     }
@@ -532,7 +532,7 @@ const listMyActiveSharing = async (user_id) => {
     });
     if (response.ok) {
         const donationsJson = await response.json();
-        return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time));
+        return donationsJson.map(d => new Share(d.sproduct_id, d.sproduct_name, d.sproduct_category, d.sproduct_description, d.sproduct_start_time, d.sproduct_end_time, d.borrower_id, d.coin_value, d.active, d.posting_time, d.status));
     } else {
         throw new Error('FE: Error listing all my active sharing');
     }
@@ -544,7 +544,7 @@ const listAllMySharing = async (user_id) => {
     });
     if (response.ok) {
         const donationsJson = await response.json();
-        return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time));
+        return donationsJson.map(d => new Share(d.sproduct_id, d.sproduct_name, d.sproduct_category, d.sproduct_description, d.sproduct_start_time, d.sproduct_end_time, d.borrower_id, d.coin_value, d.active, d.posting_time, d.status));
     } else {
         throw new Error('FE: Error listing all my  sharing');
     }
@@ -556,19 +556,19 @@ const filterSharingByCoin = async (min, max) => {
     });
     if (response.ok) {
         const donationsJson = await response.json();
-        return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time));
+        return donationsJson.map(d => new Share(d.sproduct_id, d.sproduct_name, d.sproduct_category, d.sproduct_description, d.sproduct_start_time, d.sproduct_end_time, d.borrower_id, d.coin_value, d.active, d.posting_time, d.status));
     } else {
         throw new Error('FE: Error filtering sharing by coins');
     }
 };
 
 const filterSharingByCategory = async (categories) => {
-    const response = await fetch(SERVER_URL + `/api/sharing/${categories}`, {
+    const response = await fetch(`${SERVER_URL}/api/sharing?categories=${categories.join('&categories=')}`, {
         method: 'GET',
     });
     if (response.ok) {
         const donationsJson = await response.json();
-        return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time));
+        return donationsJson.map(d => new Share(d.sproduct_id, d.sproduct_name, d.sproduct_category, d.sproduct_description, d.sproduct_start_time, d.sproduct_end_time, d.borrower_id, d.coin_value, d.active, d.posting_time, d.status));
     } else {
         throw new Error('FE: Error filtering sharing by categories');
     }
@@ -577,7 +577,7 @@ const filterSharingByCategory = async (categories) => {
 
 const API = {logIn, getUserInfo, logOut, handleInvalidResponse, getCategoriesList, getAllCategoriesByUserId, getSingleCategoryByUserId, insertUserCategory, deleteUserCategory,
     getChatUsers, getChatProduct, getChatType, insertChat, getMessagesByChatId, insertMessage, insertDonation, inactiveDonation, listActiveDonations, listMyActiveDonations,
-    listAllMyDonations, filterDonationsByCoin, filterDonationsByCategory, insertSharing, deleteSharing, inactiveSharing, listActiveSharing, listMyActiveSharing, listAllMySharing,
+    listAllMyDonations, filterDonationsByCoin, filterDonationsByCategory, insertSharing, inactiveSharing, listActiveSharing, listMyActiveSharing, listAllMySharing,
     filterSharingByCoin, filterSharingByCategory, setUserAsGraduate, getUserProfileInfo, isUserActive, setUserAsInactive, insertUser, getAllChatsForUser, getChatIdByUserAndProduct};
 
 export default API;

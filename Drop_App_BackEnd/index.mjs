@@ -417,14 +417,14 @@ app.post('/api/sharing/insert', /* [], */
   async (req, res) => {
     try {
       const {sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, status} = req.body;
-      const sproduct_id = await shareDao.insertSharingQuest(req.body.sproduct_name, req.body.sproduct_category, req.body.sproduct_start_time, req.body.sproduct_end_time,req.body.borrower_id, req.body.status);
+      const sproduct_id = await shareDao.insertSharingQuest(req.body.sproduct_name, req.body.sproduct_category, req.body.sproduct_description, req.body.sproduct_start_time, req.body.sproduct_end_time,req.body.borrower_id, req.body.status);
       res.status(201).json({sproduct_id});
     } catch (err) {
       res.status(503).json({ error: `BE: Error inserting new sharing quest ${err}` });
     }
   });
 
-
+/*
 app.delete('/api/sharing/delete', 
   async (req, res) => {
     try {
@@ -434,7 +434,7 @@ app.delete('/api/sharing/delete',
     } catch (err) {
       res.status(503).json({ error: `BE: Error deleting sharing quest: ${err}` });
     }
-  });
+  });*/
 
 app.post('/api/sharing/inactive', /* [], */
   async (req, res) => {
@@ -460,6 +460,7 @@ app.get('/api/sharing/all/active',
 app.get('/api/sharing/:user_id/active',
   async (req, res) => {
     try {
+      const user_id = req.params.user_id;
       const myActiveSharing = await shareDao.listMyActiveSharingQuests(user_id);
       res.status(200).json(myActiveSharing);
     } catch (err) {
@@ -470,6 +471,7 @@ app.get('/api/sharing/:user_id/active',
 app.get('/api/sharing/:user_id',
   async (req, res) => {
     try {
+      const user_id = req.params.user_id;
       const mySharing = await shareDao.listAllMySharingQuests(user_id);
       res.status(200).json(mySharing);
     } catch (err) {
@@ -480,6 +482,8 @@ app.get('/api/sharing/:user_id',
 app.get('/api/sharing/:min/:max',
   async (req, res) => {
     try {
+      const min = parseInt(req.params.min, 10);
+      const max = parseInt(req.params.max, 10);
       const filtSharing = await shareDao.filterSharingByCoin(min, max);
       res.status(200).json(filtSharing);
     } catch (err) {
@@ -496,6 +500,22 @@ app.get('/api/sharing/:categories',
       res.status(500).json({ error: `BE: Error filtering sharing quests by categories ${err}` });
     }
   });
+
+  app.get('/api/sharing', async (req, res) => {
+    try {
+        const categories = req.query.categories
+        if (!categories || categories.length === 0) {
+            return res.status(400).json({ error: 'Categories parameter is required and must contain at least one category.' });
+        }
+        const categoriesArray = Array.isArray(categories) ? categories : [categories];
+        const filtSharing = await shareDao.filterSharingByCategories(categoriesArray);
+        res.status(200).json(filtSharing);
+    } catch (err) {
+        res.status(500).json({ error: `BE: Error filtering sharing quests by categories ${err.message}` });
+    }
+});
+
+  
 
 
 // start the server
