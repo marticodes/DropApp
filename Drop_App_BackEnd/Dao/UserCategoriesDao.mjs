@@ -3,7 +3,7 @@ import UserCategories from '../Models/UserCategories_model.mjs';
 
 const UserCategoriesDAO = {
     
-    async insertCategory(userId, newCategoryName) { //V
+    async insertCategory(userId, newCategoryName) {
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'INSERT INTO UserCategories (user_id, category_name) VALUES (?,?)';
@@ -19,7 +19,7 @@ const UserCategoriesDAO = {
             }
         });
     },
-    async deleteCategory(userId, categoryName) {    //V
+    async deleteCategory(userId, categoryName) {
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'DELETE FROM UserCategories WHERE user_id = ? AND category_name = ?';
@@ -35,17 +35,17 @@ const UserCategoriesDAO = {
             }
         });
     },
-    async getAllCategoriesByUserId(userId){ //V
+    async getAllCategoriesByUserId(userId){
         return new Promise((resolve, reject) => {
             try {
-                const sql = 'SELECT category_name FROM UserCategories WHERE user_id = ?';
+                const sql = 'SELECT * FROM UserCategories WHERE user_id = ?';
                 db.all(sql, [userId], (err, rows) => {
                     if (err) {
                         reject(err);
                     } else if (rows.length === 0) {
                         resolve(false);
                     } else {
-                        const userCategories = rows.map(row => new UserCategories(row.user_id, row.game_id));
+                        const userCategories = rows.map(row => new UserCategories(row.user_id, row.category_name));
                         resolve(userCategories);
                     }
                 });
@@ -54,7 +54,7 @@ const UserCategoriesDAO = {
             }
         });
     },
-    async getSingleCategoryByUserId(userId, CategoryName){  //V
+    async getSingleCategoryByUserId(userId, CategoryName){
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'SELECT COUNT(*) FROM UserCategories WHERE user_id = ? AND category_name=?';
