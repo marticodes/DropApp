@@ -318,18 +318,24 @@ app.post('/api/messages/insert', /* [], */
   
 
 //DONATION API 
-app.post('/api/donation/insert', /* [], */
-  async (req, res) => {
-    try {
-      const {product_name, product_description, product_category, product_picture, donor_id, status} = req.body;
-      const product_id = await donationDao.insertDonation(req.body.product_name, req.body.product_description, req.body.product_category, req.body.product_picture,req.body.donor_id, request.body.body);
-      res.status(201).json({product_id});
-    } catch (err) {
+app.post('/api/donation/insert', async (req, res) => {
+  try {
+      const { product_name, product_description, product_category, product_picture, donor_id, status } = req.body;
+      const product_id = await donationDao.insertDonation(
+          req.body.product_name, 
+          req.body.product_description, 
+          req.body.product_category, 
+          req.body.product_picture, 
+          req.body.donor_id, 
+          req.body.status
+      );
+      res.status(201).json({ product_id });
+  } catch (err) {
       res.status(503).json({ error: `BE: Error inserting new donation ${err}` });
-    }
-  });
+  }
+});
 
-
+/*
 app.delete('/api/donation/delete', 
   async (req, res) => {
     try {
@@ -340,6 +346,7 @@ app.delete('/api/donation/delete',
       res.status(503).json({ error: `BE: Error deleting donation: ${err}` });
     }
   });
+*/
 
 app.post('/api/donation/inactive', /* [], */
   async (req, res) => {
@@ -352,7 +359,7 @@ app.post('/api/donation/inactive', /* [], */
     }
   });
 
-app.get('/api/donation/all/active',
+app.get('/api/donations/all/active',
   async (req, res) => {
     try {
       const activeDonations = await donationDao.listActiveDonations();
@@ -362,19 +369,20 @@ app.get('/api/donation/all/active',
     }
   });
 
-app.get('/api/donation/:user_id/active',
-  async (req, res) => {
+  app.get('/api/donations/:user_id/active', async (req, res) => {
     try {
+      const user_id = req.params.user_id; 
       const myActiveDonations = await donationDao.listMyActiveDonations(user_id);
       res.status(200).json(myActiveDonations);
     } catch (err) {
       res.status(500).json({ error: `BE: Error listing all my active donations ${err}` });
     }
-  });
+  });  
 
-app.get('/api/donation/:user_id',
+app.get('/api/donations/:user_id',
   async (req, res) => {
     try {
+      const user_id = req.params.user_id;
       const myDonations = await donationDao.listAllMyDonations(user_id);
       res.status(200).json(myDonations);
     } catch (err) {
@@ -382,9 +390,11 @@ app.get('/api/donation/:user_id',
     }
   });
 
-app.get('/api/donation/:min/:max',
+app.get('/api/donations/:min/:max',
   async (req, res) => {
     try {
+      const min = parseInt(req.params.min, 10);
+      const max = parseInt(req.params.max, 10);
       const filtDonations = await donationDao.filterDonationByCoin(min, max);
       res.status(200).json(filtDonations);
     } catch (err) {
@@ -392,7 +402,7 @@ app.get('/api/donation/:min/:max',
     }
   });
 
-app.get('/api/donation/:categories',
+app.get('/api/donations/:categories',
   async (req, res) => {
     try {
       const filtDonations = await donationDao.filterDonationsByCategories(categories);

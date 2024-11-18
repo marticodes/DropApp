@@ -1,20 +1,21 @@
 import db from '../db.mjs';
 import Donation from "../Models/Donation_model.mjs"
 const DonationDAO = {
-    async insertDonation(product_name, product_description, product_category, product_picture, donor_id, status) {  //V
+    async insertDonation(product_name, product_description, product_category, product_picture, donor_id, status) {  //v
         return new Promise((resolve, reject) => {
             try {
-                const coin_value=get_coin_value(product_name, status);
-                const posting_time= new Date().toISOString();
+                const coin_value = get_coin_value(product_name, status); 
+                const posting_time = new Date().toISOString(); 
                 const sql = 'INSERT INTO Donation (product_name, product_category, product_description, product_picture, donor_id, coin_value, active, posting_time, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-                db.run(sql, [product_name, product_category, product_description, product_picture, donor_id, 5, 1, posting_time, status], (err, row) => {   //TO DO: change coin value
+                
+                db.run(sql, [product_name, product_category, product_description, product_picture, donor_id, 5, 1, posting_time, status], function(err) {
                     if (err) {
                         reject(err);
-                    } else if (row.length === 0) {
-                        resolve(false);
-                    } else {
-                        const id = row.product_id;
+                    } else if (this.lastID) { // Usa this.lastID per ottenere l'ID dell'ultima riga inserita
+                        const id = this.lastID;
                         resolve(id);
+                    } else {
+                        resolve(false); // Se l'inserimento non ha avuto successo
                     }
                 });
             } catch (error) {
@@ -22,6 +23,7 @@ const DonationDAO = {
             }
         });
     },
+    
     /*
     this changes just the active flag (1=active, 0=inactive)
     an inactive product is similar to deleted but without consequences
@@ -62,17 +64,28 @@ const DonationDAO = {
         });
     },
 
-    async listMyActiveDonations(user_id){   //V
+    async listMyActiveDonations(user_id) { //v
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'SELECT * FROM Donation WHERE donor_id=? AND active=?';
-                return db.all(sql, [user_id,1], (err, rows) => {
+                db.all(sql, [user_id, 1], (err, rows) => {
                     if (err) {
                         reject(err);
                     } else if (rows.length === 0) {
-                        resolve(false);
+                        resolve([]);  
                     } else {
-                        const donations= rows.map(row => new Donation(row.product_id, row.product_name, row.product_description, row.product_picture, row.donor_id, row.coin_value, row.product_category, row.active, row.posting_time, row.status));
+                        const donations = rows.map(row => new Donation(
+                            row.product_id, 
+                            row.product_name, 
+                            row.product_description, 
+                            row.product_picture, 
+                            row.donor_id, 
+                            row.coin_value, 
+                            row.product_category, 
+                            row.active, 
+                            row.posting_time, 
+                            row.status
+                        ));
                         resolve(donations);
                     }
                 });
@@ -81,6 +94,7 @@ const DonationDAO = {
             }
         });
     },
+    
 
     async listAllMyDonations(user_id){     //V
         return new Promise((resolve, reject) => {
@@ -90,7 +104,7 @@ const DonationDAO = {
                     if (err) {
                         reject(err);
                     } else if (rows.length === 0) {
-                        resolve(false);
+                        resolve([]);
                     } else {
                         const donations= rows.map(row => new Donation(row.product_id, row.product_name, row.product_description, row.product_picture, row.donor_id, row.coin_value, row.product_category, row.active, row.posting_time, row.status));
                         resolve(donations);
@@ -111,7 +125,7 @@ const DonationDAO = {
                     if (err) {
                         reject(err);
                     } else if (rows.length === 0) {
-                        resolve(false);
+                        resolve([]);
                     } else {
                         const donations= rows.map(row => new Donation(row.product_id, row.product_name, row.product_description, row.product_picture, row.donor_id, row.coin_value, row.product_category, row.active, row.posting_time, row.status));
                         resolve(donations);
@@ -123,18 +137,29 @@ const DonationDAO = {
         });
     },
     
-    async filterDonationByCoin(min, max){   //V
+    async filterDonationByCoin(min, max) {  
         return new Promise((resolve, reject) => {
             try {
-                const sql = `SELECT * FROM Donation WHERE coin_value>=? AND coin_value<=?`; 
-                return db.all(sql, [min,max], (err, rows) => {
+                const sql = `SELECT * FROM Donation WHERE coin_value >= ? AND coin_value <= ?`; 
+                db.all(sql, [min, max], (err, rows) => {
                     if (err) {
                         reject(err);
                     } else if (rows.length === 0) {
-                        resolve(false);
+                        resolve([]);
                     } else {
-                        const donations= rows.map(row => new Donation(row.product_id, row.product_name, row.product_description, row.product_picture, row.donor_id, row.coin_value, row.product_category, row.active, row.posting_time, row.status));
-                        resolve(donations);
+                        const donations = rows.map(row => new Donation(
+                            row.product_id,
+                            row.product_name,
+                            row.product_description,
+                            row.product_picture,
+                            row.donor_id,
+                            row.coin_value,
+                            row.product_category,
+                            row.active,
+                            row.posting_time,
+                            row.status
+                        ));
+                        resolve(donations); 
                     }
                 });
             } catch (error) {
@@ -142,6 +167,7 @@ const DonationDAO = {
             }
         });
     }
+    
 
     /*
     async listAllDonations(){

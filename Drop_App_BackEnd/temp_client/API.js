@@ -348,6 +348,7 @@ const insertDonation = async (product_name, product_description, product_categor
     }
 };
 
+/*
 const deleteDonation = async (product_id) => {
     const response = await fetch(SERVER_URL + `/donation/delete`, {
         method: 'DELETE',
@@ -365,6 +366,7 @@ const deleteDonation = async (product_id) => {
         console.error(`Error status: ${response.status}, message: ${errorText}`);
     }
 };
+*/
 
 const inactiveDonation = async (product_id) => {
     const response = await fetch(SERVER_URL + `/api/donation/inactive`, {
@@ -390,7 +392,7 @@ const listActiveDonations = async () => {
     });
     if (response.ok) {
         const donationsJson = await response.json();
-        return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time));
+        return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time, d.status));
     } else {
         throw new Error('FE: Error listing all active donations');
     }
@@ -402,11 +404,23 @@ const listMyActiveDonations = async (user_id) => {
     });
     if (response.ok) {
         const donationsJson = await response.json();
-        return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time));
+        return donationsJson.map(d => new Donation(
+            d.product_id, 
+            d.product_name, 
+            d.product_description, 
+            d.product_picture, 
+            d.donor_id, 
+            d.coin_value, 
+            d.product_category, 
+            d.active, 
+            d.posting_time, 
+            d.status
+        ));
     } else {
         throw new Error('FE: Error listing all my active donations');
     }
 };
+
 
 const listAllMyDonations = async (user_id) => {
     const response = await fetch(SERVER_URL + `/api/donations/${user_id}`, {
@@ -414,7 +428,7 @@ const listAllMyDonations = async (user_id) => {
     });
     if (response.ok) {
         const donationsJson = await response.json();
-        return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time));
+        return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time, d.status));
     } else {
         throw new Error('FE: Error listing all my  donations');
     }
@@ -426,7 +440,7 @@ const filterDonationsByCoin = async (min, max) => {
     });
     if (response.ok) {
         const donationsJson = await response.json();
-        return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time));
+        return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time, d.status));
     } else {
         throw new Error('FE: Error filtering donations by coins');
     }
@@ -438,7 +452,7 @@ const filterDonationsByCategory = async (categories) => {
     });
     if (response.ok) {
         const donationsJson = await response.json();
-        return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time));
+        return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time, d.status));
     } else {
         throw new Error('FE: Error filtering donations by categories');
     }
@@ -562,7 +576,7 @@ const filterSharingByCategory = async (categories) => {
 
 
 const API = {logIn, getUserInfo, logOut, handleInvalidResponse, getCategoriesList, getAllCategoriesByUserId, getSingleCategoryByUserId, insertUserCategory, deleteUserCategory,
-    getChatUsers, getChatProduct, getChatType, insertChat, getMessagesByChatId, insertMessage, insertDonation, deleteDonation, inactiveDonation, listActiveDonations, listMyActiveDonations,
+    getChatUsers, getChatProduct, getChatType, insertChat, getMessagesByChatId, insertMessage, insertDonation, inactiveDonation, listActiveDonations, listMyActiveDonations,
     listAllMyDonations, filterDonationsByCoin, filterDonationsByCategory, insertSharing, deleteSharing, inactiveSharing, listActiveSharing, listMyActiveSharing, listAllMySharing,
     filterSharingByCoin, filterSharingByCategory, setUserAsGraduate, getUserProfileInfo, isUserActive, setUserAsInactive, insertUser, getAllChatsForUser, getChatIdByUserAndProduct};
 

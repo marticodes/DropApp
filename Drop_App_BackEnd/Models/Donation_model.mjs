@@ -2,7 +2,7 @@ export default function Donation(product_id, product_name, product_description, 
     this.product_id = product_id;
     this.product_name = product_name;
     this.product_description = product_description;
-    this.this.product_picture= product_picture;
+    this.product_picture= product_picture;
     this.donor_id = donor_id; 
     this.coin_value = coin_value; 
     this.product_category = product_category;
