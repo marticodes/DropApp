@@ -302,18 +302,18 @@ const getMessagesByChatId = async (chat_id) => {
         method: 'GET',
     });
     if (response.ok) {
-        const userCategJson = await response.json();
-        return userCategJson.map(mex => new Message(mex.chatId, mex.message_time, mex.content, mex.image, mex.sender_id));
+        const messages = await response.json();
+        return messages.map(mex => new Message(mex.chat_id, mex.message_id, mex.message_time, mex.content, mex.image, mex.sender_id));
     } else {
         throw new Error('FE: Error getting messages of a chat');
     }
 };
 
-const insertMessage = async (chatId, message_time, content, image, sender_id) => {
+const insertMessage = async (chat_id, content, image, sender_id) => {
     const response = await fetch(SERVER_URL + `/api/messages/insert`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({chatId, message_time, content, image, sender_id}),
+        body: JSON.stringify({chat_id, message_time, content, image, sender_id}),
         //credentials: 'include'
     });
 
@@ -564,7 +564,7 @@ const filterSharingByCategory = async (categories) => {
 const API = {logIn, getUserInfo, logOut, handleInvalidResponse, getCategoriesList, getAllCategoriesByUserId, getSingleCategoryByUserId, insertUserCategory, deleteUserCategory,
     getChatUsers, getChatProduct, getChatType, insertChat, getMessagesByChatId, insertMessage, insertDonation, deleteDonation, inactiveDonation, listActiveDonations, listMyActiveDonations,
     listAllMyDonations, filterDonationsByCoin, filterDonationsByCategory, insertSharing, deleteSharing, inactiveSharing, listActiveSharing, listMyActiveSharing, listAllMySharing,
-    filterSharingByCoin, filterSharingByCategory, setUserAsGraduate, getUserProfileInfo, isUserActive, setUserAsInactive, insertUser};
+    filterSharingByCoin, filterSharingByCategory, setUserAsGraduate, getUserProfileInfo, isUserActive, setUserAsInactive, insertUser, getAllChatsForUser, getChatIdByUserAndProduct};
 
 export default API;
 export { UnauthorizedError };

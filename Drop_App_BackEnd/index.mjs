@@ -294,12 +294,11 @@ app.post('/api/chats/insert', /* [], */
   });
 
 //MESSAGE API
-//TO DO: how do I save the photos into my folder?
 
 app.get('/api/messages/:chat_id',
   async (req, res) => {
     try {
-      const messagesList = await userCategoriesDao.getMessagesByChatId(req.params.chat_id);
+      const messagesList = await messageDao.getMessagesByChatId(req.params.chat_id);
       res.status(200).json(messagesList);
     } catch (err) {
       res.status(500).json({ error: `BE: Error getting messages of a chat ${err}` });
@@ -309,8 +308,8 @@ app.get('/api/messages/:chat_id',
 app.post('/api/messages/insert', /* [], */
   async (req, res) => {
     try {
-      const {chatId, message_time, content, image, sender_id} = req.body;
-      const message_id = await userCategoriesDao.insertNewMessage(req.body.chatId, req.body.message_time, req.body.content, req.body.image,req.body.sender_id);
+      const {chat_id, content, image, sender_id} = req.body;
+      const message_id = await messageDao.insertNewMessage(req.body.chat_id, req.body.content, req.body.image,req.body.sender_id);
       res.status(201).json({message_id});
     } catch (err) {
       res.status(503).json({ error: `BE: Error inserting new message ${err}` });
