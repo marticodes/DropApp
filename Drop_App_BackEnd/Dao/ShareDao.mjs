@@ -1,5 +1,6 @@
 import db from '../db.mjs';
 import Share from '../Models/Share_model.mjs';
+import fetch from 'node-fetch';
 
 /*
 - sproduct_id: id of the (sharing)product (PK)
@@ -11,6 +12,8 @@ import Share from '../Models/Share_model.mjs';
 - coin_value: coin value of the (sharing)product 
 - active: 1=active, 0=inactive
 */
+
+const fetch = require('node-fetch');
 
 const ShareDAO = {
     async insertSharingQuest(sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, status) { //Vv
@@ -185,42 +188,67 @@ const ShareDAO = {
     */
 }
 
-async function get_coin_value(product_name, status) {   //TO DO
+// Function to fetch product prices from an external API
+async function fetchProductPricesFromAPI() {
+    const apiUrl = `https://price-comparison8.p.rapidapi.com/api/compare`;
+    const apiKey = 'YOUR_RAPIDAPI_KEY'; // Replace with your actual API key
 
-    // Function to fetch the market value from an external source
-    async function fetchMarketValue(product_name) {
-        // Replace the URL with the actual API endpoint or database query
-        const apiUrl = `https://api.example.com/products?name=${encodeURIComponent(product_name)}`;
-        try {
-            const response = await fetch(apiUrl);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch market value: ${response.statusText}`);
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'X-RapidAPI-Key': apiKey,
+                'X-RapidAPI-Host': 'price-comparison8.p.rapidapi.com'
             }
-            const data = await response.json();
-            // Assume the API returns a 'marketValue' field in the response
-            return data.marketValue || 0;
-        } catch (error) {
-            console.error(error);
-            return 0; // Return 0 if there's an error
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch data from the API');
         }
+
+        const data = await response.json();
+        return data.products; // Assume the API returns a 'products' field with product info
+    } catch (error) {
+        console.error('Error fetching data from the API:', error);
+        return []; // Return an empty array if something goes wrong
+    }
+}
+
+// Function to scale product price between 0 and 10
+function scalePrice(price, maxPrice) {
+    const scaledValue = (price / maxPrice) * 10;
+    return Math.min(10, Math.max(0, scaledValue)); // Ensure the scaled value is between 0 and 10
+}
+
+// Main function to get the coin value based on product name and status
+async function get_coin_value(product_name, status) {
+    // Fetch the product prices from the external API
+    const products = await fetchProductPricesFromAPI();
+
+    // Find the product by name (case insensitive)
+    const product = products.find(p => p.name.toLowerCase() === product_name.toLowerCase());
+
+    if (!product) {
+        console.log(`Product "${product_name}" not found.`);
+        return 0; // If the product is not found, return 0
     }
 
-    // Fetch the market value
-    const marketValue = await fetchMarketValue(product_name);
+    // Find the maximum price in the list to scale other prices accordingly
+    const maxPrice = Math.max(...products.map(p => p.price));
 
-    // Map market value to the [0, 10] scale
-    const value = Math.min(10, Math.max(0, marketValue / 100)); // Assuming a max value of 100
+    // Scale the product's price between 0 and 10 based on the maximum price
+    const scaledPrice = scalePrice(product.price, maxPrice);
 
-    // Adjust the value based on the status
+    // Apply status-based scaling logic
     if (status === "New") {
-        return value;
+        return scaledPrice;
     } else if (status === "Good conditions") {
-        return (90 / 100) * value;
+        return scaledPrice * 0.9; // 10% off for "Good conditions"
     } else if (status === "Used") {
-        return (70 / 100) * value;
-    } else {
-        return 0;
+        return scaledPrice * 0.7; // 30% off for "Used"
     }
+
+    return 0; // If no status matches, return 0
 }
 
 
