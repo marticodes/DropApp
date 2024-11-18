@@ -235,7 +235,7 @@ app.delete('/api/user_categories/delete',
 app.get('/api/chat/:chat_id/users',
   async (req, res) => {
     try {
-      const chatUsers = await userCategoriesDao.getUsersIdByChatId(req.params.chat_id);
+      const chatUsers = await chatDao.getUsersIdByChatId(req.params.chat_id);
       res.status(200).json(chatUsers);
     } catch (err) {
       res.status(500).json({ error: `BE: Error retrieving user ids of the chat ${err}` });
@@ -245,7 +245,7 @@ app.get('/api/chat/:chat_id/users',
 app.get('/api/chat/:chat_id/product',
   async (req, res) => {
     try {
-      const chatProduct = await userCategoriesDao.getProductIdByChatId(req.params.chat_id);
+      const chatProduct = await chatDao.getProductIdByChatId(req.params.chat_id);
       res.status(200).json(chatProduct);
     } catch (err) {
       res.status(500).json({ error: `BE: Error retrieving product of the chat ${err}` });
@@ -255,18 +255,38 @@ app.get('/api/chat/:chat_id/product',
 app.get('/api/chat/:chat_id/type',
   async (req, res) => {
     try {
-      const chatType = await userCategoriesDao.getChatTypeByChatId(req.params.chat_id);
+      const chatType = await chatDao.getChatTypeByChatId(req.params.chat_id);
       res.status(200).json(chatType);
     } catch (err) {
       res.status(500).json({ error: `BE: Error retrieving type of the chat ${err}` });
     }
   });
 
+app.get('/api/chat/all/:user_id_1/:user_id_2',
+  async (req, res) => {
+    try {
+      const chats = await chatDao.getAllChatsByUser(req.params.user_id_1, req.params.user_id_2);
+      res.status(200).json(chats);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error retrieving list of chats for a user ${err}` });
+    }
+  });
+
+app.get('/api/chat/:user_id_1/:user_id_2/:product_id/:sproduct_id',
+  async (req, res) => {
+    try {
+      const chatID = await chatDao.getChatIdByUserAndProduct(req.params.user_id_1, req.params.user_id_2, req.params.product_id, req.params.sproduct_id);
+      res.status(200).json(chatID);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error retrieving chat id from users and product ${err}` });
+    }
+  });
+
 app.post('/api/chats/insert', /* [], */
   async (req, res) => {
     try {
-      const {userID1, userID2, product_id, type, sproduct_id} = req.body;
-      const chat_id = await userCategoriesDao.insertChat(req.body.userID1, req.body.userID2, req.body.product_id, req.body.type,req.body.sproduct_id); 
+      const {user_id_1, user_id_2, product_id, type, sproduct_id} = req.body;
+      const chat_id = await chatDao.insertChat(req.body.user_id_1, req.body.user_id_2, req.body.product_id, req.body.type,req.body.sproduct_id); 
       res.status(201).json({chat_id});
     } catch (err) {
       res.status(503).json({ error: `BE: Error inserting new chat ${err}` });
