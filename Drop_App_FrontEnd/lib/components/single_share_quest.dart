@@ -10,14 +10,14 @@ class ShareQuestItem extends StatelessWidget {
   final String date;
 
   const ShareQuestItem({
-    required this.userName,
-    required this.itemName,
-    required this.itemDescription,
-    required this.coins,
-    required this.timeRemaining,
-    required this.date,
-    Key? key,
-  }) : super(key: key);
+  required this.userName,
+  required this.itemName,
+  required this.itemDescription,
+  required this.coins,
+  required this.timeRemaining,
+  required this.date,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class ShareQuestItem extends StatelessWidget {
         // Navigate to the placeholder page on tap
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ShareDetailPage()),
+          MaterialPageRoute(builder: (context) => const ShareDetailPage()),
         );
       },
       child: Container(
@@ -94,9 +94,9 @@ class ShareQuestItem extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 5),
-                Text(timeRemaining,
+                Text(itemDescription,
                     style: const TextStyle(color: Colors.grey, fontSize: 12)),
-                Text(date,
+                Text(timeRemaining,
                     style: const TextStyle(color: Colors.grey, fontSize: 12)),
               ],
             ),

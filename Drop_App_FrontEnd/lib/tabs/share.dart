@@ -1,51 +1,101 @@
+import 'package:drop_app/models/sharing_post_model.dart';
+import 'package:drop_app/pages/create_request.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_app/components/single_share_quest.dart';
 import 'package:drop_app/top_bar/top_bar_search.dart';
 import 'package:drop_app/top_bar/top_bar_go_back.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:drop_app/api/api_service.dart';
 
-class ShareQuest {
-  final String userName;
-  final String itemName;
-  final String itemDescription;
-  final int coins;
-  final String timeRemaining;
-  final String date;
-
-  ShareQuest({
-    required this.userName,
-    required this.itemName,
-    required this.itemDescription,
-    required this.coins,
-    required this.timeRemaining,
-    required this.date,
-  });
+class ShareQuestList extends StatefulWidget {
+  @override
+  _ShareQuestListState createState() => _ShareQuestListState();
 }
 
-class ShareQuestList extends StatelessWidget {
-  final List<ShareQuest> shareQuests;
+class _ShareQuestListState extends State<ShareQuestList> {
+  // late final List<ShareQuest> shareQuests;
+  String _searchQuery = ''; // Holds the search input
+  final List<SharingModel> _sharingModelPosts=  [];
 
-  const ShareQuestList({required this.shareQuests, super.key});
+  
+  @override
+  void initState() {
+    super.initState();
+    fetchActiveSharingPosts(); 
+  }
+
+  Future<void> fetchActiveSharingPosts() async {
+      // Call your API function to get the active sharing posts
+      List<SharingModel> posts = await ApiService.fetchActiveSharingPosts();   
+      setState(() {
+        _sharingModelPosts.clear(); // Clear any previous data
+        _sharingModelPosts.addAll(posts); // Add fetched posts to the list
+      });
+  }
+  
+  void _onSearchChanged(String query) {
+    setState(() {
+      _searchQuery = query.toLowerCase();
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
+    // // Filter posts based on search query
+    List<SharingModel> filteredPosts = _sharingModelPosts.where((post) {
+      return post.sproductName.toLowerCase().contains(_searchQuery);
+    }).toList();
+
     return Scaffold(
-      appBar: BackTopBar(), // MUST CHANGE THIS TO SEARCH BAR INSTEAD OF BACKTOPBAR 
+      appBar: CustomTopBar(onSearchChanged: _onSearchChanged), // MUST CHANGE THIS TO SEARCH BAR INSTEAD OF BACKTOPBAR 
       //the issue why i cant use the normal search bar is that share quests are not widget but list
       //to make the search bar to work the seatchquestlist has to become a widget (CHECK HOW I DID FOR DONATION)
       body: ListView.builder(
-        itemCount: shareQuests.length,
+        itemCount: filteredPosts.length,
         itemBuilder: (context, index) {
-          final quest = shareQuests[index];
+          final quest = filteredPosts[index];
+
           return ShareQuestItem(
-            userName: quest.userName,
-            itemName: quest.itemName,
-            itemDescription: quest.itemDescription,
-            coins: quest.coins,
-            timeRemaining: quest.timeRemaining,
-            date: quest.date,
+            userName: 'quest.userName', //FIX
+            itemName: quest.sproductName,
+            itemDescription: quest.sproductDescription,
+            coins: quest.coinValue,
+            timeRemaining: '30',//FIX 
+            date: quest.sproductStartTime,
           );
         },
       ),
+      floatingActionButton: SpeedDial(
+          icon: Icons.add, // The main floating button icon
+          activeIcon: Icons.close, // Icon when the button is expanded
+          backgroundColor: const Color.fromARGB(255, 108, 106, 157),
+          foregroundColor: Colors.white,
+          overlayColor: Colors.black,
+          overlayOpacity: 0.5,
+          spacing: 10, // Space between children
+          children: [
+            SpeedDialChild(
+              child: Image.asset('assets/images/donate.png', color: Colors.white, width: 28, height:  28,),
+              backgroundColor: const Color.fromARGB(255, 108, 106, 157),
+              foregroundColor: Colors.white,
+              onTap: () =>  Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Share()),
+                      ),
+            ),
+            SpeedDialChild(
+              child: Image.asset('assets/images/share.png', color: Colors.white, width: 28, height:  28,),
+              foregroundColor: Colors.white,
+              backgroundColor: const Color.fromARGB(255, 108, 106, 157),
+              onTap: () =>  Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Share()),
+                      ),
+            ),
+          ],
+        ),
+
     );
   }
 }

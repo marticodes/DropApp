@@ -1,8 +1,10 @@
+import 'package:drop_app/pages/create_request.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_app/top_bar/top_bar_search.dart'; 
 import 'package:drop_app/components/filter_menu_donation.dart'; 
 //import 'package:drop_app/top_bar_go_back.dart';
 import 'package:drop_app/components/donation_item.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 
 class DonatePage extends StatefulWidget {
@@ -56,6 +58,36 @@ class _DonatePageState extends State<DonatePage> {
           },
         ),
       ),
+      floatingActionButton: SpeedDial(
+          icon: Icons.add, // The main floating button icon
+          activeIcon: Icons.close, // Icon when the button is expanded
+          backgroundColor: const Color.fromARGB(255, 108, 106, 157),
+          foregroundColor: Colors.white,
+          overlayColor: Colors.black,
+          overlayOpacity: 0.5,
+          spacing: 10, // Space between children
+          children: [
+            SpeedDialChild(
+              child: Image.asset('assets/images/donate.png', color: Colors.white, width: 28, height:  28,),
+              backgroundColor: const Color.fromARGB(255, 108, 106, 157),
+              foregroundColor: Colors.white,
+              onTap: () =>  Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Share()),
+                      ),
+            ),
+            SpeedDialChild(
+              child: Image.asset('assets/images/share.png', color: Colors.white, width: 28, height:  28,),
+              foregroundColor: Colors.white,
+              backgroundColor: const Color.fromARGB(255, 108, 106, 157),
+              onTap: () =>  Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Share()),
+                      ),
+            ),
+          ],
+        ),
+
     );
   }
 }

@@ -9,9 +9,11 @@ import 'package:drop_app/tabs/donate.dart';
 import 'package:drop_app/tabs/share.dart';
 import 'package:drop_app/tabs/chat.dart';
 import 'package:drop_app/tabs/profile.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 
-ShareQuest example = ShareQuest(userName: 'Conan Gray', itemName: 'Multipot', itemDescription: 'Electric multi-pot for cooking pasta', coins: 1, timeRemaining: '30 Min', date: '17 Oct');
+
+// ShareQuest example = ShareQuest(userName: 'Conan Gray', itemName: 'Multipot', itemDescription: 'Electric multi-pot for cooking pasta', coins: 1, timeRemaining: '30 Min', date: '17 Oct');
 
 
 class MyHomePage extends StatefulWidget {
@@ -44,8 +46,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     return Scaffold(
       body: TabBarView(
         controller: navbarcontroller,
-        children:  <Widget> [DonatePage(),  ShareQuestList(shareQuests: [example,example,example,example,example, example, example, example, example, example
-        ],), ChatListPage(), UserProfilePage() ],
+        children:  <Widget> [DonatePage(),  ShareQuestList(), ChatListPage(), UserProfilePage() ],
       ),
 
   bottomNavigationBar: Material(
