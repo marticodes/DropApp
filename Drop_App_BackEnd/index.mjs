@@ -119,6 +119,27 @@ app.get('/api/active/:user_id',
     }
 });
 
+app.get('/api/:user_id/get_score',
+  async (req, res) => {
+    try {
+      const rating = await userDao.getRating(req.params.user_id);
+      res.status(200).json(rating);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error getting user rating ${err}` });
+    }
+});
+
+app.post('/api/user/add_score', /* [], */
+  async (req, res) => {
+    try {
+      const {score, user_id} = req.body;
+      const ins = await userDao.addReview(req.body.score, req.body.user_id);
+      res.status(201).json({ins});
+    } catch (err) {
+      res.status(503).json({ error: `BE: Error inserting a review for an user${err}` });
+    }
+});
+
 app.post('/api/user/inactive', /* [], */
   async (req, res) => {
     try {

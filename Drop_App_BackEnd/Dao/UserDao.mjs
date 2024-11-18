@@ -3,7 +3,6 @@ import crypto from "crypto";
 import User from "../Models/User_model.mjs"
 
 export default function UserDao() {
-    //TO DO: add add_rating
     this.setUserAsGraduate = (user_id) => {//V0= not graduated 1=graduated
         return new Promise((resolve, reject) => {
             try {
@@ -21,6 +20,42 @@ export default function UserDao() {
         });
     };
 
+    this.addReview = (user_rating, user_id) => {
+        return new Promise((resolve, reject) => {
+            try {
+                const sql = 'UPDATE User SET user_rating = user_rating + ?, num_rev = num_rev + ? WHERE user_id = ?';
+                db.run(sql, [user_rating, 1, user_id], function (err) {
+                    if (err) {
+                      reject(err);
+                    }else {
+                      resolve(this.changes > 0); //at least one line changed
+                    }
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+
+    this.getRating = (user_id) => {
+        return new Promise((resolve, reject) => {
+            try {
+                const sql = 'SELECT user_rating, num_rev FROM User WHERE user_id = ?';
+                db.get(sql, [user_id], (err, row) => {
+                    if (err) {
+                        reject(err); 
+                    } else if (!row) { 
+                        resolve(false);
+                    } else {
+                        resolve(Math.floor(row.user_rating / row.num_rev));
+                    }
+                });
+            } catch (error) {
+                reject(error); 
+            }
+        });
+    };
+
     this.getUserInfo=(user_id) => {
         return new Promise((resolve, reject) => {
             try {
@@ -31,7 +66,7 @@ export default function UserDao() {
                     } else if (row.length === 0) {
                         resolve(false);
                     } else {
-                        const user = new User(row.user_id, row.user_name, row.user_surname, row.user_cardnum, row.coins_num, row.user_picture, row.user_rating, row.user_location, row.user_graduated, row.hash, row.salt, row.active);
+                        const user = new User(row.user_id, row.user_name, row.user_surname, row.user_cardnum, row.coins_num, row.user_picture, row.user_rating, row.user_location, row.user_graduated, row.hash, row.salt, row.active, row.num_rev);
                         resolve(user);
                     }
                 });
@@ -71,8 +106,8 @@ export default function UserDao() {
             }
     
             try {
-                const sql = 'INSERT INTO User (user_name, user_surname, user_cardnum, coins_num, user_picture, user_rating, user_location, user_graduated, hash, salt, active) VALUES (?,?,?,?,?,?,?,?,?,?,?)';
-                db.run(sql, [user_name, user_surname, user_cardnum, coins_num, user_picture, 0, user_location, 0, "x", "x", 1], function(err) { // Notice the use of function to get access to `this`
+                const sql = 'INSERT INTO User (user_name, user_surname, user_cardnum, coins_num, user_picture, user_rating, user_location, user_graduated, hash, salt, active, num_rev) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)';
+                db.run(sql, [user_name, user_surname, user_cardnum, coins_num, user_picture, 0, user_location, 0, "x", "x", 1, 0], function(err) { // Notice the use of function to get access to `this`
                     if (err) {
                         reject(err);
                     } else if (this.changes === 0) { 

@@ -40,7 +40,7 @@ const ChatDAO = {
                         resolve(false);
                     } else {
                         const ids = [row.user_id_1, row.user_id_2];
-                        resolve(ids); //TO DO: append to a list
+                        resolve(ids);
                     }
                 });
             } catch (error) {
@@ -60,7 +60,7 @@ const ChatDAO = {
                         resolve(false);
                     } else {
                         const ids = [row.product_id, row.sproduct_id];
-                        resolve(ids); //TO DO: append to a list
+                        resolve(ids);
                     }
                 });
             } catch (error) {

@@ -50,7 +50,7 @@ const getUserProfileInfo = async () => {
     });
     if (response.ok) {
         const userJson = await response.json();
-        return userJson.map(u => new User(u.user_id, u.user_name, u.user_surname, u.user_cardnum, u.coins_num, u.user_picture, u.user_rating, u.user_location, u.user_graduated, u.hash, u.salt, u.active));
+        return userJson.map(u => new User(u.user_id, u.user_name, u.user_surname, u.user_cardnum, u.coins_num, u.user_picture, u.user_rating, u.user_location, u.user_graduated, u.hash, u.salt, u.active, u.num_rev));
     } else {
         throw new Error('FE: Error getting user profile info');
     }
@@ -65,6 +65,35 @@ const isUserActive = async () => {
         return userJson.active;
     } else {
         throw new Error('FE: Error getting user info (active)');
+    }
+};
+
+const getUserRating = async () => {
+    const response = await fetch(SERVER_URL + `/api/${user_id}/get_score`, {
+        method: 'GET',
+    });
+    if (response.ok) {
+        const userJson = await response.json();
+        return userJson.active;
+    } else {
+        throw new Error('FE: Error getting user info (active)');
+    }
+};
+
+const addAReview = async (score, user_id) => {
+    const response = await fetch(SERVER_URL + '/api/user/add_score', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({score, user_id}),
+        //credentials: 'include'
+    });
+    if (response.ok) {
+        return await response.json();
+    } else if (response.status === 401) {
+        throw new UnauthorizedError('Unauthorized access');
+    } else {
+        const errorText = await response.text();
+        console.error(`FE: Error status: ${response.status}, message: ${errorText}`);
     }
 };
 
@@ -577,7 +606,8 @@ const filterSharingByCategory = async (categories) => {
 const API = {logIn, getUserInfo, logOut, handleInvalidResponse, getCategoriesList, getAllCategoriesByUserId, getSingleCategoryByUserId, insertUserCategory, deleteUserCategory,
     getChatUsers, getChatProduct, getChatType, insertChat, getMessagesByChatId, insertMessage, insertDonation, inactiveDonation, listActiveDonations, listMyActiveDonations,
     listAllMyDonations, filterDonationsByCoin, filterDonationsByCategory, insertSharing, inactiveSharing, listActiveSharing, listMyActiveSharing, listAllMySharing,
-    filterSharingByCoin, filterSharingByCategory, setUserAsGraduate, getUserProfileInfo, isUserActive, setUserAsInactive, insertUser, getAllChatsForUser, getChatIdByUserAndProduct};
+    filterSharingByCoin, filterSharingByCategory, setUserAsGraduate, getUserProfileInfo, isUserActive, setUserAsInactive, insertUser, getAllChatsForUser, getChatIdByUserAndProduct,
+    getUserRating, addAReview};
 
 export default API;
 export { UnauthorizedError };

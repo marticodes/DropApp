@@ -11,11 +11,11 @@ const DonationDAO = {
                 db.run(sql, [product_name, product_category, product_description, product_picture, donor_id, 5, 1, posting_time, status], function(err) {
                     if (err) {
                         reject(err);
-                    } else if (this.lastID) { // Usa this.lastID per ottenere l'ID dell'ultima riga inserita
+                    } else if (this.lastID) {
                         const id = this.lastID;
                         resolve(id);
                     } else {
-                        resolve(false); // Se l'inserimento non ha avuto successo
+                        resolve(false);
                     }
                 });
             } catch (error) {
