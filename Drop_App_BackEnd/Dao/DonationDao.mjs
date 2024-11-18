@@ -116,26 +116,38 @@ const DonationDAO = {
         });
     },
 
-    async filterDonationsByCategories(categories) {  //V   //TO DO:check
+    async filterDonationsByCategories(categories) {
         return new Promise((resolve, reject) => {
             try {
                 const placeholders = categories.map(() => '?').join(', ');
                 const sql = `SELECT * FROM Donation WHERE product_category IN (${placeholders})`;
-                db.all(sql, [categories], (err, rows) => {
+                db.all(sql, categories, (err, rows) => {
                     if (err) {
                         reject(err);
                     } else if (rows.length === 0) {
-                        resolve([]);
+                        resolve([]); 
                     } else {
-                        const donations= rows.map(row => new Donation(row.product_id, row.product_name, row.product_description, row.product_picture, row.donor_id, row.coin_value, row.product_category, row.active, row.posting_time, row.status));
-                        resolve(donations);
+                        const donations = rows.map(row => new Donation(
+                            row.product_id, 
+                            row.product_name, 
+                            row.product_description, 
+                            row.product_picture, 
+                            row.donor_id, 
+                            row.coin_value, 
+                            row.product_category, 
+                            row.active, 
+                            row.posting_time, 
+                            row.status
+                        ));
+                        resolve(donations);  
                     }
                 });
             } catch (error) {
-                reject(error);
+                reject(error); 
             }
         });
     },
+    
     
     async filterDonationByCoin(min, max) {  
         return new Promise((resolve, reject) => {

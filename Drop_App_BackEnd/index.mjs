@@ -402,15 +402,20 @@ app.get('/api/donations/:min/:max',
     }
   });
 
-app.get('/api/donations/:categories',
-  async (req, res) => {
+  app.get('/api/donations', async (req, res) => {
     try {
-      const filtDonations = await donationDao.filterDonationsByCategories(categories);
-      res.status(200).json(filtDonations);
+        const categories = req.query.categories;
+        if (!categories || categories.length === 0) {
+            return res.status(400).json({ error: 'Categories parameter is required and must contain at least one category.' });
+        }
+        const categoriesArray = Array.isArray(categories) ? categories : [categories];
+        const filtDonations = await donationDao.filterDonationsByCategories(categoriesArray);
+        res.status(200).json(filtDonations);
     } catch (err) {
-      res.status(500).json({ error: `BE: Error filtering donations by categories ${err}` });
+        res.status(500).json({ error: `BE: Error filtering donations by categories ${err.message}` });
     }
-  });
+});
+
   
 //SHARE API
 app.post('/api/sharing/insert', /* [], */

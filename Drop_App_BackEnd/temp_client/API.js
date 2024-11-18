@@ -445,9 +445,8 @@ const filterDonationsByCoin = async (min, max) => {
         throw new Error('FE: Error filtering donations by coins');
     }
 };
-
-const filterDonationsByCategory = async (categories) => { //TO DO
-    const response = await fetch(SERVER_URL + `/api/donations/${categories}`, {
+const filterDonationsByCategory = async (categories) => {
+    const response = await fetch(`${SERVER_URL}/api/donations?categories=${categories.join('&categories=')}`, {
         method: 'GET',
     });
     if (response.ok) {
