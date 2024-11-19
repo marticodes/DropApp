@@ -16,15 +16,15 @@ class UserProfilePageState extends State<UserProfilePage> {
   @override
   void initState() {
     super.initState();
-    fetchUserById(id); 
+    //fetchUserById(id); 
   }
 
   Future<void> fetchUserById(int id) async {
       // Call your API function to get the active sharing posts
-      UserModel posts = await ApiService.fetchUserById(id);   
-      setState(() {
-        user=posts; // Add fetched posts to the list
-      });
+      //UserModel posts = await ApiService.fetchUserById(id);   
+      //setState(() {
+        //user=posts; // Add fetched posts to the list
+     // });
   }
 
 
