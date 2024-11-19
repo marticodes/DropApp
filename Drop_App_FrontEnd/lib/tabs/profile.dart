@@ -1,14 +1,39 @@
+import 'package:drop_app/api/api_service.dart';
+import 'package:drop_app/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_app/pages/category_selection_page.dart';
 import 'package:drop_app/top_bar/top_bar_go_back.dart';
 
-class UserProfilePage extends StatelessWidget {
-  final String name = "John";
-  final String surname = "Doe";
-  final String studentID = "20234567";
-  final String profileImageUrl =
-      "https://via.placeholder.com/150"; // Placeholder profile image URL
-  final int rating = 4; //this is the number of starts that has to be implemented (lets round the number to the biggest full integer)
+class UserProfilePage extends StatefulWidget {
+  const UserProfilePage({super.key});
+
+  @override
+  UserProfilePageState createState() => UserProfilePageState();
+}
+
+class UserProfilePageState extends State<UserProfilePage> {
+  late final UserModel user;
+  @override
+  void initState() {
+    super.initState();
+    fetchUserById(id); 
+  }
+
+  Future<void> fetchUserById(int id) async {
+      // Call your API function to get the active sharing posts
+      UserModel posts = await ApiService.fetchUserById(id);   
+      setState(() {
+        user=posts; // Add fetched posts to the list
+      });
+  }
+
+
+  // final String name = "John";
+  // final String surname = "Doe";
+  // final String studentID = "20234567";
+  // final String profileImageUrl =
+  //     "https://via.placeholder.com/150"; // Placeholder profile image URL
+  // final int rating = 4; //this is the number of starts that has to be implemented (lets round the number to the biggest full integer)
   //this is the number of yellow starts to come out
 
   @override
@@ -23,13 +48,13 @@ class UserProfilePage extends StatelessWidget {
             // Profile Image
             CircleAvatar(
               radius: 50,
-              backgroundImage: NetworkImage(profileImageUrl),
+              backgroundImage: NetworkImage(user.userPicture),
             ),
             SizedBox(height: 20),
             
             // User Information
             Text(
-              "$name $surname",
+              "$user.userName",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -38,7 +63,7 @@ class UserProfilePage extends StatelessWidget {
             ),
             SizedBox(height: 4),
             Text(
-              "Student ID: $studentID",
+              "Student ID: $user.userId",
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[600],
@@ -59,7 +84,7 @@ class UserProfilePage extends StatelessWidget {
                 ...List.generate(5, (index) {
                   return Icon(
                     Icons.star,
-                    color: index < rating ? Colors.amber : Colors.grey,
+                    color: index < user.userRating ? Colors.amber : Colors.grey,
                     size: 20,
                   );
                 }),

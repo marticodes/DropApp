@@ -8,11 +8,13 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:drop_app/api/api_service.dart';
 
 class ShareQuestList extends StatefulWidget {
+  const ShareQuestList({super.key});
+
   @override
-  _ShareQuestListState createState() => _ShareQuestListState();
+  ShareQuestListState createState() => ShareQuestListState();
 }
 
-class _ShareQuestListState extends State<ShareQuestList> {
+class ShareQuestListState extends State<ShareQuestList> {
   // late final List<ShareQuest> shareQuests;
   String _searchQuery = ''; // Holds the search input
   final List<SharingModel> _sharingModelPosts=  [];

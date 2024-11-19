@@ -98,7 +98,6 @@ class ItemDetailPage extends StatelessWidget {
           SizedBox(height: 10), // Space between Chat button and NavBar
 
           // Navigation bar
-          BackTopBar(),
         ],
       ),
     );
