@@ -1,6 +1,10 @@
 import db from '../db.mjs';
 import Share from '../Models/Share_model.mjs';
 import fetch from 'node-fetch';
+import { readFileSync } from 'fs'; // Import readFileSync from 'fs' module
+import pkg from 'natural'; // Import the entire 'natural' module
+const { PorterStemmer } = pkg; // Extract PorterStemmer from the module
+import { compareTwoStrings } from 'string-similarity'; // Ensure the package is installed
 
 /*
 - sproduct_id: id of the (sharing)product (PK)
@@ -19,7 +23,7 @@ const ShareDAO = {
     async insertSharingQuest(sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, status) { //Vv
         return new Promise((resolve, reject) => {
             try {
-                const coin_value = get_coin_value(sproduct_name, status);
+                const coin_value = get_coin_value(sproduct_name, status, sproduct_category); 
                 const posting_time = new Date().toISOString();
                 const sql = 'INSERT INTO Share (sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, coin_value, active, posting_time, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
                 
@@ -188,67 +192,103 @@ const ShareDAO = {
     */
 }
 
-// Function to fetch product prices from an external API
-async function fetchProductPricesFromAPI() {
-    const apiUrl = `https://price-comparison8.p.rapidapi.com/api/compare`;
-    const apiKey = 'api_key'; // Replace with your actual API key
-
+function get_coin_value(productName, productStatus, category) {
+    const dbPath = './products.json'; // Update with the correct path to your file
+    const rawData = readFileSync(dbPath, 'utf-8'); // Read file synchronously
+    let products;
+  
     try {
-        const response = await fetch(apiUrl, {
-            method: 'GET',
-            headers: {
-                'X-RapidAPI-Key': apiKey,
-                'X-RapidAPI-Host': 'price-comparison8.p.rapidapi.com'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch data from the API');
-        }
-
-        const data = await response.json();
-        return data.products; // Assume the API returns a 'products' field with product info
+      products = JSON.parse(rawData).products; // Access the products object directly
     } catch (error) {
-        console.error('Error fetching data from the API:', error);
-        return []; // Return an empty array if something goes wrong
+      console.error('Error parsing JSON:', error);
+      return;
     }
-}
-
-// Function to scale product price between 0 and 10
-function scalePrice(price, maxPrice) {
-    const scaledValue = (price / maxPrice) * 10;
-    return Math.min(10, Math.max(0, scaledValue)); // Ensure the scaled value is between 0 and 10
-}
-
-// Main function to get the coin value based on product name and status
-async function get_coin_value(product_name, status) {
-    // Fetch the product prices from the external API
-    const products = await fetchProductPricesFromAPI();
-
-    // Find the product by name (case insensitive)
-    const product = products.find(p => p.name.toLowerCase() === product_name.toLowerCase());
-
-    if (!product) {
-        console.log(`Product "${product_name}" not found.`);
-        return 0; // If the product is not found, return 0
+  
+    // Normalize and stem the input product name (remove spaces, convert to lowercase)
+    const normalizedProductName = productName.trim().toLowerCase();
+    const stemmedProductName = PorterStemmer.stem(normalizedProductName);
+  
+    let mostSimilarProduct = null;
+    let highestSimilarity = 0;
+  
+    // Function to check similarity using stemming within the category
+    function checkCategory(categoryProducts) {
+      categoryProducts.forEach(product => {
+        // Normalize and stem the product name from the database
+        const normalizedProduct = product.name.trim().toLowerCase();
+        const stemmedProduct = PorterStemmer.stem(normalizedProduct);
+  
+        // Compare the stemmed product name with the input's stemmed name
+        const similarity = compareTwoStrings(stemmedProductName, stemmedProduct);
+  
+        // If similarity exceeds a threshold and is more relevant than the previous one
+        if (similarity > highestSimilarity && similarity > 0.5) {
+          highestSimilarity = similarity;
+          mostSimilarProduct = product;
+        }
+      });
     }
-
-    // Find the maximum price in the list to scale other prices accordingly
-    const maxPrice = Math.max(...products.map(p => p.price));
-
-    // Scale the product's price between 0 and 10 based on the maximum price
-    const scaledPrice = scalePrice(product.price, maxPrice);
-
-    // Apply status-based scaling logic
-    if (status === "New") {
-        return scaledPrice;
-    } else if (status === "Good conditions") {
-        return scaledPrice * 0.9; // 10% off for "Good conditions"
-    } else if (status === "Used") {
-        return scaledPrice * 0.7; // 30% off for "Used"
+  
+    // 1. Check similarity within the given category
+    if (products[category]) {
+      const categoryProducts = products[category];
+      if (Array.isArray(categoryProducts)) {
+        checkCategory(categoryProducts);
+      }
     }
+  
+    // 2. If no match is found within the given category, look in all other categories
+    if (!mostSimilarProduct) {
+      for (const cat in products) {
+        if (cat !== category && Array.isArray(products[cat])) {
+          checkCategory(products[cat]);
+        }
+      }
+    }
+  
+    // 3. If no match is found, return default value 4
+    if (!mostSimilarProduct || highestSimilarity < 0.5) {
+      return 4;
+    }
+  
+    const price = mostSimilarProduct.price;
+  
+    // Calculate value based on status
+    let valuePercentage;
+    switch (productStatus.toLowerCase()) {
+      case 'new':
+        valuePercentage = 1.0;
+        break;
+      case 'good conditions':
+        valuePercentage = 0.85;
+        break;
+      case 'used':
+        valuePercentage = 0.7;
+        break;
+      default:
+        console.error(`Invalid product status: "${productStatus}". Valid statuses are "new", "good conditions", "used".`);
+        return;
+    }
+  
+    // Calculate adjusted value
+    const adjustedValue = price * valuePercentage;
+  
+    // Remap the value to a range [1, 10]
+    const minPrice = 5000;
+    const maxPrice = 150000;
+    const remappedValue = Math.max(1, Math.min(10, ((adjustedValue - minPrice) / (maxPrice - minPrice)) * 9 + 1));
+  
+    // Round the rescaled value to an integer
+    const roundedValue = Math.round(remappedValue);
+    return roundedValue;
 
-    return 0; // If no status matches, return 0
+    /*
+    // Output the required information
+    console.log(`Matched Product: ${mostSimilarProduct.name}`);
+    console.log(`Price in Won: ${price.toLocaleString()} ₩`);
+    console.log(`Adjusted Price (Based on Status: ${productStatus}): ${adjustedValue.toLocaleString()} ₩`);
+    console.log(`Rescaled Value: ${roundedValue}`);
+    */
 }
 
 

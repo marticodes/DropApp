@@ -1,10 +1,15 @@
 import db from '../db.mjs';
 import Donation from "../Models/Donation_model.mjs"
+import { readFileSync } from 'fs'; // Import readFileSync from 'fs' module
+import pkg from 'natural'; // Import the entire 'natural' module
+const { PorterStemmer } = pkg; // Extract PorterStemmer from the module
+import { compareTwoStrings } from 'string-similarity'; // Ensure the package is installed
+
 const DonationDAO = {
     async insertDonation(product_name, product_description, product_category, product_picture, donor_id, status) {  //v
         return new Promise((resolve, reject) => {
             try {
-                const coin_value = get_coin_value(product_name, status); 
+                const coin_value = get_coin_value(product_name, status, product_category); 
                 const posting_time = new Date().toISOString(); 
                 const sql = 'INSERT INTO Donation (product_name, product_category, product_description, product_picture, donor_id, coin_value, active, posting_time, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
                 
@@ -193,7 +198,103 @@ const DonationDAO = {
     */
 };
 
-function get_coin_value(product_name, status) { //TO DO
+function get_coin_value(productName, productStatus, category) {
+    const dbPath = './products.json'; // Update with the correct path to your file
+    const rawData = readFileSync(dbPath, 'utf-8'); // Read file synchronously
+    let products;
+  
+    try {
+      products = JSON.parse(rawData).products; // Access the products object directly
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+      return;
+    }
+  
+    // Normalize and stem the input product name (remove spaces, convert to lowercase)
+    const normalizedProductName = productName.trim().toLowerCase();
+    const stemmedProductName = PorterStemmer.stem(normalizedProductName);
+  
+    let mostSimilarProduct = null;
+    let highestSimilarity = 0;
+  
+    // Function to check similarity using stemming within the category
+    function checkCategory(categoryProducts) {
+      categoryProducts.forEach(product => {
+        // Normalize and stem the product name from the database
+        const normalizedProduct = product.name.trim().toLowerCase();
+        const stemmedProduct = PorterStemmer.stem(normalizedProduct);
+  
+        // Compare the stemmed product name with the input's stemmed name
+        const similarity = compareTwoStrings(stemmedProductName, stemmedProduct);
+  
+        // If similarity exceeds a threshold and is more relevant than the previous one
+        if (similarity > highestSimilarity && similarity > 0.5) {
+          highestSimilarity = similarity;
+          mostSimilarProduct = product;
+        }
+      });
+    }
+  
+    // 1. Check similarity within the given category
+    if (products[category]) {
+      const categoryProducts = products[category];
+      if (Array.isArray(categoryProducts)) {
+        checkCategory(categoryProducts);
+      }
+    }
+  
+    // 2. If no match is found within the given category, look in all other categories
+    if (!mostSimilarProduct) {
+      for (const cat in products) {
+        if (cat !== category && Array.isArray(products[cat])) {
+          checkCategory(products[cat]);
+        }
+      }
+    }
+  
+    // 3. If no match is found, return default value 4
+    if (!mostSimilarProduct || highestSimilarity < 0.5) {
+      return 4;
+    }
+  
+    const price = mostSimilarProduct.price;
+  
+    // Calculate value based on status
+    let valuePercentage;
+    switch (productStatus.toLowerCase()) {
+      case 'new':
+        valuePercentage = 1.0;
+        break;
+      case 'good conditions':
+        valuePercentage = 0.85;
+        break;
+      case 'used':
+        valuePercentage = 0.7;
+        break;
+      default:
+        console.error(`Invalid product status: "${productStatus}". Valid statuses are "new", "good conditions", "used".`);
+        return;
+    }
+  
+    // Calculate adjusted value
+    const adjustedValue = price * valuePercentage;
+  
+    // Remap the value to a range [1, 10]
+    const minPrice = 5000;
+    const maxPrice = 150000;
+    const remappedValue = Math.max(1, Math.min(10, ((adjustedValue - minPrice) / (maxPrice - minPrice)) * 9 + 1));
+  
+    // Round the rescaled value to an integer
+    const roundedValue = Math.round(remappedValue);
+    return roundedValue;
+
+    /*
+    // Output the required information
+    console.log(`Matched Product: ${mostSimilarProduct.name}`);
+    console.log(`Price in Won: ${price.toLocaleString()} ₩`);
+    console.log(`Adjusted Price (Based on Status: ${productStatus}): ${adjustedValue.toLocaleString()} ₩`);
+    console.log(`Rescaled Value: ${roundedValue}`);
+    */
 }
 
 export default DonationDAO;
