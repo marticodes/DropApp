@@ -6,6 +6,7 @@ import 'package:drop_app/top_bar/top_bar_search.dart';
 import 'package:drop_app/top_bar/top_bar_go_back.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:drop_app/api/api_service.dart';
+import 'package:drop_app/models/user_model.dart';
 
 class ShareQuestList extends StatefulWidget {
   const ShareQuestList({super.key});
@@ -18,6 +19,7 @@ class ShareQuestListState extends State<ShareQuestList> {
   // late final List<ShareQuest> shareQuests;
   String _searchQuery = ''; // Holds the search input
   final List<SharingModel> _sharingModelPosts=  [];
+  final Map<int, String> _userNamesCache = {};
 
   
   @override
@@ -26,14 +28,31 @@ class ShareQuestListState extends State<ShareQuestList> {
     fetchActiveSharingPosts(); 
   }
 
-  Future<void> fetchActiveSharingPosts() async {
-      // Call your API function to get the active sharing posts
-      List<SharingModel> posts = await ApiService.listAllSharing();   
-      setState(() {
-        _sharingModelPosts.clear(); // Clear any previous data
-        _sharingModelPosts.addAll(posts); // Add fetched posts to the list
-      });
+Future<void> fetchActiveSharingPosts() async {
+  List<SharingModel> posts = await ApiService.listAllSharing();
+
+  setState(() {
+    _sharingModelPosts.clear();
+    _sharingModelPosts.addAll(posts);
+  });
+
+  for (var post in posts) {
+    if (!_userNamesCache.containsKey(post.borrowerID)) {
+      try {
+        // Fetch user data
+        UserModel user = await ApiService.fetchUserById(post.borrowerID);
+
+        setState(() {
+          _userNamesCache[post.borrowerID] = '${user.userName} ${user.userSurname}';
+        });
+      } catch (e) {
+        setState(() {
+          _userNamesCache[post.borrowerID] = 'Unknown User'; // Fallback for errors
+        });
+      }
+    }
   }
+}
   
   void _onSearchChanged(String query) {
     setState(() {
@@ -54,20 +73,23 @@ class ShareQuestListState extends State<ShareQuestList> {
       //the issue why i cant use the normal search bar is that share quests are not widget but list
       //to make the search bar to work the seatchquestlist has to become a widget (CHECK HOW I DID FOR DONATION)
       body: ListView.builder(
-        itemCount: filteredPosts.length,
-        itemBuilder: (context, index) {
-          final quest = filteredPosts[index];
+  itemCount: filteredPosts.length,
+  itemBuilder: (context, index) {
+    final quest = filteredPosts[index];
 
-          return ShareQuestItem(
-            userName: 'quest.userName', //FIX
-            itemName: quest.sproductName,
-            itemDescription: quest.sproductDescription,
-            coins: quest.coinValue,
-            timeRemaining: '30',//FIX 
-            date: quest.sproductStartTime,
-          );
-        },
-      ),
+    // Retrieve the user name from the cache
+    String userName = _userNamesCache[quest.borrowerID] ?? 'Loading...';
+
+    return ShareQuestItem(
+      userName: userName, // Pass the correct user name
+      itemName: quest.sproductName,
+      itemDescription: quest.sproductDescription,
+      coins: quest.coinValue,
+      timeRemaining: '30', // FIX
+      date: quest.sproductStartTime,
+    );
+  },
+),
       floatingActionButton: SpeedDial(
           icon: Icons.add, // The main floating button icon
           activeIcon: Icons.close, // Icon when the button is expanded
