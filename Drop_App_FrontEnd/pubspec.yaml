@@ -71,7 +71,13 @@ flutter:
     - assets/images/donate.png
     - assets/images/chat.png
     - assets/images/share.png
+    - assets/images/erika.jpg
+    - assets/images/fork.jpg
+    - assets/images/knife.jpg
+    - assets/images/martina.jpg
+    - assets/images/microwave.jpg
     - assets/images/profile.png
+
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

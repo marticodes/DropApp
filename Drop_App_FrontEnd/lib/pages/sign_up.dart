@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:drop_app/pages/category_selection_page.dart'; // Import the Category Selection page
+import 'package:drop_app/pages/log_in.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -213,6 +214,29 @@ class _SignUpPageState extends State<SignUpPage> {
                     'Sign Up',
                     style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Have an account? "),
+                    GestureDetector(
+                      onTap: () {
+                        // Navigate to the login page
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                        );
+                      },
+                      child: Text(
+                        'Log In',
+                        style: TextStyle(
+                          color: const Color.fromARGB(255, 108, 106, 157),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

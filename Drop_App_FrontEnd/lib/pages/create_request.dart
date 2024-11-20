@@ -1,5 +1,6 @@
 import 'package:drop_app/api/api_service.dart';
 import 'package:drop_app/models/sharing_post_model.dart';
+import 'package:drop_app/tabs/share.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_app/components/calendar.dart';
 import 'package:drop_app/components/clock.dart';
@@ -16,11 +17,11 @@ Color purpleDrop = const Color.fromRGBO(108, 106, 157, 1);
 
 class _ShareState extends State<Share> {
   String sproductName = '';
-  String? sproducCategory;
-  DateTime? sproductStartDate;
-  TimeOfDay? sproductStartTime;
-  DateTime? sproductEndDate;
-  TimeOfDay? sproductEndTime;
+  String? sproductCategory;
+  DateTime sproductStartDay = DateTime.now();
+  TimeOfDay sproductStartShigan = TimeOfDay.now();
+  DateTime sproductEndDay = DateTime.now();
+  TimeOfDay sproductEndShigan = TimeOfDay.now();
   String sproductDescription = '';
 
   final List<String> categoryList = ['Books', 'Clothing', 'Decoration', 'Electronics', 'Food', 'Health', 'Kitchenware', 'Linens', 'Miscellaneous', 'Sports', 'Stationery', 'Storage', 'Vehicles'];
@@ -83,7 +84,7 @@ class _ShareState extends State<Share> {
             SizedBox(
               width: 200,
               child: DropdownButtonFormField<String>(
-                value: sproducCategory,
+                value: sproductCategory,
                 hint: Text(
                   'Select Category',
                   style: hintTextStyle,
@@ -96,7 +97,7 @@ class _ShareState extends State<Share> {
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
-                    sproducCategory = value;
+                    sproductCategory = value!;
                   });
                 },
                 decoration: const InputDecoration(
@@ -121,10 +122,10 @@ class _ShareState extends State<Share> {
                           Expanded(
                             child: CalendarComponent(
                               isFromDate: true,
-                              date: sproductStartDate,
+                              date: sproductStartDay,
                               onDateChanged: (newDate) {
                                 setState(() {
-                                  sproductStartDate = newDate;
+                                  sproductStartDay = newDate;
                                 });
                               },
                             ),
@@ -133,10 +134,10 @@ class _ShareState extends State<Share> {
                           Expanded(
                             child: TimePickerComponent(
                               isFromTime: true,
-                              time: sproductStartTime,
+                              time: sproductStartShigan,
                               onTimeChanged: (newTime) {
                                 setState(() {
-                                  sproductStartTime = newTime;
+                                  sproductStartShigan = newTime!;
                                 });
                               },
                             ),
@@ -165,10 +166,10 @@ class _ShareState extends State<Share> {
                           Expanded(
                             child: CalendarComponent(
                               isFromDate: false,
-                              date: sproductEndDate,
+                              date: sproductEndDay,
                               onDateChanged: (newDate) {
                                 setState(() {
-                                  sproductEndDate = newDate;
+                                  sproductEndDay = newDate;
                                 });
                               },
                             ),
@@ -177,10 +178,10 @@ class _ShareState extends State<Share> {
                           Expanded(
                             child: TimePickerComponent(
                               isFromTime: false,
-                              time: sproductEndTime,
+                              time: sproductEndShigan,
                               onTimeChanged: (newTime) {
                                 setState(() {
-                                  sproductEndTime = newTime;
+                                  sproductEndShigan = newTime!;
                                 });
                               },
                             ),
@@ -223,8 +224,11 @@ class _ShareState extends State<Share> {
                   padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 10),
                 ),
                 onPressed: () {
+                  DateTime combinedStart = DateTime(sproductStartDay.year,sproductStartDay.month, sproductStartDay.day,sproductStartShigan.hour,sproductStartShigan.minute,);
+                  DateTime combinedEnd = DateTime(sproductStartDay.year,sproductStartDay.month, sproductStartDay.day,sproductStartShigan.hour,sproductStartShigan.minute,);
 
-                  insertSharing(sproductName, sproducCategory, sproductDescription, ' ', ' ',1, 1);
+                  insertSharing(sproductName, sproductCategory, sproductDescription, combinedStart.toString(), combinedEnd.toString(),1, "New");
+                  Navigator.pop(context);
                 },
                 child: const Text(
                   "Post",

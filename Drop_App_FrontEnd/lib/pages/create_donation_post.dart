@@ -23,7 +23,7 @@ class _DonateState extends State<Donate> {
   int coinValue = 0;
 
   final List<String> categoryList = ['Books', 'Clothing', 'Decoration', 'Electronics', 'Food', 'Health', 'Kitchenware', 'Linens', 'Miscellaneous', 'Sports', 'Stationery', 'Storage', 'Vehicles'];
-  final List<String> conditionList = ['New', 'Good', 'Fair', 'Poor'];
+  final List<String> conditionList = ['New', 'Good conditions', 'Used'];
 
   // final ImagePicker _picker = ImagePicker();
 

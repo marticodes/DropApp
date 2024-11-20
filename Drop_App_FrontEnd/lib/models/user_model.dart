@@ -6,11 +6,12 @@ class UserModel {
   final int coinsNum;
   final String userPicture;
   final int userRating;
-  final String? userLocation; // Nullable, as it's not required in the schema
+  final String userLocation; // Nullable, as it's not required in the schema
   final int userGraduated;
   final String hash;
   final String salt;
   final int active;
+  final int numRev;
 
   UserModel({
     required this.userId,
@@ -20,11 +21,12 @@ class UserModel {
     required this.coinsNum,
     required this.userPicture,
     required this.userRating,
-    this.userLocation,
+    required this.userLocation,
     required this.userGraduated,
     required this.hash,
     required this.salt,
     required this.active,
+    required this.numRev,
   });
 
   // Factory constructor to parse JSON into a UserModel object
@@ -42,6 +44,7 @@ class UserModel {
       hash: json['hash'],
       salt: json['salt'],
       active: json['active'],
+      numRev: json['num_rev']
     );
   }
 
@@ -60,6 +63,7 @@ class UserModel {
       'hash': hash,
       'salt': salt,
       'active': active,
+      'num_rev': numRev,
     };
   }
 }

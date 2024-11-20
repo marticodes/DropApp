@@ -26,6 +26,7 @@ const messageDao = MessageDAO;
 const shareDao = ShareDAO;
 const userCategoriesDao = UserCategoriesDAO;
 const userDao = new UserDAO();
+import * as path from 'path';
 
 const SERVER_URL = 'http://localhost:3001/api';
 
@@ -39,7 +40,9 @@ const app = express();
 const port = 3001;
 app.use(morgan('dev'));
 app.use(express.json());
-app.use(express.static('Img')); //path for image folder
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+app.use(express.static('Img'));
+
 
 //cors
 const corsOptions = {

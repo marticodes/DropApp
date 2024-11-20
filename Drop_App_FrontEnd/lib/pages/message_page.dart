@@ -2,17 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:drop_app/top_bar/top_bar_go_back.dart';
 import 'package:drop_app/components/rating.dart';
 
-
 class MessagePage extends StatefulWidget {
   @override
   _MessagePageState createState() => _MessagePageState();
 }
 
 class _MessagePageState extends State<MessagePage> {
+  int moneycount = 7;
+
   final TextEditingController _messageController = TextEditingController();
   final List<Map<String, dynamic>> _messages = [
-    {'message': 'I have the pot you are looking for. Should we meet at W2 in ten?', 'sender': 'user', 'time': '08:15 AM'},
-    {'message': 'Yes. Thank you for your help! Let’s confirm the share.', 'sender': 'other', 'time': '08:16 AM'},
+    {
+      'message': 'I have the pot you are looking for. Should we meet at W2 in ten?',
+      'sender': 'user',
+      'time': '08:15 AM'
+    },
+    {
+      'message': 'Yes. Thank you for your help! Let’s confirm the share.',
+      'sender': 'other',
+      'time': '08:16 AM'
+    },
   ];
 
   void _sendMessage(String text) {
@@ -32,10 +41,10 @@ class _MessagePageState extends State<MessagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BackTopBar(), 
+      appBar: BackTopBar(moneyCount: moneycount),
       body: Column(
         children: [
-          //User Banner
+          // User Banner
           Container(
             color: const Color.fromARGB(255, 108, 106, 157),
             padding: const EdgeInsets.all(10.0),
@@ -51,22 +60,22 @@ class _MessagePageState extends State<MessagePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Cooking Pot',  //CHANGE
+                      'Bowl',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
-                         color: Colors.white,
+                        color: Colors.white,
                       ),
                     ),
                     Row(
                       children: [
-                        SizedBox(width: 3,),
+                        SizedBox(width: 3),
                         Text(
-                          'Kim Namjoon',  //CHANGE
+                          'Martina Di Paola',
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
-                             color: Colors.white,
+                            color: Colors.white,
                           ),
                         ),
                       ],
@@ -76,8 +85,7 @@ class _MessagePageState extends State<MessagePage> {
               ],
             ),
           ),
-          
-          //Button
+          // Button
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
@@ -85,21 +93,21 @@ class _MessagePageState extends State<MessagePage> {
                   ? null // Disable the button when it's gray
                   : _onButtonPressed,
               style: ElevatedButton.styleFrom(
-                backgroundColor: buttonColor, // Button color based on state
+                backgroundColor: buttonColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text(buttonState, 
+              child: Text(
+                buttonState,
                 style: const TextStyle(
-                color: Colors.white,
-                fontSize:20,
-                fontWeight: FontWeight.w400, 
-              ),), // Display the current state text
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
             ),
           ),
-
-          
           // Chat bubbles
           Expanded(
             child: ListView.builder(
@@ -108,26 +116,33 @@ class _MessagePageState extends State<MessagePage> {
                 final message = _messages[index];
                 final isUser = message['sender'] == 'user';
                 return Container(
-                  margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  alignment:
+                      isUser ? Alignment.centerRight : Alignment.centerLeft,
                   child: Column(
-                    crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                    crossAxisAlignment:
+                        isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: isUser ? const Color.fromARGB(255, 108, 106, 157) : Colors.yellow[100],
+                          color: isUser
+                              ? const Color.fromARGB(255, 108, 106, 157)
+                              : Colors.yellow[100],
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
                           message['message'],
-                          style: isUser ? TextStyle(color: Colors.white): TextStyle(color: Colors.black),
+                          style: isUser
+                              ? const TextStyle(color: Colors.white)
+                              : const TextStyle(color: Colors.black),
                         ),
                       ),
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
                       Text(
                         message['time'],
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                        style: const TextStyle(color: Colors.grey, fontSize: 12),
                       ),
                     ],
                   ),
@@ -135,13 +150,13 @@ class _MessagePageState extends State<MessagePage> {
               },
             ),
           ),
-
+          // Input field
           Container(
             height: 60,
             decoration: BoxDecoration(
               border: Border.all(
-                color: Color.fromRGBO(0,0,0,0.5), // Border color
-                width: 0.2, // Border width
+                color: const Color.fromRGBO(0, 0, 0, 0.5),
+                width: 0.2,
               ),
             ),
             child: Row(
@@ -152,19 +167,22 @@ class _MessagePageState extends State<MessagePage> {
                     decoration: const InputDecoration(
                       hintText: "Message ...",
                       border: InputBorder.none,
-                      prefixIcon: Icon(Icons.face, color: const Color.fromARGB(255, 108, 106, 157)),
+                      prefixIcon: Icon(Icons.face,
+                          color: Color.fromARGB(255, 108, 106, 157)),
                     ),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 IconButton(
-                  icon: Icon(Icons.image, color: const Color.fromARGB(255, 108, 106, 157)),
+                  icon: const Icon(Icons.image,
+                      color: Color.fromARGB(255, 108, 106, 157)),
                   onPressed: () {
                     // Handle image selection
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.send, color: const Color.fromARGB(255, 108, 106, 157)),
+                  icon: const Icon(Icons.send,
+                      color: Color.fromARGB(255, 108, 106, 157)),
                   onPressed: () {
                     _sendMessage(_messageController.text);
                   },
@@ -176,7 +194,7 @@ class _MessagePageState extends State<MessagePage> {
       ),
     );
   }
-  
+
   String buttonState = "Confirm"; // Initial state
   Color buttonColor = const Color.fromARGB(255, 108, 106, 157); // Initial color
 
@@ -186,26 +204,24 @@ class _MessagePageState extends State<MessagePage> {
         buttonState = "Returned";
       });
     } else if (buttonState == "Returned") {
+      setState(() {
+              moneycount = 8;
+              buttonState = "Completed";
+              buttonColor = Colors.grey; // Make the button gray
+            });
       // Show the RatingWidget popup
       showDialog(
         context: context,
         builder: (context) => RatingWidget(
           onPressed: () {
-            // When the rating is done, set the button to "Completed" state
-            setState(() {
-              buttonState = "Returned";
-              buttonColor = Colors.grey; // Make the button gray
-            });
+            // Update moneycount to 8
+            
             Navigator.of(context).pop(); // Close the dialog
           },
         ),
       );
     }
   }
-
-
-
-
 }
 
 

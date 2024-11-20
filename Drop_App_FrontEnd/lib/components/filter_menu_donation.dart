@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 class FilterMenu extends StatefulWidget {
+  final Function(List<String>) onApplyFilters; // Callback to pass selected filters
+
+  FilterMenu({required this.onApplyFilters});
+
   @override
   _FilterMenuState createState() => _FilterMenuState();
 }
 
 class _FilterMenuState extends State<FilterMenu> {
-  // State for categories checkboxes
   Map<String, bool> categories = {
     "Books": false,
     "Clothing": false,
@@ -23,7 +26,6 @@ class _FilterMenuState extends State<FilterMenu> {
     "Vehicles": false,
   };
 
-  // Controllers for the min and max coin range
   final TextEditingController minController = TextEditingController();
   final TextEditingController maxController = TextEditingController();
 
@@ -40,8 +42,6 @@ class _FilterMenuState extends State<FilterMenu> {
                   Text("Category:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   SizedBox(height: 10),
                   Wrap(
-                    spacing: 0, // Horizontal space between items
-                    runSpacing: -12, // Adjust this for vertical spacing
                     children: categories.keys.map((category) {
                       return Row(
                         children: [
@@ -91,7 +91,7 @@ class _FilterMenuState extends State<FilterMenu> {
                       Expanded(
                         child: TextField(
                           controller: maxController,
-                          decoration: InputDecoration(    //Min 0 e Max 10
+                          decoration: InputDecoration( // Min 0 e Max 10
                             labelText: "Max",
                             border: OutlineInputBorder(),
                           ),
@@ -104,24 +104,28 @@ class _FilterMenuState extends State<FilterMenu> {
               ),
             ),
             SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity, // Makes the button take full width of the drawer
+            SizedBox( // Missing SizedBox wrapper
+              width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  print("Filter items with selected options");
+                  // Extract selected categories
+                  List<String> selectedCategories = categories.entries
+                      .where((entry) => entry.value)
+                      .map((entry) => entry.key)
+                      .toList();
+
+                  widget.onApplyFilters(selectedCategories);
                   Navigator.pop(context); // Close the drawer
                 },
                 child: Text(
-                  "Filter Items",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 255, 255, 255),
-                  ),
-                ),
+  "Filter Items",
+  style: TextStyle(color: Colors.white),
+),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 108, 106, 157),
                   padding: EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // BORDER RADIUS
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
               ),
@@ -132,4 +136,3 @@ class _FilterMenuState extends State<FilterMenu> {
     );
   }
 }
-

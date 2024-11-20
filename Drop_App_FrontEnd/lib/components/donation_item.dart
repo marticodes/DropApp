@@ -6,6 +6,8 @@ import 'package:drop_app/models/user_model.dart';
 class PostCard extends StatelessWidget {
   final DonationModel item;
 
+  final serverUrl = 'http://143.248.127.51:3001/';
+
   const PostCard({Key? key, required this.item}) : super(key: key);
 
   Future<UserModel> _fetchUser() async {
@@ -63,7 +65,7 @@ class PostCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(0.0),
             child: Image.network(
-              item.productPicture,
+              serverUrl + item.productPicture,
               height: 180,
               width: double.infinity,
               fit: BoxFit.cover,

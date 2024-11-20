@@ -1,3 +1,4 @@
+import 'package:drop_app/models/chat_model.dart';
 import 'package:drop_app/pages/message_page.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_app/components/single_chat.dart';
@@ -9,8 +10,12 @@ class ChatListPage extends StatefulWidget {
 }
 
 class _ChatListPageState extends State<ChatListPage> {
+  String userId1 = '1';
   String selectedFilter = 'All'; // Track selected filter
   String _searchQuery = ''; // Holds the search input
+  final List<ChatModel> _chatModelPosts=  [];
+  
+
 
     void _onSearchChanged(String query) {
     setState(() {
@@ -19,6 +24,14 @@ class _ChatListPageState extends State<ChatListPage> {
   }
 
   final List<Map<String, String>> chatItems = [
+    {
+      'userName': 'Martina Di Paola',
+      'itemName': 'Bowl',
+      'date': '2024/11/21',
+      'category': 'Share',
+      'avatarUrl': 'https://example.com/avatar1.png',
+    },
+    
     {
       'userName': 'Kim Namjoon',
       'itemName': 'Cooking Pot',

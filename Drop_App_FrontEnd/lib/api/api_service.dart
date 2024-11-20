@@ -108,6 +108,28 @@ class ApiService {
     }
   }
 
+    Future<List<DonationModel>> filterDonationsByCategory(List<String> categories) async {
+    try {
+      // Construct the query string
+      final queryString = categories.map((category) => 'categories=$category').join('&');
+
+      // Make the GET request
+      final response = await http.get(Uri.parse('$_baseUrl/api/donations?$queryString'));
+
+      if (response.statusCode == 200) {
+        // Parse the JSON response
+        final List<dynamic> data = json.decode(response.body);
+
+        // Convert JSON to a list of Donation objects
+        return data.map((json) => DonationModel.fromJson(json)).toList();
+      } else {
+        throw Exception('Error filtering donations by categories: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('FE: Error filtering donations by categories: $e');
+    }
+  }
+
   // CHATS
   Future<List<Map<String, dynamic>>> fetchAllChatsForUser(int userId1, int userId2) async {
   final response = await http.get(
@@ -210,8 +232,6 @@ Future<int> insertChat(userID1, userID2, product_id, type, sproduct_id) async {
   }
 
 
-
-
   // USER
   static Future<UserModel> fetchUserById(int userId) async {
     final response = await http.get(Uri.parse('$_baseUrl/api/info/$userId'));
@@ -260,7 +280,6 @@ Future<int> insertChat(userID1, userID2, product_id, type, sproduct_id) async {
       rethrow;
     }
   }
-
 
 
 
@@ -320,5 +339,27 @@ Future<int> insertChat(userID1, userID2, product_id, type, sproduct_id) async {
       throw Exception('Failed to load categories');
     }
   }
+
+//LOGIN
+  Future<int?> logIn(String userCardNum, String hash) async {
+
+  try {
+    final response = await http.get(
+      Uri.parse('$_baseUrl/api/$userCardNum/$hash'),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body); // Parse the JSON response
+      // Handle the response as needed
+      //print(res);
+    } else {
+      throw Exception('FE: Error logging in');
+    }
+  } catch (e) {
+    // Handle errors
+    print('Error: $e');
+    throw Exception('FE: Error logging in');
+  }
+}
 
 }

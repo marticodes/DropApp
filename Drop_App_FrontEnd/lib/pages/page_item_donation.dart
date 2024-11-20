@@ -6,6 +6,8 @@ import 'package:drop_app/components/user_review_name_row.dart';
 class ItemDetailPage extends StatelessWidget {
   final DonationModel item;
 
+  final SERVER_URL = 'http://143.248.127.51:3001/';
+
   const ItemDetailPage({Key? key, required this.item}) : super(key: key);
 
   final int rating = 4;
@@ -21,7 +23,7 @@ class ItemDetailPage extends StatelessWidget {
             userId: item.donorId,
           ),
           Image.network(
-            item.productPicture,
+            SERVER_URL + item.productPicture,
             width: double.infinity,
             height: 300,
             fit: BoxFit.cover,

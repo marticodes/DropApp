@@ -1,52 +1,39 @@
+import 'package:drop_app/components/user_review_name_row.dart';
+import 'package:drop_app/models/sharing_post_model.dart';
+import 'package:drop_app/models/user_model.dart';
+import 'package:drop_app/pages/message_page.dart';
+import 'package:drop_app/tabs/chat.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_app/top_bar/top_bar_go_back.dart';
+import 'package:intl/intl.dart';
 
 
-class ShareDetailPage extends StatelessWidget {
-  const ShareDetailPage({super.key});
+class ShareDetailPage extends StatefulWidget {
+  final SharingModel post;
+  final UserModel user;
+  const ShareDetailPage({super.key, required this.post, required this.user});
+
+  @override
+  ShareDetailPageState createState() => ShareDetailPageState();}
+
+  class  ShareDetailPageState extends State< ShareDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    SharingModel sharepost = widget.post;
+    UserModel user = widget.user;
+    DateTime endTime = DateTime.parse(sharepost.sproductEndTime);
+    DateTime startTime = DateTime.parse(sharepost.sproductStartTime);
+    String formattedStartTime = DateFormat('dd-MM-yyyy   HH:mm').format(startTime);
+    String formattedEndTime = DateFormat('dd-MM-yyyy   HH:mm').format(endTime);
+
     return Scaffold(
       appBar: BackTopBar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // User profile row
-          Container(
-            color: const Color.fromARGB(255, 108, 106, 157),
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.grey[300],
-                  radius: 25,
-                  child: const Icon(Icons.person, color: Colors.white, size: 30),
-                ),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Sabrina Millies',  //CHANGE
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                         color: Colors.white,
-                      ),
-                    ),
-                    Row(
-                      children: List.generate(
-                        5,
-                        (index) => const Icon(Icons.star, color: Colors.amber, size: 12),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          
+          UserProfileRow(userId: sharepost.borrowerID),
           // Item details section
           Padding(
             padding: const EdgeInsets.all(24.0),
@@ -60,12 +47,12 @@ class ShareDetailPage extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Text("Cooking pot"),
+                   Text(sharepost.sproductName),
                   const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Column(
+                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -75,7 +62,7 @@ class ShareDetailPage extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text("Kitchenware"),
+                          Text(sharepost.sproductCategory),
                         ],
                       ),
                       Column(
@@ -92,39 +79,39 @@ class ShareDetailPage extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                          const Text("1 Coin"),
+                           Text('${sharepost.coinValue} coins'),
                         ],
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  const Row(
+                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             "From",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text("17-10-2024   18:00"),
+                          Text(formattedStartTime),
                         ],
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             "Until",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text("17-10-2024   20:00"),
+                          Text(formattedEndTime),
                         ],
                       ),
                     ],
@@ -137,10 +124,8 @@ class ShareDetailPage extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Text(
-                    "Pot for cooking meat.\n"
-                    "Preferably big enough for four people and I need the specific type that works for an induction hob.\n"
-                    "Thank you.",
+                   Text(
+                    sharepost.sproductDescription,
                   ),
                 ],
               ),
@@ -157,14 +142,17 @@ class ShareDetailPage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              onPressed: () {},
+              onPressed:() =>  Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MessagePage()),
+                      ),
+              
               child: const Center(child: Text('Chat', style: TextStyle(fontSize: 18))),
             ),
           ),
 
           const SizedBox(height: 10), // Space between Chat button and NavBar
 
-          // REPLACE Navigation bar
         ],
       ),
     );

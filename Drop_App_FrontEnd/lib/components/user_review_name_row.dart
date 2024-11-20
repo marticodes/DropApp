@@ -5,6 +5,8 @@ import 'package:drop_app/models/user_model.dart';
 class UserProfileRow extends StatelessWidget {
   final int userId;
 
+  final serverUrl = 'http://143.248.127.51:3001/';
+
   const UserProfileRow({
     Key? key,
     required this.userId,
@@ -47,7 +49,7 @@ class UserProfileRow extends StatelessWidget {
 
         String userName = user.userName;
         String userSurname = user.userSurname;
-        String userPicture = user.userPicture;
+        String userPicture = serverUrl + user.userPicture;
         String userLocation = user.userLocation ?? 'Unknown';
         int rating = user.userRating;
 
@@ -59,12 +61,10 @@ class UserProfileRow extends StatelessWidget {
               CircleAvatar(
                 backgroundColor: Colors.grey[300],
                 radius: 25,
-                backgroundImage: userPicture.isNotEmpty
-                    ? NetworkImage(userPicture)
-                    : null,
-                child: userPicture.isEmpty
-                    ? const Icon(Icons.person, color: Colors.white, size: 30)
-                    : null,
+                child: Image.network(
+                userPicture, // Add your image in the assets folder and update pubspec.yaml
+                height: 35,
+              ),
               ),
               const SizedBox(width: 12),
               Expanded(
