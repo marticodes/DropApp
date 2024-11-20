@@ -93,21 +93,19 @@ export default function UserDao() {
         });
     };
       
-    this.insertUser = (user_name, user_surname, user_cardnum, user_picture, user_location) => {
+    this.insertUser = (user_name, user_surname, user_cardnum, user_location, hash) => {
         return new Promise((resolve, reject) => {
             const currentYear = new Date().getFullYear().toString();
             let coins_num = 0;
             if (user_cardnum.toString().startsWith(currentYear)) {
                 coins_num = 5;
-                console.log("a");
             } else {
                 coins_num = 3;
-                console.log("b");
             }
     
             try {
-                const sql = 'INSERT INTO User (user_name, user_surname, user_cardnum, coins_num, user_picture, user_rating, user_location, user_graduated, hash, salt, active, num_rev) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)';
-                db.run(sql, [user_name, user_surname, user_cardnum, coins_num, user_picture, 0, user_location, 0, "x", "x", 1, 0], function(err) { // Notice the use of function to get access to `this`
+                const sql = 'INSERT INTO User (user_name, user_surname, user_cardnum, coins_num, user_rating, user_location, user_graduated, hash, salt, active, num_rev) VALUES (?,?,?,?,?,?,?,?,?,?,?)';
+                db.run(sql, [user_name, user_surname, user_cardnum, coins_num, 0, user_location, 0, hash, null, 1, 0], function(err) { 
                     if (err) {
                         reject(err);
                     } else if (this.changes === 0) { 
@@ -123,6 +121,39 @@ export default function UserDao() {
         });
     };
     
+    this.addUserPicture = (user_picture, user_id) => {
+        return new Promise((resolve, reject) => {
+            try {
+                const sql = 'UPDATE User SET user_picture=? WHERE user_id=?';
+                db.run(sql, [user_picture, user_id], function (err) {
+                    if (err) {
+                      reject(err);
+                    }else {
+                      resolve(this.changes > 0); //at least one line changed
+                    }
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+
+    this.removeUserPicture = (user_id) => {
+        return new Promise((resolve, reject) => {
+            try {
+                const sql = 'UPDATE User SET user_picture=? WHERE user_id=?';
+                db.run(sql, [null, user_id], function (err) {
+                    if (err) {
+                      reject(err);
+                    }else {
+                      resolve(this.changes > 0); //at least one line changed
+                    }
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
 
     this.isUserActive = (user_id) => {
         return new Promise((resolve, reject) => {
@@ -143,6 +174,25 @@ export default function UserDao() {
         });
     };
     
+    this.checkCredentials = (user_cardnum, hash) => {
+        return new Promise((resolve, reject) => {
+            const query = 'SELECT * FROM User WHERE user_cardnum=? AND hash=?';
+
+            try {
+                db.get(query, [user_cardnum, hash], (err, row) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    if (row === undefined) {
+                        resolve(false);
+                    } else {
+                        resolve(true);
+                    }
+                });
+            } catch (err) { reject({ error: err.message }) }
+
+        });
+    }
 
     //this 2 following functions are from my old project - I will leave them since they are required for the login
     this.getUserById = (id) => {

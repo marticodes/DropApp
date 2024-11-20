@@ -114,11 +114,11 @@ const setUserAsInactive = async (user_id) => {
     }
 };
 
-const insertUser = async (user_name, user_surname, user_cardnum, user_picture, user_location) => {
+const insertUser = async (user_name, user_surname, user_cardnum, user_location, hash) => { //hash is password
     const response = await fetch(SERVER_URL + '/api/user/insert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({user_name, user_surname, user_cardnum, user_picture, user_location}),
+        body: JSON.stringify({user_name, user_surname, user_cardnum, user_location, hash}),
         //credentials: 'include'
     });
     if (response.ok) {
@@ -130,9 +130,59 @@ const insertUser = async (user_name, user_surname, user_cardnum, user_picture, u
         console.error(`FE: Error status: ${response.status}, message: ${errorText}`);
     }
 };
-/* This function wants username and password inside a "credentials" object.
-* It executes the log-in.
-*/
+
+const addUserPicture = async (user_picture, user_id) => {
+    const response = await fetch(SERVER_URL + '/api/user/picture', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_picture, user_id}),
+        //credentials: 'include'
+    });
+    if (response.ok) {
+        return await response.json();
+    } else if (response.status === 401) {
+        throw new UnauthorizedError('Unauthorized access');
+    } else {
+        const errorText = await response.text();
+        console.error(`FE: Error status: ${response.status}, message: ${errorText}`);
+    }
+}
+
+const removeUserPicture = async (user_id) => {
+    const response = await fetch(SERVER_URL + '/api/user/picture/remove', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({user_id}),
+        //credentials: 'include'
+    });
+    if (response.ok) {
+        return await response.json();
+    } else if (response.status === 401) {
+        throw new UnauthorizedError('Unauthorized access');
+    } else {
+        const errorText = await response.text();
+        console.error(`FE: Error status: ${response.status}, message: ${errorText}`);
+    }
+}
+
+//TO DO: remove picture
+
+const logIn = async () => {
+    const response = await fetch(SERVER_URL + `/api/${user_cardnum}/${hash}`, {
+        method: 'GET',
+    });
+    if (response.ok) {
+        const res = await response.json();
+    } else {
+        throw new Error('FE: Error logging in');
+    }
+};
+
+
+
+/*
+This function wants username and password inside a "credentials" object.
+It executes the log-in.
 const logIn = async (credentials) => {
     await fetch(SERVER_URL + '/api/sessions', {
         method: 'POST',
@@ -148,9 +198,8 @@ const logIn = async (credentials) => {
 
 
 
-/* This function is used to verify if the user is still logged-in.
-* It returns a JSON object with the user info.
-*/
+This function is used to verify if the user is still logged-in.
+It returns a JSON object with the user info.
 const getUserInfo = async () => {
     return await fetch(SERVER_URL + '/api/sessions/current', {
         credentials: 'include'
@@ -158,15 +207,15 @@ const getUserInfo = async () => {
         .then(response => response.json());
 };
 
-/**
-* This function destroy the current user's session (executing the log-out).
-*/
+
+This function destroy the current user's session (executing the log-out).
 const logOut = async () => {
     return await fetch(SERVER_URL + '/api/sessions/current', {
         method: 'DELETE',
         credentials: 'include'
     }).then(handleInvalidResponse);
 }
+*/
 
 //CATEORIES API 
 const getCategoriesList = async () => {
@@ -608,6 +657,9 @@ const API = {logIn, getUserInfo, logOut, handleInvalidResponse, getCategoriesLis
     listAllMyDonations, filterDonationsByCoin, filterDonationsByCategory, insertSharing, inactiveSharing, listActiveSharing, listMyActiveSharing, listAllMySharing,
     filterSharingByCoin, filterSharingByCategory, setUserAsGraduate, getUserProfileInfo, isUserActive, setUserAsInactive, insertUser, getAllChatsForUser, getChatIdByUserAndProduct,
     getUserRating, addAReview};
+
+//TO DO: discuss about API for coin assignment
+//TO DO: discuss about login (Might need to change db attributes for user)
 
 export default API;
 export { UnauthorizedError };

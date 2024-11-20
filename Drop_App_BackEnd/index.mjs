@@ -151,17 +151,52 @@ app.post('/api/user/inactive', /* [], */
     }
 });
 
+app.get('/api/:user_cardnum/:hash',
+  async (req, res) => {
+    try {
+      //const user_cardnum = req.query.user_cardnum;
+      //const hash = req.query.hash;
+      const logged = await userDao.checkCredentials(req.params.user_cardnum, req.params.hash);
+      res.status(200).json(logged);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error logging in ${err}` });
+    }
+});
+
+app.post('/api/user/picture', /* [], */
+  async (req, res) => {
+    try {
+      const {user_picture, user_id} = req.body;
+      const set = await userDao.addUserPicture(req.body.user_picture, req.body.user_id);
+      res.status(201).json({set});
+    } catch (err) {
+      res.status(503).json({ error: `BE: Error inserting user picture${err}` });
+    }
+});
+
+app.post('/api/user/picture/remove', /* [], */
+  async (req, res) => {
+    try {
+      const {user_id} = req.body;
+      const set = await userDao.removeUserPicture(req.body.user_id);
+      res.status(201).json({set});
+    } catch (err) {
+      res.status(503).json({ error: `BE: Error removing user picture${err}` });
+    }
+});
+
 app.post('/api/user/insert', /* [], */
   async (req, res) => {
     try {
-      const {user_name, user_surname, user_cardnum, user_picture, user_location} = req.body;
-      const user_id = await userDao.insertUser(req.body.user_name, req.body.user_surname, req.body.user_cardnum, req.body.user_picture, req.body.user_location);
+      const {user_name, user_surname, user_cardnum, user_location, hash} = req.body;
+      const user_id = await userDao.insertUser(req.body.user_name, req.body.user_surname, req.body.user_cardnum, req.body.user_location, req.body.hash);
       res.status(201).json({user_id});
     } catch (err) {
       res.status(503).json({ error: `BE: Error inserting user${err}` });
     }
 });
 
+/*
 app.post('/api/sessions', function (req, res, next) {
   passport.authenticate('local', (err, user, info) => {
     if (err) {
@@ -196,6 +231,8 @@ app.delete('/api/sessions/current', (req, res) => {
     res.end();
   });
 });
+*/
+
 
 //CATEORIES API 
 app.get('/api/categories/list',

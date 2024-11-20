@@ -13,7 +13,7 @@ import fetch from 'node-fetch';
 - active: 1=active, 0=inactive
 */
 
-const fetch = require('node-fetch');
+//const fetch = require('node-fetch');
 
 const ShareDAO = {
     async insertSharingQuest(sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, status) { //Vv
