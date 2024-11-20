@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:drop_app/models/donation_post_model.dart';
 import 'package:drop_app/top_bar/top_bar_go_back.dart';
 import 'package:drop_app/components/user_review_name_row.dart';
 
 class ItemDetailPage extends StatelessWidget {
+  final DonationModel item;
+
+  const ItemDetailPage({Key? key, required this.item}) : super(key: key);
+
   final int rating = 4;
 
   @override
@@ -12,27 +17,21 @@ class ItemDetailPage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Using the UserProfileRow widget
           UserProfileRow(
-            userName: 'Sabrina Millies', // Change the name as needed
-            rating: rating,
+            userId: item.donorId,
           ),
-
-          // Item image
-          Image.asset(
-            'lib/testpic/Soup_Spoon.jpg', // Path to your image
+          Image.network(
+            item.productPicture,
             width: double.infinity,
             height: 300,
             fit: BoxFit.cover,
           ),
-
-          // Item details section
           Padding(
             padding: const EdgeInsets.all(24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Spoon', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                Text(item.productName, style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -41,7 +40,7 @@ class ItemDetailPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Category', style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
-                        Text('Kitchenware', style: TextStyle(fontSize: 16)),
+                        Text(item.productCategory, style: TextStyle(fontSize: 16)),
                       ],
                     ),
                     Column(
@@ -60,7 +59,7 @@ class ItemDetailPage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 100),
-                        Text('1 Coin', style: TextStyle(fontSize: 16, color: Colors.yellow[700], fontWeight: FontWeight.bold)),
+                        Text('${item.coinValue} Coin', style: TextStyle(fontSize: 16, color: Colors.yellow[700], fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ],
@@ -70,34 +69,27 @@ class ItemDetailPage extends StatelessWidget {
                 Text('Good', style: TextStyle(fontSize: 16)),
                 SizedBox(height: 8),
                 Text('Description', style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
-                Text(
-                  'Bought it from Homeplus a couple of years ago. Have used it at least once a week but has no stains.',
-                  style: TextStyle(fontSize: 16, color: Colors.black87),
+                Text( item.productDescription, style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
               ],
             ),
           ),
-
           Spacer(),
-
-          // Chat button above the navigation bar
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 108, 106, 157), 
-                foregroundColor: Colors.white, 
+                backgroundColor: const Color.fromARGB(255, 108, 106, 157),
                 padding: EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              onPressed: () {}, //ADD HERE
+              onPressed: () {
+                // Add chat logic here
+              },
               child: Center(child: Text('Chat', style: TextStyle(fontSize: 18))),
             ),
           ),
-
-          SizedBox(height: 10), // Space between Chat button and NavBar
-
-          // Navigation bar
+          SizedBox(height: 10),
         ],
       ),
     );
