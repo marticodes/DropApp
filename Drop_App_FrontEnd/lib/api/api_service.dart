@@ -9,15 +9,15 @@ import '../models/user_categories_model.dart';
 import '../models/chat_model.dart';
 
 class ApiService {
-  static const String _baseUrl = 'http://localhost:3001';
+  static const String _baseUrl = 'http://143.248.228.143:3001';
 
   //SHARING
-  static Future<List<SharingModel>> fetchActiveSharingPosts() async {
+  static Future<List<SharingModel>> listAllSharing() async {
     final response = await http.get(Uri.parse('$_baseUrl/api/sharing/all/active'));
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => SharingModel.fromJson(json)).toList();
+      final List<dynamic> responseData = json.decode(response.body);
+      return responseData.map((data) => SharingModel.fromJson(data)).toList();
     } else {
       throw Exception('Failed to load active sharing posts');
     }

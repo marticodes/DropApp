@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     return Scaffold(
       body: TabBarView(
         controller: navbarcontroller,
-        children:  <Widget> [DonatePage(),  ShareQuestList(), ChatListPage(), UserProfilePage() ],
+        children:  <Widget> [DonatePage(),  ShareQuestList(), ChatListPage(), ChatListPage() ],
       ),
 
   bottomNavigationBar: Material(

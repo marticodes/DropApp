@@ -1,5 +1,5 @@
 class SharingModel {
-  final String sproductId;
+  final int sproductId;
   final String sproductName;
   final String sproductCategory;
   final String sproductDescription;
@@ -7,9 +7,9 @@ class SharingModel {
   final String sproductEndTime;
   final int borrowerID;
   final int coinValue;
-  final bool active;
+  final int active;
   final String postingTime;
-  final int status;
+  final String status;
 
   SharingModel({
     required this.sproductId,

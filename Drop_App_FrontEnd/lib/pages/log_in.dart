@@ -91,10 +91,10 @@ class LoginPage extends StatelessWidget {
                   Text("Don't have an account? "),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SignUpPage()),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => SignUpPage()),
+                      // );
                     },
                     child: Text(
                       'Sign Up',

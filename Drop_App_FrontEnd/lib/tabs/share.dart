@@ -28,7 +28,7 @@ class ShareQuestListState extends State<ShareQuestList> {
 
   Future<void> fetchActiveSharingPosts() async {
       // Call your API function to get the active sharing posts
-      List<SharingModel> posts = await ApiService.fetchActiveSharingPosts();   
+      List<SharingModel> posts = await ApiService.listAllSharing();   
       setState(() {
         _sharingModelPosts.clear(); // Clear any previous data
         _sharingModelPosts.addAll(posts); // Add fetched posts to the list

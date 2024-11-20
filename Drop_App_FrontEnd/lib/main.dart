@@ -93,10 +93,10 @@ class WelcomeScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: OutlinedButton(
                 onPressed: () {
-                   Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SignUpPage()),
-                  );
+                  //  Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => SignUpPage()),
+                  // );
                 },
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: const Color.fromARGB(255, 108, 106, 157)),
