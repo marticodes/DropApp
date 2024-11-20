@@ -9,7 +9,7 @@ import '../models/user_categories_model.dart';
 import '../models/chat_model.dart';
 
 class ApiService {
-  static const String _baseUrl = 'http://143.248.77.98:3001';
+  static const String _baseUrl = 'http://143.248.127.51:3001';
 
   //SHARING
   static Future<List<SharingModel>> listAllSharing() async {
