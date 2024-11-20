@@ -9,7 +9,7 @@ import '../models/user_categories_model.dart';
 import '../models/chat_model.dart';
 
 class ApiService {
-  static const String _baseUrl = 'http://143.248.127.51:3001';
+  static const String _baseUrl = 'http://143.248.77.98:3001';
 
   //SHARING
   static Future<List<SharingModel>> listAllSharing() async {
@@ -23,7 +23,7 @@ class ApiService {
     }
   }
 
-  Future<int> insertSharing(sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, status) async {
+  static Future<int> insertSharing(sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, status) async {
     final url = Uri.parse('$_baseUrl/api/sharing/insert');
 
     try {
@@ -71,7 +71,7 @@ class ApiService {
     }
   }
 
-  Future<int> insertDonation(product_name, product_description, product_category, product_picture, donor_id, status) async {
+  static Future<int> insertDonation(product_name, product_description, product_category, product_picture, donor_id, status) async {
     final url = Uri.parse('$_baseUrl/api/donation/insert');
 
     try {
@@ -322,4 +322,3 @@ Future<int> insertChat(userID1, userID2, product_id, type, sproduct_id) async {
   }
 
 }
-

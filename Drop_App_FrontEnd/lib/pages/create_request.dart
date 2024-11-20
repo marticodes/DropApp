@@ -1,6 +1,9 @@
+import 'package:drop_app/api/api_service.dart';
+import 'package:drop_app/models/sharing_post_model.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_app/components/calendar.dart';
 import 'package:drop_app/components/clock.dart';
+
 
 class Share extends StatefulWidget {
   const Share({super.key});
@@ -12,16 +15,37 @@ class Share extends StatefulWidget {
 Color purpleDrop = const Color.fromRGBO(108, 106, 157, 1);
 
 class _ShareState extends State<Share> {
-  String itemName = '';
-  String? category;
-  DateTime? fromDate;
-  TimeOfDay? fromTime;
-  DateTime? untilDate;
-  TimeOfDay? untilTime;
-  String description = '';
+  String sproductName = '';
+  String? sproducCategory;
+  DateTime? sproductStartDate;
+  TimeOfDay? sproductStartTime;
+  DateTime? sproductEndDate;
+  TimeOfDay? sproductEndTime;
+  String sproductDescription = '';
 
   final List<String> categoryList = ['Books', 'Clothing', 'Decoration', 'Electronics', 'Food', 'Health', 'Kitchenware', 'Linens', 'Miscellaneous', 'Sports', 'Stationery', 'Storage', 'Vehicles'];
 
+  Future<void> insertSharing(sproductName,
+        sproducCategory,
+        sproductDescription,
+        sproductStartTime,
+        sproductEndTime,
+        borrowerId,
+        status) async {
+      int productId = await ApiService.insertSharing(
+        sproductName,
+        sproducCategory,
+        sproductDescription,
+        sproductStartTime,
+        sproductEndTime,
+        borrowerId,
+        status
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sharing inserted! Product ID: $productId')),
+      );
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +70,7 @@ class _ShareState extends State<Share> {
                 ),
                 onChanged: (value) {
                   setState(() {
-                    itemName = value;
+                    sproductName = value;
                   });
                 },
               ),
@@ -59,7 +83,7 @@ class _ShareState extends State<Share> {
             SizedBox(
               width: 200,
               child: DropdownButtonFormField<String>(
-                value: category,
+                value: sproducCategory,
                 hint: Text(
                   'Select Category',
                   style: hintTextStyle,
@@ -72,7 +96,7 @@ class _ShareState extends State<Share> {
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
-                    category = value;
+                    sproducCategory = value;
                   });
                 },
                 decoration: const InputDecoration(
@@ -97,10 +121,10 @@ class _ShareState extends State<Share> {
                           Expanded(
                             child: CalendarComponent(
                               isFromDate: true,
-                              date: fromDate,
+                              date: sproductStartDate,
                               onDateChanged: (newDate) {
                                 setState(() {
-                                  fromDate = newDate;
+                                  sproductStartDate = newDate;
                                 });
                               },
                             ),
@@ -109,10 +133,10 @@ class _ShareState extends State<Share> {
                           Expanded(
                             child: TimePickerComponent(
                               isFromTime: true,
-                              time: fromTime,
+                              time: sproductStartTime,
                               onTimeChanged: (newTime) {
                                 setState(() {
-                                  fromTime = newTime;
+                                  sproductStartTime = newTime;
                                 });
                               },
                             ),
@@ -141,10 +165,10 @@ class _ShareState extends State<Share> {
                           Expanded(
                             child: CalendarComponent(
                               isFromDate: false,
-                              date: untilDate,
+                              date: sproductEndDate,
                               onDateChanged: (newDate) {
                                 setState(() {
-                                  untilDate = newDate;
+                                  sproductEndDate = newDate;
                                 });
                               },
                             ),
@@ -153,10 +177,10 @@ class _ShareState extends State<Share> {
                           Expanded(
                             child: TimePickerComponent(
                               isFromTime: false,
-                              time: untilTime,
+                              time: sproductEndTime,
                               onTimeChanged: (newTime) {
                                 setState(() {
-                                  untilTime = newTime;
+                                  sproductEndTime = newTime;
                                 });
                               },
                             ),
@@ -182,7 +206,7 @@ class _ShareState extends State<Share> {
               ),
               onChanged: (value) {
                 setState(() {
-                  description = value;
+                  sproductDescription = value;
                 });
               },
             ),
@@ -199,7 +223,8 @@ class _ShareState extends State<Share> {
                   padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 10),
                 ),
                 onPressed: () {
-                  // Handle post action
+
+                  insertSharing(sproductName, sproducCategory, sproductDescription, ' ', ' ',1, 1);
                 },
                 child: const Text(
                   "Post",
