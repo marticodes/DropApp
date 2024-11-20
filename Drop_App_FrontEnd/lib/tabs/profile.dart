@@ -13,6 +13,7 @@ class UserProfilePage extends StatefulWidget {
 
 class UserProfilePageState extends State<UserProfilePage> {
   late final UserModel user;
+  
   //@override
   //void initState() {
    // super.initState();

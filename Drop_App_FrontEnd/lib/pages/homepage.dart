@@ -9,6 +9,7 @@ import 'package:drop_app/tabs/donate.dart';
 import 'package:drop_app/tabs/share.dart';
 import 'package:drop_app/tabs/chat.dart';
 import 'package:drop_app/tabs/profile.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 
@@ -46,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     return Scaffold(
       body: TabBarView(
         controller: navbarcontroller,
-        children:  <Widget> [DonatePage(),  ShareQuestList(), ChatListPage(), ChatListPage() ],
+        children:  <Widget> [DonatePage(),  ShareQuestList(), ChatListPage(), UserProfilePage() ],
       ),
 
   bottomNavigationBar: Material(
