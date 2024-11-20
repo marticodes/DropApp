@@ -191,7 +191,7 @@ const ShareDAO = {
 // Function to fetch product prices from an external API
 async function fetchProductPricesFromAPI() {
     const apiUrl = `https://price-comparison8.p.rapidapi.com/api/compare`;
-    const apiKey = 'YOUR_RAPIDAPI_KEY'; // Replace with your actual API key
+    const apiKey = 'api_key'; // Replace with your actual API key
 
     try {
         const response = await fetch(apiUrl, {

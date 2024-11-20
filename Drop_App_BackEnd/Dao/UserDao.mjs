@@ -176,7 +176,7 @@ export default function UserDao() {
     
     this.checkCredentials = (user_cardnum, hash) => {
         return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM User WHERE user_cardnum=? AND hash=?';
+            const query = 'SELECT user_id FROM User WHERE user_cardnum=? AND hash=?';
 
             try {
                 db.get(query, [user_cardnum, hash], (err, row) => {
@@ -186,7 +186,7 @@ export default function UserDao() {
                     if (row === undefined) {
                         resolve(false);
                     } else {
-                        resolve(true);
+                        resolve(row.user_id);
                     }
                 });
             } catch (err) { reject({ error: err.message }) }

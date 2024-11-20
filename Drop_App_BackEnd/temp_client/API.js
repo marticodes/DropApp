@@ -165,7 +165,6 @@ const removeUserPicture = async (user_id) => {
     }
 }
 
-//TO DO: remove picture
 
 const logIn = async () => {
     const response = await fetch(SERVER_URL + `/api/${user_cardnum}/${hash}`, {
@@ -656,7 +655,7 @@ const API = {logIn, getUserInfo, logOut, handleInvalidResponse, getCategoriesLis
     getChatUsers, getChatProduct, getChatType, insertChat, getMessagesByChatId, insertMessage, insertDonation, inactiveDonation, listActiveDonations, listMyActiveDonations,
     listAllMyDonations, filterDonationsByCoin, filterDonationsByCategory, insertSharing, inactiveSharing, listActiveSharing, listMyActiveSharing, listAllMySharing,
     filterSharingByCoin, filterSharingByCategory, setUserAsGraduate, getUserProfileInfo, isUserActive, setUserAsInactive, insertUser, getAllChatsForUser, getChatIdByUserAndProduct,
-    getUserRating, addAReview};
+    getUserRating, addAReview, removeUserPicture, addUserPicture};
 
 //TO DO: discuss about API for coin assignment
 //TO DO: discuss about login (Might need to change db attributes for user)
