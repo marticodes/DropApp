@@ -28,27 +28,51 @@ class UserProfileRow extends StatelessWidget {
                 : null,
           ),
           const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                userName,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        userName,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                        overflow: TextOverflow.ellipsis, // Handles long names
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.location_on, color: Colors.white, size: 18),
+                        const SizedBox(width: 4),
+                        Text(
+                          "N1",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ),
-              Row(
-                children: List.generate(5, (index) {
-                  return Icon(
-                    Icons.star,
-                    color: index < rating ? Colors.amber : Colors.grey,
-                    size: 20,
-                  );
-                }),
-              ),
-            ],
+                Row(
+                  children: List.generate(5, (index) {
+                    return Icon(
+                      Icons.star,
+                      color: index < rating ? Colors.amber : Colors.grey,
+                      size: 20,
+                    );
+                  }),
+                ),
+              ],
+            ),
           ),
         ],
       ),

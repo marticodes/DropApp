@@ -57,7 +57,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
             ),
             Text(
-              'Share and Donate CHANGE',
+              'Share and Donate between students',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,

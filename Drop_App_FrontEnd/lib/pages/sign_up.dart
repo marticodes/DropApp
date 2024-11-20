@@ -12,6 +12,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController surnameController = TextEditingController();
   final TextEditingController studentIdController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
 
@@ -86,7 +87,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   },
                 ),
                 SizedBox(height: 15),
-                // Student ID TextFormField with validation for exact length and starting with 2
+                // Student ID TextFormField with validation
                 TextFormField(
                   controller: studentIdController,
                   decoration: InputDecoration(
@@ -109,6 +110,37 @@ class _SignUpPageState extends State<SignUpPage> {
                     }
                     return null;
                   },
+                ),
+                SizedBox(height: 15),
+                // Location TextFormField with example text
+                TextFormField(
+                  controller: locationController,
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.location_on),
+                    hintText: 'Location',
+                    filled: true,
+                    fillColor: const Color.fromARGB(255, 230, 229, 246),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your location';
+                    }
+                    return null;
+                  },
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 12.0, top: 5.0),
+                    child: Text(
+                      'Example: W2, E11...',
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                  ),
                 ),
                 SizedBox(height: 15),
                 // Password TextFormField with validation
@@ -190,3 +222,4 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 }
+

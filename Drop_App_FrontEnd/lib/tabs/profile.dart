@@ -13,19 +13,19 @@ class UserProfilePage extends StatefulWidget {
 
 class UserProfilePageState extends State<UserProfilePage> {
   late final UserModel user;
-  @override
-  void initState() {
-    super.initState();
+  //@override
+  //void initState() {
+   // super.initState();
     //fetchUserById(id); 
-  }
+  //}
 
-  Future<void> fetchUserById(int id) async {
+  //Future<void> fetchUserById(int id) async {
       // Call your API function to get the active sharing posts
       //UserModel posts = await ApiService.fetchUserById(id);   
       //setState(() {
         //user=posts; // Add fetched posts to the list
      // });
-  }
+  //}
 
 
   // final String name = "John";
@@ -132,6 +132,22 @@ class UserProfilePageState extends State<UserProfilePage> {
               child: Text(
                 'Change Password',
                 style: TextStyle(fontSize: 18, color: const Color.fromARGB(255, 255, 255, 255)),
+              ),
+            ),
+            Spacer(), // Adds space to push the next button down
+            // Graduate button
+            ElevatedButton(
+              onPressed: () {
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 241, 138, 138),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: Text(
+                'Graduate',
+                style: TextStyle(fontSize: 14, color: Colors.white),
               ),
             ),
             Spacer(), // Adds space to push the next button down
