@@ -1,3 +1,4 @@
+import 'package:drop_app/pages/create_donation_post.dart';
 import 'package:drop_app/pages/create_request.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_app/top_bar/top_bar_search.dart'; 
@@ -73,7 +74,7 @@ class _DonatePageState extends State<DonatePage> {
               foregroundColor: Colors.white,
               onTap: () =>  Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Share()),
+                        MaterialPageRoute(builder: (context) => Donate()),
                       ),
             ),
             SpeedDialChild(

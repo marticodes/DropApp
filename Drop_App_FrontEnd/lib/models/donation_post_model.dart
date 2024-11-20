@@ -1,14 +1,14 @@
 class DonationModel {
-  final String productId;
+  final int productId;
   final String productName;
   final String productCategory;
   final String productDescription;
   final String productPicture;
   final int donorId;
   final int coinValue;
-  final bool active;
+  final int active;
   final String postingTime;
-  final int status;
+  final String status;
 
   DonationModel({
     required this.productId,

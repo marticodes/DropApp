@@ -1,4 +1,5 @@
 import 'package:drop_app/models/sharing_post_model.dart';
+import 'package:drop_app/pages/create_donation_post.dart';
 import 'package:drop_app/pages/create_request.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_app/components/single_share_quest.dart';
@@ -23,10 +24,10 @@ class ShareQuestListState extends State<ShareQuestList> {
   @override
   void initState() {
     super.initState();
-    fetchActiveSharingPosts(); 
+    listAllSharing(); 
   }
 
-  Future<void> fetchActiveSharingPosts() async {
+  Future<void> listAllSharing() async {
       // Call your API function to get the active sharing posts
       List<SharingModel> posts = await ApiService.listAllSharing();   
       setState(() {
@@ -83,7 +84,7 @@ class ShareQuestListState extends State<ShareQuestList> {
               foregroundColor: Colors.white,
               onTap: () =>  Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Share()),
+                        MaterialPageRoute(builder: (context) => Donate()),
                       ),
             ),
             SpeedDialChild(

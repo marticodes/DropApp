@@ -27,7 +27,7 @@ const shareDao = ShareDAO;
 const userCategoriesDao = UserCategoriesDAO;
 const userDao = new UserDAO();
 
-const SERVER_URL = 'http://localhost:3001/api';
+const SERVER_URL = 'http://143.248.77.98:3001/api';
 
 /*
 const notificationsRouter = require('./notifications'); // import notification router
@@ -43,7 +43,7 @@ app.use(express.static('Img')); //path for image folder
 
 //cors
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: ['http://localhost:5173', 'http://143.248.77.98:3001', 'http://143.248.77.98:5173'],
   optionsSuccessStatus: 200,
   credentials: true  //for exchanging cookies with other origins
 };
