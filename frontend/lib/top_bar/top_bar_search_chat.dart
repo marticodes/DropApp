@@ -1,15 +1,16 @@
 //the only different is that this one has no filter working
-
+import 'package:drop_app/api/api_service.dart'; 
+import 'package:drop_app/models/user_model.dart'; 
+import 'package:drop_app/global.dart' as globals;
 import 'package:flutter/material.dart';
 
 class CustomTopBar extends StatefulWidget implements PreferredSizeWidget {
-  final int moneyCount;
   final Function(String) onSearchChanged; // Callback for search input changes
 
   @override
   final Size preferredSize;
 
-  CustomTopBar({Key? key, this.moneyCount = 7, required this.onSearchChanged}) 
+  const CustomTopBar({Key? key, required this.onSearchChanged})
       : preferredSize = const Size.fromHeight(64.0),
         super(key: key);
 
@@ -19,7 +20,28 @@ class CustomTopBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _CustomTopBarState extends State<CustomTopBar> {
   bool _isSearching = false;
+  int? _moneyCount; // To store the coinsNum value
   TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserCoins(); // Fetch coins when the widget initializes
+  }
+
+  Future<void> _fetchUserCoins() async {
+    try {
+      final user = await ApiService.fetchUserById(globals.userData); // Fetch user data
+      setState(() {
+        _moneyCount = user.coinsNum; // Update the state with fetched coinsNum
+      });
+    } catch (error) {
+      setState(() {
+        _moneyCount = 0; // Fallback to 0 on error
+      });
+      debugPrint('Error fetching user coins: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +107,7 @@ class _CustomTopBarState extends State<CustomTopBar> {
             ),
             const SizedBox(width: 4),
             Text(
-              '${widget.moneyCount}',
+              _moneyCount == null ? '...' : '$_moneyCount', // Show '...' while loading
               style: TextStyle(color: Colors.black, fontSize: 16),
             ),
             const SizedBox(width: 16),
@@ -93,5 +115,11 @@ class _CustomTopBarState extends State<CustomTopBar> {
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 }

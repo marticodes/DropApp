@@ -32,20 +32,20 @@ class UserModel {
   // Factory constructor to parse JSON into a UserModel object
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      userId: json['user_id'],
-      userName: json['user_name'],
-      userSurname: json['user_surname'],
-      userCardNum: json['user_cardnum'],
-      coinsNum: json['coins_num'],
-      userPicture: json['user_picture'],
-      userRating: json['user_rating'],
-      userLocation: json['user_location'], // Can be null
-      userGraduated: json['user_graduated'],
-      hash: json['hash'],
-      salt: json['salt'],
-      active: json['active'],
-      numRev: json['num_rev']
-    );
+    userId: json['user_id'],
+    userName: json['user_name'] ?? '',
+    userSurname: json['user_surname'] ?? '',
+    userCardNum: json['user_cardnum'] ?? 0,
+    coinsNum: json['coins_num'] ?? 0,
+    userPicture: json['user_picture'] ?? '',
+    userRating: json['user_rating'] ?? 0,
+    userLocation: json['user_location'] ?? '', // Default to an empty string if null
+    userGraduated: json['user_graduated'] ?? 0,
+    hash: json['hash'] ?? '',
+    salt: json['salt'] ?? '',
+    active: json['active'] ?? 1,
+    numRev: json['num_rev'] ?? 0,
+  );
   }
 
   // Method to convert UserModel object to JSON (if needed)

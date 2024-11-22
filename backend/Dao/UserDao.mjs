@@ -104,8 +104,8 @@ export default function UserDao() {
             }
     
             try {
-                const sql = 'INSERT INTO User (user_name, user_surname, user_cardnum, coins_num, user_rating, user_location, user_graduated, hash, salt, active, num_rev) VALUES (?,?,?,?,?,?,?,?,?,?,?)';
-                db.run(sql, [user_name, user_surname, user_cardnum, coins_num, 0, user_location, 0, hash, null, 1, 0], function(err) { 
+                const sql = 'INSERT INTO User (user_name, user_surname, user_cardnum, coins_num, user_picture, user_rating, user_location, user_graduated, hash, salt, active, num_rev) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)';
+                db.run(sql, [user_name, user_surname, user_cardnum, coins_num, "null", 0, user_location, 0, hash, null, 1, 0], function(err) { 
                     if (err) {
                         reject(err);
                     } else if (this.changes === 0) { 

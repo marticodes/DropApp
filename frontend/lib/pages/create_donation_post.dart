@@ -1,7 +1,6 @@
 import 'package:drop_app/api/api_service.dart';
 import 'package:flutter/material.dart';
-// import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'dart:async';
 
 class Donate extends StatefulWidget {
   const Donate({super.key});
@@ -18,32 +17,51 @@ class _DonateState extends State<Donate> {
   String? status;
   String productDescription = '';
   String productPicture = '';
-  int donorId = 0;
-  // XFile? image;
-  int coinValue = 0;
+  int donorId = 1; // Example donor ID, replace with actual value in production
 
-  final List<String> categoryList = ['Books', 'Clothing', 'Decoration', 'Electronics', 'Food', 'Health', 'Kitchenware', 'Linens', 'Miscellaneous', 'Sports', 'Stationery', 'Storage', 'Vehicles'];
+  final List<String> categoryList = [
+    'Books', 'Clothing', 'Decoration', 'Electronics', 'Food', 'Health',
+    'Kitchenware', 'Linens', 'Miscellaneous', 'Sports', 'Stationery',
+    'Storage', 'Vehicles',
+  ];
+
   final List<String> conditionList = ['New', 'Good conditions', 'Used'];
 
-  // final ImagePicker _picker = ImagePicker();
+  Future<void> insertDonation(
+    String productName,
+    String productDescription,
+    String? productCategory,
+    String productPicture,
+    int donorId,
+    String? status,
+  ) async {
+    if (productName.isEmpty || productCategory == null || status == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all required fields.')),
+      );
+      return;
+    }
 
-  Future<void> insertDonation(productName,
-        productDescription,
-        productCategory,
-        productPicture,
-        donorId,
-        status) async {
+    try {
       int productId = await ApiService.insertDonation(
         productName,
         productDescription,
         productCategory,
         productPicture,
         donorId,
-        status
+        status,
       );
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Sharing inserted! Product ID: $productId')),
+        SnackBar(content: Text('Donation inserted successfully!')),
       );
+
+      Navigator.pop(context); // Navigate back after successful insertion
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    }
   }
 
   @override
@@ -51,6 +69,7 @@ class _DonateState extends State<Donate> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Create New Donation Post"),
+        backgroundColor: purpleDrop,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
@@ -60,102 +79,56 @@ class _DonateState extends State<Donate> {
             // Item Name
             getLabel("Item Name"),
             const SizedBox(height: 5),
-            SizedBox(
-              width: 200,
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Enter Item Name',
-                  hintStyle: hintTextStyle,
-                  border: const OutlineInputBorder(),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    productName = value;
-                  });
-                },
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'Enter Item Name',
+                hintStyle: hintTextStyle,
+                border: const OutlineInputBorder(),
               ),
+              onChanged: (value) => productName = value,
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
 
             // Category
             getLabel("Category"),
             const SizedBox(height: 5),
-            SizedBox(
-              width: 200,
-              child: DropdownButtonFormField<String>(
-                value: productCategory,
-                hint: Text(
-                  'Select Category',
-                  style: hintTextStyle,
-                ),
-                items: categoryList.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    productCategory = value;
-                    calculateCoinValue();
-                  });
-                },
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-              ),
+            DropdownButtonFormField<String>(
+              value: productCategory,
+              hint: Text('Select Category', style: hintTextStyle),
+              items: categoryList.map((value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (value) => setState(() {
+                productCategory = value;
+              }),
+              decoration: const InputDecoration(border: OutlineInputBorder()),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
 
             // Item Condition
             getLabel("Item Condition"),
             const SizedBox(height: 5),
-            SizedBox(
-              width: 200,
-              child: DropdownButtonFormField<String>(
-                value: status,
-                hint: Text(
-                  'Select Condition',
-                  style: hintTextStyle,
-                ),
-                items: conditionList.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    status = value;
-                    calculateCoinValue();
-                  });
-                },
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-              ),
+            DropdownButtonFormField<String>(
+              value: status,
+              hint: Text('Select Condition', style: hintTextStyle),
+              items: conditionList.map((value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: (value) => setState(() {
+                status = value;
+              }),
+              decoration: const InputDecoration(border: OutlineInputBorder()),
             ),
-            const SizedBox(height: 15),
+            const SizedBox(height: 10),
 
-            // Calculated Coin Value
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                getLabel("Calculated coin value:"),
-                Row(
-                  children: [
-                    Icon(Icons.attach_money, color: Colors.amber),
-                    Text(
-                      coinValue.toString(),
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 15),
-
-            // Add Image
+            
+// Add Image
             getLabel("Add Image"),
             const SizedBox(height: 5),
             GestureDetector(
@@ -169,7 +142,7 @@ class _DonateState extends State<Donate> {
               },
               child: Container(
                 width: double.infinity,
-                height: 150,
+                height: 100,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
                   borderRadius: BorderRadius.circular(8),
@@ -202,26 +175,20 @@ class _DonateState extends State<Donate> {
                 hintStyle: hintTextStyle,
                 border: const OutlineInputBorder(),
               ),
-              onChanged: (value) {
-                setState(() {
-                  productDescription = value;
-                });
-              },
+              onChanged: (value) => productDescription = value,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
 
             // Post Button
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
                   backgroundColor: purpleDrop,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 10),
                 ),
                 onPressed: () {
-                  insertDonation(productName, productDescription, productCategory, productPicture, 1, status);
+                  insertDonation(productName, productDescription, productCategory, productPicture, donorId, status);
                 },
                 child: const Text(
                   "Post",
@@ -239,30 +206,24 @@ class _DonateState extends State<Donate> {
       ),
     );
   }
-
-  void calculateCoinValue() {
-    // Logic to calculate coin value based on category and condition
-    setState(() {
-      coinValue = (productCategory != null ? 10 : 0) + (status != null ? 5 : 0); // Example calculation
-    });
-  }
 }
 
 Text getLabel(String labelName) {
   return Text(
     labelName,
     style: const TextStyle(
-      fontSize: 16, 
-      fontWeight: FontWeight.w500, 
-      fontFamily: 'Roboto', 
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+      fontFamily: 'Roboto',
       color: Colors.black,
     ),
   );
 }
 
 TextStyle hintTextStyle = const TextStyle(
-  fontSize: 16, 
-  fontWeight: FontWeight.normal, 
-  fontFamily: 'Roboto', 
+  fontSize: 16,
+  fontWeight: FontWeight.normal,
+  fontFamily: 'Roboto',
   color: Color.fromARGB(255, 148, 147, 147),
 );
+

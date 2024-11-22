@@ -3,7 +3,8 @@ import 'package:drop_app/tabs/donate.dart';
 import 'package:drop_app/pages/homepage.dart';
 import 'package:drop_app/pages/sign_up.dart';
 import 'package:drop_app/api/api_service.dart'; // Import ApiService
-import 'package:drop_app/global.dart'; // Import the global.dart file
+//import 'package:drop_app/global.dart'; // Import the global.dart file
+import 'package:drop_app/global.dart' as globals;
 
 class LoginPage extends StatefulWidget {
   @override
@@ -30,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
       final userData = await apiService.logIn(userCardNum, hash); // Use the instance method here
       if (userData != null) {
         // Save userData globally
-        Global.userData = userData; // Store user data in the global variable
+        globals.userData = userData; // Store user data in the global variable
 
         // Successfully logged in, navigate to home page
         Navigator.pushReplacement(

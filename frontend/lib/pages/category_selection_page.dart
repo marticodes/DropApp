@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:drop_app/tabs/profile.dart'; // Import the UserProfilePage
+import 'package:drop_app/pages/homepage.dart';
 
 class CategorySelectionPage extends StatefulWidget {
   @override
@@ -39,7 +40,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Select Categories You Are Interested In. You will be notified if someone is looking to borrow an item in one of these categories.",
+              "Select categories you are interested in. You will be notified if someone is looking to borrow an item in one of these categories.",
               style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
             SizedBox(height: 20),
@@ -72,10 +73,12 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
             ElevatedButton(
               onPressed: () {
                 if (selectedCategories.isNotEmpty) {
-                  // Navigate to User Profile Page
+                  // Navigate to the Home Page with the "Profile" tab selected
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => UserProfilePage()), //we cannot change this because this page is also used for SignIn
+                    MaterialPageRoute(
+                      builder: (context) => MyHomePage(title: 'Home', initialTabIndex: 3), // Set the Profile tab index
+                    ),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(

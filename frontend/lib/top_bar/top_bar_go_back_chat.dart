@@ -1,4 +1,7 @@
 import 'package:drop_app/tabs/chat.dart';
+import 'package:drop_app/api/api_service.dart'; 
+import 'package:drop_app/models/user_model.dart'; 
+import 'package:drop_app/global.dart' as globals;
 import 'package:flutter/material.dart';
 
 class BackTopBar extends StatelessWidget implements PreferredSizeWidget {

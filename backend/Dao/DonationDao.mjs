@@ -13,7 +13,7 @@ const DonationDAO = {
                 const posting_time = new Date().toISOString(); 
                 const sql = 'INSERT INTO Donation (product_name, product_category, product_description, product_picture, donor_id, coin_value, active, posting_time, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
                 
-                db.run(sql, [product_name, product_category, product_description, product_picture, donor_id, 5, 1, posting_time, status], function(err) {
+                db.run(sql, [product_name, product_category, product_description, product_picture, donor_id, coin_value, 1, posting_time, status], function(err) {
                     if (err) {
                         reject(err);
                     } else if (this.lastID) {

@@ -13,27 +13,30 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 
-
+//this was used for trial
 // ShareQuest example = ShareQuest(userName: 'Conan Gray', itemName: 'Multipot', itemDescription: 'Electric multi-pot for cooking pasta', coins: 1, timeRemaining: '30 Min', date: '17 Oct');
 
-
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({super.key, required this.title, this.initialTabIndex = 0});
 
   final String title;
+  final int initialTabIndex; // Add this parameter
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin{
-  
+class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
   late TabController navbarcontroller;
-  
+
   @override
   void initState() {
     super.initState();
-    navbarcontroller = TabController(length: 4, vsync: this);
+    navbarcontroller = TabController(
+      length: 4,
+      vsync: this,
+      initialIndex: widget.initialTabIndex, // Use the initial index here
+    );
   }
 
   @override
@@ -47,38 +50,38 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     return Scaffold(
       body: TabBarView(
         controller: navbarcontroller,
-        children:  <Widget> [DonatePage(),  ShareQuestList(), ChatListPage(), UserProfilePage() ],
+        children: <Widget>[DonatePage(), ShareQuestList(), ChatListPage(), UserProfilePage()],
       ),
-
-  bottomNavigationBar: Material(
-  elevation: 3,
-  child: Container(
-    height: 70, 
-    decoration: BoxDecoration(
-      color: const Color.fromARGB(255, 249, 249, 249),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(0.2),
-          spreadRadius: 1,
-          blurRadius: 5,
-          offset: const Offset(0, -3), // Shadow position (to add shadow above)
+      bottomNavigationBar: Material(
+        elevation: 3,
+        child: Container(
+          height: 70,
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 249, 249, 249),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.2),
+                spreadRadius: 1,
+                blurRadius: 5,
+                offset: const Offset(0, -3), // Shadow position (to add shadow above)
+              ),
+            ],
+          ),
+          child: TabBar(
+            tabs: <Tab>[
+              makeTab('assets/images/donate.png', 'Donate'),
+              makeTab('assets/images/share.png', 'Share'),
+              makeTab('assets/images/chat.png', 'Chat'),
+              makeTab('assets/images/profile.png', 'Profile')
+            ],
+            controller: navbarcontroller,
+          ),
         ),
-      ],
-    ),
-    child: TabBar(
-      tabs: <Tab>[
-        makeTab('assets/images/donate.png', 'Donate'),
-        makeTab('assets/images/share.png', 'Share'),
-        makeTab('assets/images/chat.png', 'Chat'),
-        makeTab('assets/images/profile.png', 'Profile')
-      ],
-      controller: navbarcontroller,
-    ),
-  ),
-),
+      ),
     );
   }
 }
+
 
 Tab makeTab( String location, String tabName){
   return Tab(

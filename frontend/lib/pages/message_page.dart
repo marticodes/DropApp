@@ -41,7 +41,7 @@ class _MessagePageState extends State<MessagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BackTopBar(moneyCount: moneycount),
+      appBar: BackTopBar(),
       body: Column(
         children: [
           // User Banner

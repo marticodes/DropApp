@@ -88,7 +88,7 @@ class ItemDetailPage extends StatelessWidget {
               onPressed: () {
                 // Add chat logic here
               },
-              child: Center(child: Text('Chat', style: TextStyle(fontSize: 18))),
+              child: Center(child: Text('Chat', style: TextStyle(fontSize: 18, color:  const Color.fromARGB(221, 255, 255, 255)))),
             ),
           ),
           SizedBox(height: 10),

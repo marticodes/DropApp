@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:drop_app/pages/category_selection_page.dart'; // Import the Category Selection page
 import 'package:drop_app/pages/log_in.dart';
+import 'package:drop_app/api/api_service.dart';
+import 'package:drop_app/models/user_model.dart';
+import 'package:drop_app/global.dart' as globals;
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -8,7 +11,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final _formKey = GlobalKey<FormState>(); // Global key for form validation
+  final _formKey = GlobalKey<FormState>();
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController surnameController = TextEditingController();
@@ -16,6 +19,46 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController locationController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
+
+  bool isLoading = false;
+
+  void _signUp() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      
+      // Call the insertUser function
+      final user = await ApiService.insertUser(
+        userName: nameController.text.trim(),
+        userSurname: surnameController.text.trim(),
+        userCardnum: studentIdController.text.trim(),
+        userLocation: locationController.text.trim(),
+        hash: passwordController.text.trim(),
+      );
+
+      // Store the returned userID in global userData
+      globals.userData = user;    //MUST UNCOMMENT
+
+      // Navigate to the next page
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => CategorySelectionPage()),
+      );
+    } catch (e) {
+      // Show an error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Sign-up failed: $e')),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +68,7 @@ class _SignUpPageState extends State<SignUpPage> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40),
           child: Form(
-            key: _formKey, // Form key for validation
+            key: _formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -46,163 +89,43 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                 ),
                 SizedBox(height: 30),
-                // Name TextFormField with validation
-                TextFormField(
-                  controller: nameController,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.person),
-                    hintText: 'Name',
-                    filled: true,
-                    fillColor: const Color.fromARGB(255, 230, 229, 246),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your name';
-                    }
-                    return null;
-                  },
-                ),
+                // Name input
+                _buildTextField(nameController, 'Name', Icons.person),
                 SizedBox(height: 15),
-                // Surname TextFormField with validation
-                TextFormField(
-                  controller: surnameController,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.person_outline),
-                    hintText: 'Surname',
-                    filled: true,
-                    fillColor: const Color.fromARGB(255, 230, 229, 246),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your surname';
-                    }
-                    return null;
-                  },
-                ),
+                // Surname input
+                _buildTextField(surnameController, 'Surname', Icons.person_outline),
                 SizedBox(height: 15),
-                // Student ID TextFormField with validation
-                TextFormField(
-                  controller: studentIdController,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.school),
-                    hintText: 'Student ID',
-                    filled: true,
-                    fillColor: const Color.fromARGB(255, 230, 229, 246),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your student ID';
-                    }
-                    // Ensure the Student ID is exactly 8 digits long and starts with "2"
-                    if (!RegExp(r'^2\d{7}$').hasMatch(value)) {
-                      return 'Invalid Student ID';
-                    }
-                    return null;
-                  },
-                ),
+                // Student ID input
+                _buildTextField(studentIdController, 'Student ID', Icons.school, validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your student ID';
+                  }
+                  if (!RegExp(r'^2\d{7}$').hasMatch(value)) {
+                    return 'Invalid Student ID';
+                  }
+                  return null;
+                }),
                 SizedBox(height: 15),
-                // Location TextFormField with example text
-                TextFormField(
-                  controller: locationController,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.location_on),
-                    hintText: 'Location',
-                    filled: true,
-                    fillColor: const Color.fromARGB(255, 230, 229, 246),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your location';
-                    }
-                    return null;
-                  },
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 12.0, top: 5.0),
-                    child: Text(
-                      'Example: W2, E11...',
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
-                    ),
-                  ),
-                ),
+                // Location input
+                _buildTextField(locationController, 'Location', Icons.location_on),
                 SizedBox(height: 15),
-                // Password TextFormField with validation
-                TextFormField(
-                  controller: passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.lock),
-                    hintText: 'Password',
-                    filled: true,
-                    fillColor: const Color.fromARGB(255, 230, 229, 246),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    return null;
-                  },
-                ),
+                // Password input
+                _buildTextField(passwordController, 'Password', Icons.lock, obscureText: true),
                 SizedBox(height: 15),
-                // Confirm Password TextFormField with validation
-                TextFormField(
-                  controller: confirmPasswordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.lock_outline),
-                    hintText: 'Confirm Password',
-                    filled: true,
-                    fillColor: const Color.fromARGB(255, 230, 229, 246),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please confirm your password';
-                    }
-                    if (value != passwordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
-                ),
+                // Confirm Password input
+                _buildTextField(confirmPasswordController, 'Confirm Password', Icons.lock_outline, obscureText: true, validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please confirm your password';
+                  }
+                  if (value != passwordController.text) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
+                }),
                 SizedBox(height: 20),
+                // Sign-up button
                 ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // If form is valid, navigate to CategorySelectionPage
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CategorySelectionPage(),
-                        ),
-                      );
-                    }
-                  },
+                  onPressed: isLoading ? null : _signUp,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 108, 106, 157),
                     minimumSize: Size(double.infinity, 50),
@@ -210,24 +133,18 @@ class _SignUpPageState extends State<SignUpPage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: Text(
-                    'Sign Up',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
+                  child: isLoading
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Text('Sign Up', style: TextStyle(fontSize: 18, color: Colors.white)),
                 ),
                 SizedBox(height: 20),
+                // Log in redirection
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Have an account? "),
                     GestureDetector(
-                      onTap: () {
-                        // Navigate to the login page
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                        );
-                      },
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage())),
                       child: Text(
                         'Log In',
                         style: TextStyle(
@@ -243,6 +160,30 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField(
+    TextEditingController controller,
+    String hintText,
+    IconData icon, {
+    bool obscureText = false,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon),
+        hintText: hintText,
+        filled: true,
+        fillColor: const Color.fromARGB(255, 230, 229, 246),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+      ),
+      validator: validator ?? (value) => value == null || value.isEmpty ? 'Please enter your $hintText' : null,
     );
   }
 }

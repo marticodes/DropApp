@@ -27,7 +27,7 @@ const ShareDAO = {
                 const posting_time = new Date().toISOString();
                 const sql = 'INSERT INTO Share (sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, coin_value, active, posting_time, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
                 
-                db.run(sql, [sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, 5, 1, posting_time, status], function(err) {
+                db.run(sql, [sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, coin_value, 1, posting_time, status], function(err) {
                     if (err) {
                         reject(err);
                     } else {

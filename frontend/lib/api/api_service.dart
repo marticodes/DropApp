@@ -56,6 +56,29 @@ class ApiService {
       rethrow;
     }
   }
+
+Future<List<SharingModel>> filterSharingByCategory(List<String> categories) async {
+  try {
+    // Construct the query string
+    final queryString = categories.map((category) => 'categories=$category').join('&');
+
+    // Make the GET request
+    final response = await http.get(Uri.parse('$_baseUrl/api/sharing?$queryString'));
+
+    if (response.statusCode == 200) {
+      // Parse the JSON response
+      final List<dynamic> data = json.decode(response.body);
+
+      // Convert JSON to a list of SharingModel objects
+      return data.map((json) => SharingModel.fromJson(json)).toList();
+    } else {
+      throw Exception('Error filtering sharing by categories: ${response.statusCode}');
+    }
+  } catch (e) {
+    throw Exception('FE: Error filtering sharing by categories: $e');
+  }
+}
+
   
 
   
@@ -88,7 +111,7 @@ class ApiService {
         }),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final data = json.decode(response.body);
         if (data != null && data['product_id'] != null) {
           return data['product_id'];
@@ -243,44 +266,44 @@ Future<int> insertChat(userID1, userID2, product_id, type, sproduct_id) async {
     }
   }
 
-    Future<UserModel> insertUser({
-    required String userName,
-    required String userSurname,
-    required String userCardnum,
-    required String userPicture,
-    required String userLocation,
-  }) async {
-    final url = Uri.parse('$_baseUrl/api/user/insert');
+static Future<int> insertUser({
+  required String userName,
+  required String userSurname,
+  required String userCardnum,
+  required String userLocation,
+  required String hash, 
+}) async {
+  final url = Uri.parse('$_baseUrl/api/user/insert');
 
-    try {
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'user_name': userName,
-          'user_surname': userSurname,
-          'user_cardnum': userCardnum,
-          'user_picture': userPicture,
-          'user_location': userLocation,
-        }),
-      );
+  try {
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'user_name': userName,
+        'user_surname': userSurname,
+        'user_cardnum': userCardnum,
+        'user_location': userLocation,
+        'hash': hash, 
+      }),
+    );
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        return UserModel.fromJson(data); // Convert the response to UserModel
-      } else if (response.statusCode == 401) {
-        throw Exception('Unauthorized access');
-      } else {
-        final errorText = response.body;
-        print('Error status: ${response.statusCode}, message: $errorText');
-        throw Exception('Failed to insert user: $errorText');
-      }
-    } catch (e) {
-      print('Error occurred while inserting user: $e');
-      rethrow;
+    if (response.statusCode == 201) {
+      // Decode the response into a Map and then convert to UserModel
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      return data['user_id'];
+    } else if (response.statusCode == 401) {
+      throw Exception('Unauthorized access');
+    } else {
+      final errorText = response.body;
+      print('Error status: ${response.statusCode}, message: $errorText');
+      throw Exception('Failed to insert user: $errorText');
     }
+  } catch (e) {
+    print('Error occurred while inserting user: $e');
+    rethrow;
   }
-
+}
 
 
   // USER CATS

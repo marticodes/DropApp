@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:drop_app/components/filter_menu_donation.dart';
+import 'package:drop_app/api/api_service.dart'; // Assuming your API file is named api.dart
+import 'package:drop_app/models/user_model.dart'; // Assuming your model file is named user_model.dart
+import 'package:drop_app/global.dart' as globals;
 
 class CustomTopBar extends StatefulWidget implements PreferredSizeWidget {
-  final int moneyCount;
   final Function(String) onSearchChanged;
 
   @override
   final Size preferredSize;
 
-  CustomTopBar({Key? key, this.moneyCount = 7, required this.onSearchChanged}) 
+  const CustomTopBar({Key? key, required this.onSearchChanged})
       : preferredSize = const Size.fromHeight(64.0),
         super(key: key);
 
@@ -18,7 +20,28 @@ class CustomTopBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _CustomTopBarState extends State<CustomTopBar> {
   bool _isSearching = false;
+  int? _moneyCount; // Holds the dynamically fetched coins value
   TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserCoins(); // Fetch coins when the widget is initialized
+  }
+
+  Future<void> _fetchUserCoins() async {
+    try {
+      final user = await ApiService.fetchUserById(globals.userData); // Fetch user data
+      setState(() {
+        _moneyCount = user.coinsNum; // Update the state with fetched coinsNum
+      });
+    } catch (error) {
+      setState(() {
+        _moneyCount = 0; // Fallback to 0 if there's an error
+      });
+      debugPrint('Error fetching user coins: $error');
+    }
+  }
 
   void _toggleSearch() {
     setState(() {
@@ -95,7 +118,7 @@ class _CustomTopBarState extends State<CustomTopBar> {
             ),
             const SizedBox(width: 4),
             Text(
-              '${widget.moneyCount}',
+              _moneyCount == null ? '...' : '$_moneyCount', // Show '...' while loading
               style: TextStyle(color: Colors.black, fontSize: 16),
             ),
             const SizedBox(width: 16),
@@ -103,5 +126,11 @@ class _CustomTopBarState extends State<CustomTopBar> {
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 }

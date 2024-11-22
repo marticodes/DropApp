@@ -4,6 +4,7 @@ import 'package:drop_app/tabs/share.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_app/components/calendar.dart';
 import 'package:drop_app/components/clock.dart';
+import 'package:drop_app/pages/homepage.dart';
 
 
 class Share extends StatefulWidget {
@@ -228,7 +229,12 @@ class _ShareState extends State<Share> {
                   DateTime combinedEnd = DateTime(sproductStartDay.year,sproductStartDay.month, sproductStartDay.day,sproductStartShigan.hour,sproductStartShigan.minute,);
 
                   insertSharing(sproductName, sproductCategory, sproductDescription, combinedStart.toString(), combinedEnd.toString(),1, "New");
-                  Navigator.pop(context);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MyHomePage(title: 'Home', initialTabIndex: 1), // Set the Profile tab index
+                    ),
+                  );
                 },
                 child: const Text(
                   "Post",
