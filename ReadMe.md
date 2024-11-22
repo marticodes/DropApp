@@ -1,16 +1,16 @@
-The backend of the application is divided into four main sections: *Database, **Models, **DAO Functions, and **APIs*.
+## Backend folder explanation:
 
-### *Database*
+## *Database*
 We decided for a local SQLite database during development to avoid the restrictions of an online solution like Firebase, like daily interaction limits. This implies that the changes are only visible locally, so for the final version of the app, we plan to transition to an online database to support scalability and real-world usage.
 ### Models
 Models are used to define the data structures within the application, representing each table in the database. These models act as the blueprint for organizing and validating the data.
-## *DAO Functions*
+### *DAO Functions*
 DAO functions allow communication between the application and the database. They include MySQL queries for interacting with the database and JavaScript code to handle promises and manage asynchronous operations. Additional functions have been implemented assigne the initial coins to new users and calculating coin values for products.
 ### *APIs*
 APIs are responsible for enabling data exchange between the frontend and backend. These functions are organized into distinct categories, corresponding to the tables in the database.
 The login system is currently a simplified version, but both the database and backend code are prepared for an upgrade to a more secure structure using libraries like Passport and LocalStrategy.
 
-FrontEnd folder explenation:
+## FrontEnd folder explenation:
 
 In the frontend folder, there is the lib folder. The lib folder contains api, components, models, pages, tabs and top_bar. The api file provides the frontend api for connecting with the backend which includes many functions among which are fetching and inserting api functions. The models which provide a class for the fetched data from the  database can be found in the models folder. In order to ensure reusability of code and easy use of widgets, we have created the files in the components folder. The main tabs can be found in the tabs folder whereas pages that are obtained by navigating through a tab are present in the pages folder.  The top_bar file contains the code for the top bar which will contain the filter sandwich button, the search bar and the number of coins a user has.
 
