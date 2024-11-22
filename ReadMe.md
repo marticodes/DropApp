@@ -1,1 +1,3 @@
-Our app is bla bla bla 
+FrontEnd folder explenation:
+
+In the frontend folder, there is the lib folder. The lib folder contains api, components, models, pages, tabs and top_bar. The api file provides the frontend api for connecting with the backend which includes many functions among which are fetching and inserting api functions. The models which provide a class for the fetched data from the  database can be found in the models folder. In order to ensure reusability of code and easy use of widgets, we have created the files in the components folder. The main tabs can be found in the tabs folder whereas pages that are obtained by navigating through a tab are present in the pages folder.  The top_bar file contains the code for the top bar which will contain the filter sandwich button, the search bar and the number of coins a user has.
