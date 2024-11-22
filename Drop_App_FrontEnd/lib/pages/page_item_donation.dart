@@ -6,7 +6,7 @@ import 'package:drop_app/components/user_review_name_row.dart';
 class ItemDetailPage extends StatelessWidget {
   final DonationModel item;
 
-  final SERVER_URL = 'http://143.248.127.51:3001/';
+  final SERVER_URL = 'http://143.248.198.42:3001/';
 
   const ItemDetailPage({Key? key, required this.item}) : super(key: key);
 

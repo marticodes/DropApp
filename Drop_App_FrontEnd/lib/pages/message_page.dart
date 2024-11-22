@@ -53,7 +53,7 @@ class _MessagePageState extends State<MessagePage> {
                 CircleAvatar(
                   backgroundColor: Colors.grey[300],
                   radius: 25,
-                  child: const Icon(Icons.person, color: Colors.white, size: 30),
+                  child: Image.asset('assets/images/martina.jpg')
                 ),
                 const SizedBox(width: 12),
                 const Column(

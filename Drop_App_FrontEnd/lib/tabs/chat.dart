@@ -29,36 +29,7 @@ class _ChatListPageState extends State<ChatListPage> {
       'itemName': 'Bowl',
       'date': '2024/11/21',
       'category': 'Share',
-      'avatarUrl': 'https://example.com/avatar1.png',
-    },
-    
-    {
-      'userName': 'Kim Namjoon',
-      'itemName': 'Cooking Pot',
-      'date': '2024/10/30',
-      'category': 'Donation',
-      'avatarUrl': 'https://example.com/avatar1.png',
-    },
-    {
-      'userName': 'Lee Seokmin',
-      'itemName': 'Lamp',
-      'date': '2024/08/21',
-      'category': 'Sharing',
-      'avatarUrl': 'https://example.com/avatar2.png',
-    },
-    {
-      'userName': 'Boo Seungkwan',
-      'itemName': 'Korean books',
-      'date': '2024/09/12',
-      'category': 'Donation',
-      'avatarUrl': 'https://example.com/avatar3.png',
-    },
-    {
-      'userName': 'Jiajin Xia',
-      'itemName': 'Hangers',
-      'date': '2024/07/02',
-      'category': 'Sharing',
-      'avatarUrl': 'https://example.com/avatar4.png',
+      'avatarUrl': 'assets/images/martina.jpg',
     },
   ];
 

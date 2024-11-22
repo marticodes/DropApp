@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 class ChatItem extends StatelessWidget {
   final String userName;
   final String itemName;
-  final String? userAvatarUrl;
-  final String? itemImageUrl;
+  final String userAvatarUrl;
+  final String? itemImageUrl; // Assumes this now refers to an asset path
   final String date;
   final String category;
 
   const ChatItem({
     required this.userName,
     required this.itemName,
-    this.userAvatarUrl,
+    required this.userAvatarUrl,
     this.itemImageUrl,
     required this.date,
     required this.category,
@@ -21,56 +21,11 @@ class ChatItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all( 10.0),
+      padding: const EdgeInsets.all(10.0),
       child: Row(
         children: [
           // Conditional image display
-          category == "Donation"
-              ? Stack(
-                  clipBehavior: Clip.none, // Allows the circle to overflow the stack
-                  children: [
-                    // Square item image or fallback with first letter
-                    itemImageUrl != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(8.0),
-                            child: Image.network(
-                              itemImageUrl!,
-                              width: 50,
-                              height: 50,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return _fallbackItemAvatar(itemName);
-                              },
-                            ),
-                          )
-                        : _fallbackItemAvatar(itemName),
-                    // Circular user avatar positioned to partially overlap the square image
-                    Positioned(
-                      bottom: -4, 
-                      right: -4,
-                      child: userAvatarUrl != null
-                          ? CircleAvatar(
-                              backgroundImage: NetworkImage(userAvatarUrl!),
-                              radius: 12,
-                              onBackgroundImageError: (error, stackTrace) {
-                                // Use fallback if loading fails
-                                return;
-                              },
-                            )
-                          : _fallbackUserAvatar(userName, 12),
-                    ),
-                  ],
-                )
-              : userAvatarUrl != null
-                  ? CircleAvatar(
-                      backgroundImage: NetworkImage(userAvatarUrl!),
-                      radius: 25,
-                      onBackgroundImageError: (error, stackTrace) {
-                        // Use fallback if loading fails
-                        return;
-                      },
-                    )
-                  : _fallbackUserAvatar(userName, 25),
+          _fallbackUserAvatar(userAvatarUrl),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -88,15 +43,10 @@ class ChatItem extends StatelessWidget {
   }
 
   // Fallback widget for user avatar with first letter of userName
-  Widget _fallbackUserAvatar(String name, double radius) {
+  Widget _fallbackUserAvatar(String name) {
     return CircleAvatar(
-      backgroundColor: Colors.blueAccent,
-      radius: radius,
-      child: Text(
-        name[0].toUpperCase(),
-        style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
-      ),
-    );
+
+      child: Image.asset(name),);
   }
 
   // Fallback widget for item image with first letter of itemName
