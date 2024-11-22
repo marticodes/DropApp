@@ -5,6 +5,7 @@ import pkg from 'natural'; // Import the entire 'natural' module
 const { PorterStemmer } = pkg; // Extract PorterStemmer from the module
 import { compareTwoStrings } from 'string-similarity'; // Ensure the package is installed
 
+
 const DonationDAO = {
     async insertDonation(product_name, product_description, product_category, product_picture, donor_id, status) {  //v
         return new Promise((resolve, reject) => {
@@ -183,8 +184,7 @@ const DonationDAO = {
                 reject(error);
             }
         });
-    }
-    
+    },
 
     /*
     async listAllDonations(){

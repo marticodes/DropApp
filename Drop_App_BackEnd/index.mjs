@@ -91,6 +91,44 @@ app.use((req, res, next) => {
 });
 
 //USER API
+app.post('/api/donation/coins', async (req, res) => {
+  try {
+      const { product_id, coin_value, user_id } = req.body;
+
+      // Validate input
+      if (!product_id || !coin_value || !user_id) {
+          return res.status(400).json({ error: 'Missing required fields' });
+      }
+
+      // Process the donation exchange
+      const result = await userDao.donation_money_update(product_id, coin_value, user_id);
+
+      res.status(201).json({ message: result });
+  } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ error: `BE: Error exchanging money for donations: ${err.message}` });
+  }
+});
+
+app.post('/api/sharing/coins', async (req, res) => {
+  try {
+      const { sproduct_id, coin_value, user_id } = req.body;
+
+      // Validate input
+      if (!sproduct_id || !coin_value || !user_id) {
+          return res.status(400).json({ error: 'Missing required fields' });
+      }
+
+      // Process the donation exchange
+      const result = await userDao.sharing_money_update(sproduct_id, coin_value, user_id);
+
+      res.status(201).json({ message: result });
+  } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ error: `BE: Error exchanging money for donations: ${err.message}` });
+  }
+});
+
 app.post('/api/user/graduate', /* [], */
   async (req, res) => {
     try {
@@ -382,7 +420,7 @@ app.post('/api/messages/insert', /* [], */
 app.post('/api/donation/insert', async (req, res) => {
   try {
       const { product_name, product_description, product_category, product_picture, donor_id, status } = req.body;
-      const product_id = await donationDao.insertDonation(
+      const product_id = await userCategoriesDao.insertDonation(
           req.body.product_name, 
           req.body.product_description, 
           req.body.product_category, 
@@ -395,6 +433,9 @@ app.post('/api/donation/insert', async (req, res) => {
       res.status(503).json({ error: `BE: Error inserting new donation ${err}` });
   }
 });
+
+
+
 
 /*
 app.delete('/api/donation/delete', 
