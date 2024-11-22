@@ -75,7 +75,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                   // Navigate to User Profile Page
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => UserProfilePage()),
+                    MaterialPageRoute(builder: (context) => UserProfilePage()), //we cannot change this because this page is also used for SignIn
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(

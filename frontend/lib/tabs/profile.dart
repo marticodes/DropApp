@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:drop_app/pages/category_selection_page.dart';
-import 'package:drop_app/top_bar/top_bar_go_back.dart';
+//import 'package:drop_app/top_bar/top_bar_go_back.dart';
+import 'package:drop_app/top_bar/bar_only_coins.dart';
+
 class UserProfilePage extends StatelessWidget {
   final String name = "Erika";
   final String surname = "Astigiano";
@@ -12,7 +14,7 @@ class UserProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BackTopBar(),
+      appBar: BackTopBarr(),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
