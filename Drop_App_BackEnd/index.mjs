@@ -358,10 +358,10 @@ app.get('/api/chat/:chat_id/type',
     }
   });
 
-app.get('/api/chat/all/:user_id_1/:user_id_2',
+app.get('/api/chat/all/:user_id_1',
   async (req, res) => {
     try {
-      const chats = await chatDao.getAllChatsByUser(req.params.user_id_1, req.params.user_id_2);
+      const chats = await chatDao.getAllChatsByUser(req.params.user_id_1);
       res.status(200).json(chats);
     } catch (err) {
       res.status(500).json({ error: `BE: Error retrieving list of chats for a user ${err}` });

@@ -89,11 +89,11 @@ const ChatDAO = {
         });
     },
 
-    async getAllChatsByUser(user_id_1, user_id_2){ //v
+    async getAllChatsByUser(user_id_1){ //v
         return new Promise((resolve, reject) => {
             try {
-                const sql = 'SELECT * FROM Chat WHERE user_id_1 = ? OR user_id_2=?';
-                return db.all(sql, [user_id_1, user_id_2], (err, rows) => {
+                const sql = 'SELECT * FROM Chat WHERE (user_id_1 = ? OR user_id_2=?)';
+                return db.all(sql, [user_id_1, user_id_1], (err, rows) => {
                     if (err) {
                         reject(err);
                     } else if (rows.length === 0) {

@@ -330,8 +330,8 @@ const getChatType = async (chat_id) => { //0=donation, 1=sharing
     }
 };
 
-const getAllChatsForUser = async (user_id_1, user_id_2) => {    //put 0 for the other one
-    const response = await fetch(SERVER_URL + `/api/chat/all/${user_id_1}/${user_id_2}`, {
+const getAllChatsForUser = async (user_id_1) => {    //put 0 for the other one
+    const response = await fetch(SERVER_URL + `/api/chat/all/${user_id_1}`, {
         method: 'GET',
     });
     if (response.ok) {
