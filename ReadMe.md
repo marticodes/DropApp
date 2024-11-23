@@ -95,7 +95,7 @@ Set-ExecutionPolicy Unrestricted
 
 1. Open a project and open the “Extensions” section of VScode.
     
-    ![drop.png](ReadMEimages/drop.png)
+    ![drop.png](ReadMEimages/extensions.png)
     
 2. Type “Flutter”, open the first result and install it.
     
