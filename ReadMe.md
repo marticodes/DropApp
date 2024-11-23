@@ -1,6 +1,6 @@
 ## Backend folder explanation:
 
-## *Database*
+### *Database*
 We decided for a local SQLite database during development to avoid the restrictions of an online solution like Firebase, like daily interaction limits. This implies that the changes are only visible locally, so for the final version of the app, we plan to transition to an online database to support scalability and real-world usage.
 ### Models
 Models are used to define the data structures within the application, representing each table in the database. These models act as the blueprint for organizing and validating the data.
