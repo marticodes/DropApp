@@ -17,6 +17,7 @@ In the frontend folder, there is the lib folder. The lib folder contains api, co
 **Instructions**
 
 Once the prototype has started, the first page shown will be the login. Please, enter with the following credentials.
+
 student_id: 20246475
 password: try12345
 
