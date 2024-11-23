@@ -48,7 +48,7 @@ node -v
 1. npm is installed automatically when you download Node, but in case of errors you can type:
 
 ```jsx
-Set-ExecutionPolicy Unrestricted For frontend
+Set-ExecutionPolicy Unrestricted
 ```
 
 ### VSCode
