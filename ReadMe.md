@@ -114,6 +114,7 @@ Set-ExecutionPolicy Unrestricted
 
 ```jsx
 cd backend
+rm -rf node_modules
 npm install
 npm rebuild sqlite3
 node index.mjs
