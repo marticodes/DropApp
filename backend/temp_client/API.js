@@ -330,8 +330,8 @@ const getChatType = async (chat_id) => { //0=donation, 1=sharing
     }
 };
 
-const getAllChatsForUser = async (user_id_1, user_id_2) => {    //put 0 for the other one
-    const response = await fetch(SERVER_URL + `/api/chat/all/${user_id_1}/${user_id_2}`, {
+const getAllChatsForUser = async (user_id_1) => {    //put 0 for the other one
+    const response = await fetch(SERVER_URL + `/api/chat/all/${user_id_1}`, {
         method: 'GET',
     });
     if (response.ok) {
@@ -650,12 +650,59 @@ const filterSharingByCategory = async (categories) => {
     }
 };
 
+const donationCoinExchange = async (product_id, coin_value, user_id) => { // user_id is the current user
+    try {
+        const response = await fetch(SERVER_URL + '/api/donation/coins', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ product_id, coin_value, user_id }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return data.product_id;
+        } else if (response.status === 401) {
+            throw new UnauthorizedError('Unauthorized access');
+        } else {
+            const errorText = await response.text();
+            throw new Error(`FE: Error status: ${response.status}, message: ${errorText}`);
+        }
+    } catch (error) {
+        console.error(error.message);
+        throw error; 
+    }
+};
+
+const sharingCoinExchange = async (sproduct_id, coin_value, user_id) => { // user_id is the current user
+    try {
+        const response = await fetch(SERVER_URL + '/api/sharing/coins', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sproduct_id, coin_value, user_id }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return data.product_id;
+        } else if (response.status === 401) {
+            throw new UnauthorizedError('Unauthorized access');
+        } else {
+            const errorText = await response.text();
+            throw new Error(`FE: Error status: ${response.status}, message: ${errorText}`);
+        }
+    } catch (error) {
+        console.error(error.message);
+        throw error;
+    }
+};
+
+
 
 const API = {logIn, getUserInfo, logOut, handleInvalidResponse, getCategoriesList, getAllCategoriesByUserId, getSingleCategoryByUserId, insertUserCategory, deleteUserCategory,
     getChatUsers, getChatProduct, getChatType, insertChat, getMessagesByChatId, insertMessage, insertDonation, inactiveDonation, listActiveDonations, listMyActiveDonations,
     listAllMyDonations, filterDonationsByCoin, filterDonationsByCategory, insertSharing, inactiveSharing, listActiveSharing, listMyActiveSharing, listAllMySharing,
     filterSharingByCoin, filterSharingByCategory, setUserAsGraduate, getUserProfileInfo, isUserActive, setUserAsInactive, insertUser, getAllChatsForUser, getChatIdByUserAndProduct,
-    getUserRating, addAReview, removeUserPicture, addUserPicture};
+    getUserRating, addAReview, removeUserPicture, addUserPicture, donationCoinExchange, sharingCoinExchange};
 
 //TO DO: discuss about API for coin assignment
 //TO DO: discuss about login (Might need to change db attributes for user)

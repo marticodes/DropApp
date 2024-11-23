@@ -168,17 +168,17 @@ Future<List<SharingModel>> filterSharingByCategory(List<String> categories) asyn
   }
 
   // CHATS
-  Future<List<Map<String, dynamic>>> fetchAllChatsForUser(int userId1, int userId2) async {
+  static Future<List<ChatModel>> fetchAllChatsForUser(int userId1) async {
   final response = await http.get(
-    Uri.parse('$_baseUrl/api/chat/all/$userId1/$userId2'),
+    Uri.parse('$_baseUrl/api/chat/all/$userId1'),
   );
   if (response.statusCode == 200) {
-    return List<Map<String, dynamic>>.from(json.decode(response.body));
+    return List<ChatModel>.from(json.decode(response.body));
   } else {
     throw Exception('Failed to load chats');
   }
 }
-Future<int> insertChat(userID1, userID2, product_id, type, sproduct_id) async {
+static Future<int> insertChat(userID1, userID2, product_id, type, sproduct_id) async {
     final url = Uri.parse('$_baseUrl/api/chats/insert');
 
     try {
@@ -186,14 +186,14 @@ Future<int> insertChat(userID1, userID2, product_id, type, sproduct_id) async {
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
-        'userID1': userID1,
-        'userID2': userID2,
+        'user_id_1': userID1,
+        'user_id_2': userID2,
         'product_id': product_id,
         'type': type,
         'sproduct_id': sproduct_id,
       }),
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final data = json.decode(response.body);
         if (data != null && data['chat_id'] != null) {
           return data['chat_id'];
@@ -226,7 +226,7 @@ Future<int> insertChat(userID1, userID2, product_id, type, sproduct_id) async {
     }
   }
 
-  Future<int> insertMessage({
+  static Future<int> insertMessage({
     required int chatId,
     required String content,
     required String image,
@@ -248,7 +248,7 @@ Future<int> insertChat(userID1, userID2, product_id, type, sproduct_id) async {
         }),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final data = json.decode(response.body);
         if (data != null && data['message_id'] != null) {
           return data['message_id']; // Return the message_id received from backend

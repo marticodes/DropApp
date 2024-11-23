@@ -1,4 +1,3 @@
-import 'package:drop_app/models/chat_model.dart';
 import 'package:drop_app/pages/message_page.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_app/components/single_chat.dart';
@@ -10,12 +9,8 @@ class ChatListPage extends StatefulWidget {
 }
 
 class _ChatListPageState extends State<ChatListPage> {
-  String userId1 = '1';
   String selectedFilter = 'All'; // Track selected filter
   String _searchQuery = ''; // Holds the search input
-  final List<ChatModel> _chatModelPosts=  [];
-  
-
 
     void _onSearchChanged(String query) {
     setState(() {
@@ -25,11 +20,32 @@ class _ChatListPageState extends State<ChatListPage> {
 
   final List<Map<String, String>> chatItems = [
     {
-      'userName': 'Martina Di Paola',
-      'itemName': 'Bowl',
-      'date': '2024/11/21',
-      'category': 'Share',
-      'avatarUrl': 'assets/images/martina.jpg',
+      'userName': 'Kim Namjoon',
+      'itemName': 'Cooking Pot',
+      'date': '2024/10/30',
+      'category': 'Donation',
+      'avatarUrl': 'https://example.com/avatar1.png',
+    },
+    {
+      'userName': 'Lee Seokmin',
+      'itemName': 'Lamp',
+      'date': '2024/08/21',
+      'category': 'Sharing',
+      'avatarUrl': 'https://example.com/avatar2.png',
+    },
+    {
+      'userName': 'Boo Seungkwan',
+      'itemName': 'Korean books',
+      'date': '2024/09/12',
+      'category': 'Donation',
+      'avatarUrl': 'https://example.com/avatar3.png',
+    },
+    {
+      'userName': 'Jiajin Xia',
+      'itemName': 'Hangers',
+      'date': '2024/07/02',
+      'category': 'Sharing',
+      'avatarUrl': 'https://example.com/avatar4.png',
     },
   ];
 
@@ -89,11 +105,11 @@ class _ChatListPageState extends State<ChatListPage> {
                 final chat = filteredChatItems[index];
                 return GestureDetector(
                   onTap: () {
-                      // Navigate to the placeholder page on tap
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => MessagePage()),
-                      );
+                      // // Navigate to the placeholder page on tap
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(builder: (context) => MessagePage()),
+                      // );
                     },
                   child: ChatItem(
                     userName: chat['userName']!,

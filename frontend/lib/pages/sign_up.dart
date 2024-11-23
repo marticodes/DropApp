@@ -108,6 +108,15 @@ class _SignUpPageState extends State<SignUpPage> {
                 SizedBox(height: 15),
                 // Location input
                 _buildTextField(locationController, 'Location', Icons.location_on),
+                SizedBox(height: 5), // Add a small gap between the field and the description
+                Text(
+                  "Example: W8, N1, N19...", 
+                  style: TextStyle(
+                    color: Colors.grey, // Use gray for the description text
+                    fontSize: 14,        // Adjust the font size if needed
+                    fontStyle: FontStyle.italic, // Optional: make it italic for distinction
+                  ),
+                ),
                 SizedBox(height: 15),
                 // Password input
                 _buildTextField(passwordController, 'Password', Icons.lock, obscureText: true),
