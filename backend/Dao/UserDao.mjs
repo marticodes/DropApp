@@ -37,6 +37,40 @@ export default function UserDao() {
         });
     };
 
+    this.addMoneyFromUser = (user_id, coin_amount) => {
+        return new Promise((resolve, reject) => {
+            try {
+                const sql = 'UPDATE User SET coins_num = coins_num - ?, WHERE user_id = ?';
+                db.run(sql, [coin_amount, user_id], function (err) {
+                    if (err) {
+                      reject(err);
+                    }else {
+                      resolve(this.changes > 0); //at least one line changed
+                    }
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+
+    this.removeMoneyFromUser = (user_id, coin_amount) => {
+        return new Promise((resolve, reject) => {
+            try {
+                const sql = 'UPDATE User SET coins_num = coins_num - ? WHERE user_id = ?';
+                db.run(sql, [coin_amount, user_id], function (err) {
+                    if (err) {
+                      reject(err);
+                    }else {
+                      resolve(this.changes > 0); //at least one line changed
+                    }
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    };
+
     this.getRating = (user_id) => {
         return new Promise((resolve, reject) => {
             try {
@@ -104,8 +138,8 @@ export default function UserDao() {
             }
     
             try {
-                const sql = 'INSERT INTO User (user_name, user_surname, user_cardnum, coins_num, user_picture, user_rating, user_location, user_graduated, hash, salt, active, num_rev) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)';
-                db.run(sql, [user_name, user_surname, user_cardnum, coins_num, "null", 0, user_location, 0, hash, null, 1, 0], function(err) { 
+                const sql = 'INSERT INTO User (user_name, user_surname, user_cardnum, coins_num, user_rating, user_location, user_graduated, hash, salt, active, num_rev) VALUES (?,?,?,?,?,?,?,?,?,?,?)';
+                db.run(sql, [user_name, user_surname, user_cardnum, coins_num, 0, user_location, 0, hash, null, 1, 0], function(err) { 
                     if (err) {
                         reject(err);
                     } else if (this.changes === 0) { 
@@ -238,8 +272,113 @@ export default function UserDao() {
                 }
             });
         });
+    };
+
+    this.donation_money_update = (product_id, coin_value, user_id) => {
+        // Start a transaction manually
+        return new Promise((resolve, reject) => {
+            db.serialize(() => {
+                db.run('BEGIN TRANSACTION', (err) => {
+                    if (err) {
+                        reject('Error starting transaction');
+                        return;
+                    }
+
+                    // Step 1: Fetch user info
+                    this.getUserInfo(user_id).then(currentUser => {
+                        if (!currentUser) {
+                            throw new Error('User not found');
+                        }
+                        if (currentUser.coins_num < coin_value) {
+                            throw new Error('Not enough coins');
+                        }
+
+                        // Step 2: Fetch donor_id
+                        const query = 'SELECT donor_id FROM Donation WHERE product_id = ?';
+                        db.get(query, [product_id], (err, row) => {
+                            if (err || !row) {
+                                reject(err || 'Donation not found');
+                                return;
+                            }
+                            const donor_id = row.donor_id;
+
+                            // Step 3: Update coins for both users
+                            const updateUserQuery = 'UPDATE User SET coins_num = coins_num - ? WHERE user_id = ?';
+                            db.run(updateUserQuery, [coin_value, user_id], (err) => {
+                                if (err) {
+                                    reject('Error updating user coins');
+                                    return;
+                                }
+                                db.run('UPDATE User SET coins_num = coins_num + ? WHERE user_id = ?', [coin_value, donor_id], (err) => {
+                                    if (err) {
+                                        reject('Error updating donor coins');
+                                        return;
+                                    }
+                                    // Step 4: Mark donation as inactive
+                                    db.run('UPDATE Donation SET active = 0 WHERE product_id = ?', [product_id], (err) => {
+                                        if (err) {
+                                            reject('Error deactivating donation');
+                                            return;
+                                        }
+                                        // Commit the transaction
+                                        db.run('COMMIT', (err) => {
+                                            if (err) {
+                                                reject('Error committing transaction');
+                                            } else {
+                                                resolve('Donation processed successfully');
+                                            }
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    }).catch(reject);
+                });
+            });
+        });
     }
 
+    //--------------------------------------------------------------------------------------------------------------------
+    this.sharing_money_update = (sproduct_id, coin_value, user_id) => {
+        // Start a transaction manually
+        return new Promise((resolve, reject) => {
+            db.serialize(() => {
+                db.run('BEGIN TRANSACTION', (err) => {
+                    if (err) {
+                        reject('Error starting transaction');
+                        return;
+                    }
+    
+                    // Update the user's coins
+                    db.run('UPDATE User SET coins_num = coins_num + ? WHERE user_id = ?', [coin_value, user_id], (err) => {
+                        if (err) {
+                            reject('Error updating donor coins');
+                            return;
+                        }
+    
+                        // Mark sharing as inactive
+                        db.run('UPDATE Share SET active = 0 WHERE sproduct_id = ?', [sproduct_id], (err) => {
+                            if (err) {
+                                reject('Error deactivating donation');
+                                return;
+                            }
+    
+                            // Commit the transaction
+                            db.run('COMMIT', (err) => {
+                                if (err) {
+                                    reject('Error committing transaction');
+                                } else {
+                                    resolve('Donation processed successfully');
+                                }
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    };
+    
+    //--------------------------------------------------------------------------------------------
     /*
     this.deleteUser=() => { //this will cascade to all the chats that have the user
         const sql = 'DELETE * FROM User WHERE user_id = ?';
@@ -247,4 +386,3 @@ export default function UserDao() {
     };
     */
 }
-

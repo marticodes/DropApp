@@ -26,7 +26,6 @@ const messageDao = MessageDAO;
 const shareDao = ShareDAO;
 const userCategoriesDao = UserCategoriesDAO;
 const userDao = new UserDAO();
-import * as path from 'path';
 
 const SERVER_URL = 'http://localhost:3001/api';
 
@@ -40,9 +39,7 @@ const app = express();
 const port = 3001;
 app.use(morgan('dev'));
 app.use(express.json());
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
-app.use(express.static('Img'));
-
+app.use(express.static('Img')); //path for image folder
 
 //cors
 //const corsOptions = {
@@ -94,6 +91,44 @@ app.use((req, res, next) => {
 });
 
 //USER API
+app.post('/api/donation/coins', async (req, res) => {
+  try {
+      const { product_id, coin_value, user_id } = req.body;
+
+      // Validate input
+      if (!product_id || !coin_value || !user_id) {
+          return res.status(400).json({ error: 'Missing required fields' });
+      }
+
+      // Process the donation exchange
+      const result = await userDao.donation_money_update(product_id, coin_value, user_id);
+
+      res.status(201).json({ message: result });
+  } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ error: `BE: Error exchanging money for donations: ${err.message}` });
+  }
+});
+
+app.post('/api/sharing/coins', async (req, res) => {
+  try {
+      const { sproduct_id, coin_value, user_id } = req.body;
+
+      // Validate input
+      if (!sproduct_id || !coin_value || !user_id) {
+          return res.status(400).json({ error: 'Missing required fields' });
+      }
+
+      // Process the donation exchange
+      const result = await userDao.sharing_money_update(sproduct_id, coin_value, user_id);
+
+      res.status(201).json({ message: result });
+  } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ error: `BE: Error exchanging money for donations: ${err.message}` });
+  }
+});
+
 app.post('/api/user/graduate', /* [], */
   async (req, res) => {
     try {
@@ -326,10 +361,10 @@ app.get('/api/chat/:chat_id/type',
     }
   });
 
-app.get('/api/chat/all/:user_id_1/:user_id_2',
+app.get('/api/chat/all/:user_id_1',
   async (req, res) => {
     try {
-      const chats = await chatDao.getAllChatsByUser(req.params.user_id_1, req.params.user_id_2);
+      const chats = await chatDao.getAllChatsByUser(req.params.user_id_1);
       res.status(200).json(chats);
     } catch (err) {
       res.status(500).json({ error: `BE: Error retrieving list of chats for a user ${err}` });
@@ -385,7 +420,7 @@ app.post('/api/messages/insert', /* [], */
 app.post('/api/donation/insert', async (req, res) => {
   try {
       const { product_name, product_description, product_category, product_picture, donor_id, status } = req.body;
-      const product_id = await donationDao.insertDonation(
+      const product_id = await userCategoriesDao.insertDonation(
           req.body.product_name, 
           req.body.product_description, 
           req.body.product_category, 
@@ -398,6 +433,9 @@ app.post('/api/donation/insert', async (req, res) => {
       res.status(503).json({ error: `BE: Error inserting new donation ${err}` });
   }
 });
+
+
+
 
 /*
 app.delete('/api/donation/delete', 

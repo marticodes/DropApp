@@ -1,19 +1,53 @@
+import 'package:drop_app/api/api_service.dart';
+import 'package:drop_app/models/chat_model.dart';
+import 'package:drop_app/models/sharing_post_model.dart';
+import 'package:drop_app/models/user_model.dart';
+import 'package:drop_app/pages/message_page.dart';
 import 'package:flutter/material.dart';
 import 'package:drop_app/models/donation_post_model.dart';
 import 'package:drop_app/top_bar/top_bar_go_back.dart';
 import 'package:drop_app/components/user_review_name_row.dart';
+import 'package:drop_app/global.dart' as globals;
 
-class ItemDetailPage extends StatelessWidget {
+
+class ItemDetailPage extends StatefulWidget {
   final DonationModel item;
+  const ItemDetailPage({Key? key, required this.item}) : super(key: key);
+  @override
+  ItemDetailPageState createState() => ItemDetailPageState();
 
+}
+
+class ItemDetailPageState extends State<ItemDetailPage> {
+  final int rating = 4;
   final SERVER_URL = 'http://localhost:3001/';
 
-  const ItemDetailPage({Key? key, required this.item}) : super(key: key);
-
-  final int rating = 4;
+  Future<int> insertChat( userID1,
+        userID2,
+        productID,
+        type,
+        sproductId,
+        ) async {
+       int productId = await ApiService.insertChat(
+        userID1,
+        userID2,
+        productID,
+        type,
+        sproductId,
+      );
+      return productId;
+  }
 
   @override
   Widget build(BuildContext context) {
+  DonationModel item = widget.item;
+
+  Future<UserModel> fetchUserById(DonationModel item) async {
+  UserModel user =  await ApiService.fetchUserById(item.donorId);
+  return user;
+  }
+
+
     return Scaffold(
       appBar: BackTopBar(),
       body: Column(
@@ -85,8 +119,41 @@ class ItemDetailPage extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              onPressed: () {
-                // Add chat logic here
+              onPressed: () async {
+                int requestedById = item.donorId; // Ensure this is valid
+                int sproductId = item.productId; // Ensure this is valid
+                int productType = 0;
+                int chatId = await insertChat(1, requestedById, item.donorId, productType, sproductId);
+                ChatModel chat = ChatModel(
+                    chatId: chatId,
+                    userId1: globals.userData,
+                    userId2: requestedById,
+                    productId: item.productId,
+                    type: productType,
+                    sproductId: sproductId
+                  );
+
+                  // Navigate to the MessagePage only after the API call completes
+                  SharingModel d = SharingModel(
+                    sproductId: 0,
+                    sproductName: 'Eh',
+                    sproductCategory: '',
+                    sproductDescription: '',
+                    borrowerID: 0,
+                    coinValue: 0,
+                    active: 0,
+                    postingTime: '',
+                    status: '',
+                    sproductEndTime: '',
+                    sproductStartTime: ''
+                  );
+
+                UserModel user = await fetchUserById(item);
+                
+                Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => MessagePage(dpost: item, spost: d, chat: chat, user: user)),
+                      );
               },
               child: Center(child: Text('Chat', style: TextStyle(fontSize: 18, color:  const Color.fromARGB(221, 255, 255, 255)))),
             ),
