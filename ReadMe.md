@@ -78,8 +78,6 @@ cd frontend
 flutter run -d chrome --web-browser-flag "--disable-web-security"
 ```
 
-If the frontend is not working properly, 
-
 ## References
 
 [1]: [https://nodejs.org/en/download/package-manager](https://nodejs.org/en/download/package-manager)
