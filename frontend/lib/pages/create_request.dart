@@ -44,7 +44,7 @@ class _ShareState extends State<Share> {
         status
       );
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Sharing inserted! Product ID: $productId')),
+        SnackBar(content: Text('Sharing inserted successfully!')),
       );
   }
   
