@@ -69,7 +69,6 @@ class _DonateState extends State<Donate> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Create New Donation Post"),
-        backgroundColor: purpleDrop,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
@@ -79,23 +78,31 @@ class _DonateState extends State<Donate> {
             // Item Name
             getLabel("Item Name"),
             const SizedBox(height: 5),
-            TextField(
-              decoration: InputDecoration(
-                hintText: 'Enter Item Name',
-                hintStyle: hintTextStyle,
-                border: const OutlineInputBorder(),
-              ),
+            SizedBox(
+              width: 200,
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Enter Item Name',
+                  hintStyle: hintTextStyle,
+                  border: const OutlineInputBorder(),
+                ),
               onChanged: (value) => productName = value,
+              ),
             ),
             const SizedBox(height: 10),
 
-            // Category
-            getLabel("Category"),
-            const SizedBox(height: 5),
-            DropdownButtonFormField<String>(
+          // Category
+          getLabel("Category"),
+          const SizedBox(height: 5),
+          SizedBox(
+            width: 200,  // Set width to 200
+            child: DropdownButtonFormField<String>(
               value: productCategory,
-              hint: Text('Select Category', style: hintTextStyle),
-              items: categoryList.map((value) {
+              hint: Text(
+                'Select Category',
+                style: hintTextStyle,
+              ),
+              items: categoryList.map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
@@ -106,12 +113,15 @@ class _DonateState extends State<Donate> {
               }),
               decoration: const InputDecoration(border: OutlineInputBorder()),
             ),
-            const SizedBox(height: 10),
+          ),
+          const SizedBox(height: 10),
 
-            // Item Condition
-            getLabel("Item Condition"),
-            const SizedBox(height: 5),
-            DropdownButtonFormField<String>(
+          // Item Condition
+          getLabel("Item Condition"),
+          const SizedBox(height: 5),
+          SizedBox(
+            width: 200,  // Set width to 200
+            child: DropdownButtonFormField<String>(
               value: status,
               hint: Text('Select Condition', style: hintTextStyle),
               items: conditionList.map((value) {
@@ -125,45 +135,45 @@ class _DonateState extends State<Donate> {
               }),
               decoration: const InputDecoration(border: OutlineInputBorder()),
             ),
-            const SizedBox(height: 10),
+          ),
+          const SizedBox(height: 10),
+
 
             
-// Add Image
-            getLabel("Add Image"),
-            const SizedBox(height: 5),
-            GestureDetector(
-              onTap: () async {
-                // final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
-                // if (pickedImage != null) {
-                //   setState(() {
-                //     image = pickedImage;
-                //   });
-                // }
-              },
-              child: Container(
-                width: double.infinity,
-                height: 100,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.grey[200],
+        // Add Image
+        getLabel("Add Image"),
+        const SizedBox(height: 5),
+        GestureDetector(
+          onTap: () async {
+            // final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
+            // if (pickedImage != null) {
+            //   setState(() {
+            //     image = pickedImage;
+            //   });
+            // }
+          },
+          child: Container(
+            width: double.infinity,
+            height: 100,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.grey[200],
+            ),
+            child: Center(
+              child: Text(
+                "Image uploading not available yet",
+                style: TextStyle(
+                  color: Colors.grey, 
+                  fontSize: 16,        
+                  fontStyle: FontStyle.italic,
                 ),
-                child: Container(),
-                // image == null
-                //     ? Column(
-                //         mainAxisAlignment: MainAxisAlignment.center,
-                //         children: const [
-                //           Icon(Icons.add_a_photo, size: 40, color: Colors.grey),
-                //           Text("Click to add image from Gallery"),
-                //         ],
-                //       )
-                //     : Image.file(
-                //         File(image!.path),
-                //         fit: BoxFit.cover,
-                //       ),
+                textAlign: TextAlign.center, 
               ),
             ),
-            const SizedBox(height: 15),
+          ),
+        ),
+        const SizedBox(height: 15),
 
             // Description
             getLabel("Description"),

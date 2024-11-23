@@ -72,10 +72,10 @@ Future<List<SharingModel>> filterSharingByCategory(List<String> categories) asyn
       // Convert JSON to a list of SharingModel objects
       return data.map((json) => SharingModel.fromJson(json)).toList();
     } else {
-      throw Exception('Error filtering sharing by categories: ${response.statusCode}');
+      throw Exception('Must select a category to filter!');
     }
   } catch (e) {
-    throw Exception('FE: Error filtering sharing by categories: $e');
+    throw Exception('Must select a category to filter!');
   }
 }
 
@@ -133,23 +133,37 @@ Future<List<SharingModel>> filterSharingByCategory(List<String> categories) asyn
 
     Future<List<DonationModel>> filterDonationsByCategory(List<String> categories) async {
     try {
-      // Construct the query string
       final queryString = categories.map((category) => 'categories=$category').join('&');
 
-      // Make the GET request
       final response = await http.get(Uri.parse('$_baseUrl/api/donations?$queryString'));
 
-      if (response.statusCode == 200) {
-        // Parse the JSON response
+      if (response.statusCode == 200) {  //check code 
         final List<dynamic> data = json.decode(response.body);
 
-        // Convert JSON to a list of Donation objects
         return data.map((json) => DonationModel.fromJson(json)).toList();
       } else {
-        throw Exception('Error filtering donations by categories: ${response.statusCode}');
+        throw Exception('Must select a category to filter!');
       }
     } catch (e) {
       throw Exception('FE: Error filtering donations by categories: $e');
+    }
+  }
+
+  static Future<List<DonationModel>> filterDonationsByCoin(int min, int max) async {
+    try {
+      final url = Uri.parse('$_baseUrl/api/donations/$min/$max');
+
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> donationsJson = json.decode(response.body);
+
+        return donationsJson.map((d) => DonationModel.fromJson(d)).toList();
+      } else {
+        throw Exception('Error: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('FE: Error filtering by coins: $e');
     }
   }
 

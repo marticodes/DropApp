@@ -20,34 +20,53 @@ class DonatePage extends StatefulWidget {
 class _DonatePageState extends State<DonatePage> {
   String _searchQuery = '';
   List<DonationModel> _donationPosts = [];
-  bool _isFiltered = false; // Tracks if the list is filtered
+  bool _isFiltered = false;
   final ApiService _apiService = ApiService();
 
   @override
   void initState() {
     super.initState();
-    fetchDonationPosts(); // Fetch all posts on initialization
+    fetchDonationPosts();
   }
 
   Future<void> fetchDonationPosts() async {
-    List<DonationModel> posts = await ApiService.fetchActiveDonationPosts();
-    setState(() {
-      _isFiltered = false; // Reset filter flag
-      _donationPosts = posts;
-    });
-  }
-
-  Future<void> filterDonationsByCategories(List<String> categories) async {
     try {
-      List<DonationModel> filteredPosts = await _apiService.filterDonationsByCategory(categories);
+      List<DonationModel> posts = await ApiService.fetchActiveDonationPosts();
       setState(() {
-        _isFiltered = true; // Set filter flag
-        _donationPosts = filteredPosts;
+        _isFiltered = false;
+        _donationPosts.clear();
+        _donationPosts.addAll(posts.reversed);
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error filtering donations: $e')),
-      );
+      print("Error fetching posts: $e");
+    }
+  }
+
+  Future<void> applyFilters(List<String> categories, int? minCoins, int? maxCoins) async {
+    try {
+      if (categories.isNotEmpty) {
+
+        // Filter by categories
+        List<DonationModel> filteredPosts = await _apiService.filterDonationsByCategory(categories);
+        setState(() {
+          _isFiltered = true;
+          _donationPosts.clear();
+          _donationPosts.addAll(filteredPosts.reversed);
+        });
+      } else if (minCoins != null && maxCoins != null) {
+        // Filter by coin range
+        List<DonationModel> filteredPosts = await ApiService.filterDonationsByCoin(minCoins, maxCoins);
+        setState(() {
+          _isFiltered = true;
+          _donationPosts.clear();
+          _donationPosts.addAll(filteredPosts.reversed);
+        });
+        
+      } else {
+        await fetchDonationPosts(); // Reset to all posts
+      }
+    } catch (e) {
+      print("Error applying filters: $e");
     }
   }
 
@@ -66,13 +85,13 @@ class _DonatePageState extends State<DonatePage> {
     return WillPopScope(
       onWillPop: () async {
         if (_isFiltered) {
-          await fetchDonationPosts(); // Reset to show all posts if filtered
+          await fetchDonationPosts(); // Reset to all posts if filtered
         }
         return true;
       },
       child: Scaffold(
         drawer: FilterMenu(
-          onApplyFilters: (categories) => filterDonationsByCategories(categories),
+          onApplyFilters: (categories, minCoins, maxCoins) => applyFilters(categories, minCoins, maxCoins),
         ),
         appBar: CustomTopBar(onSearchChanged: _onSearchChanged),
         body: Padding(
@@ -116,7 +135,7 @@ class _DonatePageState extends State<DonatePage> {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => Donate()),
-              ).then((_) => fetchDonationPosts()), // Re-fetch all posts on return
+              ).then((_) => fetchDonationPosts()),
             ),
             SpeedDialChild(
               child: Image.asset('assets/images/share.png', color: Colors.white, width: 28, height: 28),
@@ -124,7 +143,7 @@ class _DonatePageState extends State<DonatePage> {
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => Share()),
-              ).then((_) => fetchDonationPosts()), // Re-fetch all posts on return
+              ).then((_) => fetchDonationPosts()),
             ),
           ],
         ),

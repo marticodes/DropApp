@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class FilterMenu extends StatefulWidget {
-  final Function(List<String>) onApplyFilters; // Callback to pass selected filters
+  final Function(List<String>, int?, int?) onApplyFilters;
 
   FilterMenu({required this.onApplyFilters});
 
@@ -58,19 +58,11 @@ class _FilterMenuState extends State<FilterMenu> {
                       );
                     }).toList(),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        categories.updateAll((key, value) => false);
-                      });
-                    },
-                    child: Text("Uncheck All"),
-                  ),
                   Divider(
                     thickness: 1,
                     color: Colors.grey[400],
                   ),
-                  SizedBox(height: 1),
+                  SizedBox(height: 10),
                   Text("Coins:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   SizedBox(height: 10),
                   Row(
@@ -91,7 +83,7 @@ class _FilterMenuState extends State<FilterMenu> {
                       Expanded(
                         child: TextField(
                           controller: maxController,
-                          decoration: InputDecoration( // Min 0 e Max 10
+                          decoration: InputDecoration(
                             labelText: "Max",
                             border: OutlineInputBorder(),
                           ),
@@ -104,23 +96,25 @@ class _FilterMenuState extends State<FilterMenu> {
               ),
             ),
             SizedBox(height: 16),
-            SizedBox( // Missing SizedBox wrapper
+            SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Extract selected categories
+                  // Extract selected categories and coin range
                   List<String> selectedCategories = categories.entries
                       .where((entry) => entry.value)
                       .map((entry) => entry.key)
                       .toList();
+                  int minCoins = int.tryParse(minController.text) ?? 1;
+                  int maxCoins = int.tryParse(maxController.text) ?? 10;
 
-                  widget.onApplyFilters(selectedCategories);
+                  widget.onApplyFilters(selectedCategories, minCoins, maxCoins);
                   Navigator.pop(context); // Close the drawer
                 },
                 child: Text(
-  "Filter Items",
-  style: TextStyle(color: Colors.white),
-),
+                  "Filter Items",
+                  style: TextStyle(color: Colors.white),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 108, 106, 157),
                   padding: EdgeInsets.symmetric(vertical: 12),
