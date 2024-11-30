@@ -175,25 +175,10 @@ class ShareDetailPage extends StatefulWidget {
                     type: productType,
                     sproductId: sproductId
                   );
-
-                  // Navigate to the MessagePage only after the API call completes
-                  DonationModel d = DonationModel(
-                    productId: 0,
-                    productName: 'Nope',
-                    productCategory: '',
-                    productDescription: '',
-                    productPicture: '',
-                    donorId: 0,
-                    coinValue: 0,
-                    active: 0,
-                    postingTime: '',
-                    status: ''
-                  );
-
                 
                 Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MessagePage(dpost: d, spost: sharepost, chat: chat, user: user)),
+                        MaterialPageRoute(builder: (context) => MessagePage(post: sharepost, chat: chat, user: user)),
                       );
                       },
               

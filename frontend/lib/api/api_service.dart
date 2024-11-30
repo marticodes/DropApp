@@ -424,4 +424,102 @@ static Future<int> insertUser({
   }
 }
 
+
+//COINS
+
+  static Future<int> donationCoinExchange(int productId, int coinValue, int userId) async {
+
+    final response = await http.post(
+      Uri.parse('$_baseUrl/api/donation/coins'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'product_id': productId,
+        'coin_value': coinValue,
+        'user_id': userId,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return data['product_id']; // Adjust based on the actual response
+    } else {
+      final String errorText = response.body;
+      throw Exception(
+          'FE: Error status: ${response.statusCode}, message: $errorText');
+    }
+  }
+
+  static Future<String> sharingCoinExchange(sproductId, coinValue, userId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/api/sharing/coins'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'sproduct_id': sproductId,
+          'coin_value': coinValue,
+          'user_id': userId,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return data['product_id']; // Adjust based on actual response data
+      } else {
+        final String errorText = response.body;
+        throw Exception(
+            'FE: Error status: ${response.statusCode}, message: $errorText');
+      }
+    } catch (error) {
+      print(error.toString());
+      rethrow; // Rethrow the caught error
+    }
+  }
+
+
+  //INACTIVE POSTS
+  static Future<void> inactiveDonation(String productId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/api/donation/inactive'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'product_id': productId}),
+      );
+
+      if (response.statusCode == 200) {
+        // return json.decode(response.body); // Return the response as a Map
+      }  else {
+        final String errorText = response.body;
+        throw Exception(
+            'FE: Error status: ${response.statusCode}, message: $errorText');
+      }
+    } catch (error) {
+      print(error.toString());
+      rethrow; // Rethrow the caught error
+    }
+  }
+
+static Future<void> inactiveSharing(String sproductId,) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/api/sharing/inactive'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'sproduct_id': sproductId}),
+      );
+
+      if (response.statusCode == 200) {
+        // return json.decode(response.body); // Return the response as a Map
+      } else {
+        final String errorText = response.body;
+        throw Exception(
+            'FE: Error status: ${response.statusCode}, message: $errorText');
+      }
+    } catch (error) {
+      print(error.toString());
+      rethrow; // Rethrow the caught error
+    }
+  }
+
+
+
+
 }

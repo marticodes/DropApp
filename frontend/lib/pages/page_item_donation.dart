@@ -133,26 +133,13 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                     sproductId: 0
                   );
 
-                  // Navigate to the MessagePage only after the API call completes
-                  SharingModel d = SharingModel(
-                    sproductId: 0,
-                    sproductName: 'Eh',
-                    sproductCategory: '',
-                    sproductDescription: '',
-                    borrowerID: 0,
-                    coinValue: 0,
-                    active: 0,
-                    postingTime: '',
-                    status: '',
-                    sproductEndTime: '',
-                    sproductStartTime: ''
-                  );
-
                 UserModel user = await fetchUserById(item);
                 
+
+
                 Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MessagePage(dpost: item, spost: d, chat: chat, user: user)),
+                        MaterialPageRoute(builder: (context) => MessagePage(post: item, chat: chat, user: user)),
                       );
               },
               child: Center(child: Text('Chat', style: TextStyle(fontSize: 18, color:  const Color.fromARGB(221, 255, 255, 255)))),

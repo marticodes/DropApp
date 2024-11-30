@@ -13,10 +13,10 @@ import 'package:intl/intl.dart';
 const serverUrl = 'http://localhost:3001/';
 
 class ShareMessagePage extends StatefulWidget {
-   SharingModel spost;
+   final SharingModel post;
    final ChatModel chat;
    final UserModel user;
- ShareMessagePage({super.key, required this.spost, required this.chat, required this.user});
+ ShareMessagePage({super.key, required this.post, required this.chat, required this.user});
 
   @override
   _ShareMessagePageState createState() => _ShareMessagePageState();
@@ -44,6 +44,14 @@ void initState() {
 
   }
 
+  Future<void> updateSharingMoney(sproductId, coinValue,userId) async {
+    int sId = (await ApiService.sharingCoinExchange(sproductId, coinValue, userId)) as int;
+    setState(() {
+    inactiveSharing(sId);
+    });
+  }
+
+
   Future<int> insertMessage(
         chatId,
         content,
@@ -62,13 +70,22 @@ void initState() {
   }
 
 
+  Future<void> inactiveSharing(
+        sproductId,) async {
+      await ApiService.inactiveSharing(
+        sproductId,
+      );
+
+  }
+
+
   final TextEditingController _messageController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     ChatModel chat = widget.chat;
     UserModel user = widget.user;
-    SharingModel post = widget.spost;
+    SharingModel post = widget.post;
 
     String formatMessageTime(DateTime dateTime) {
   // Format the DateTime object to display HH:MM AM/PM
@@ -254,6 +271,8 @@ void initState() {
   Color buttonColor = const Color.fromARGB(255, 108, 106, 157); // Initial color
 
   void _onButtonPressed() {
+    SharingModel post = widget.post;
+    UserModel user = widget.user;
     if (buttonState == "Confirm") {
       setState(() {
         buttonState = "Returned";
@@ -263,14 +282,14 @@ void initState() {
               moneycount = 8;
               buttonState = "Completed";
               buttonColor = Colors.grey; // Make the button gray
+              updateSharingMoney(post.sproductId, post.coinValue,user.userId);
+            print('Helooooooooooooo');   
             });
       // Show the RatingWidget popup
       showDialog(
         context: context,
         builder: (context) => RatingWidget(
-          onPressed: () {
-            // Update moneycount to 8
-            
+          onPressed: () {        
             Navigator.of(context).pop(); // Close the dialog
           },
         ),
