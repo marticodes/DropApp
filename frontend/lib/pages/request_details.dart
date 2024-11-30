@@ -166,12 +166,12 @@ class ShareDetailPage extends StatefulWidget {
                 int requestedById = user.userId; // Ensure this is valid
                 int sproductId = sharepost.sproductId; // Ensure this is valid
                 int productType = 1;
-                int chatId = await insertChat(1, requestedById, sharepost.borrowerID, productType, sproductId);
+                int chatId = await insertChat(globals.userData, requestedById, 0, productType, sproductId);
                 ChatModel chat = ChatModel(
                     chatId: chatId,
                     userId1: globals.userData,
                     userId2: requestedById,
-                    productId: sharepost.sproductId,
+                    productId: 0,
                     type: productType,
                     sproductId: sproductId
                   );

@@ -168,16 +168,20 @@ Future<List<SharingModel>> filterSharingByCategory(List<String> categories) asyn
   }
 
   // CHATS
+
   static Future<List<ChatModel>> fetchAllChatsForUser(int userId1) async {
   final response = await http.get(
     Uri.parse('$_baseUrl/api/chat/all/$userId1'),
   );
   if (response.statusCode == 200) {
-    return List<ChatModel>.from(json.decode(response.body));
+    final List<dynamic> jsonList = json.decode(response.body);
+    return jsonList.map((json) => ChatModel.fromJson(json)).toList();
   } else {
     throw Exception('Failed to load chats');
   }
 }
+
+
 static Future<int> insertChat(userID1, userID2, product_id, type, sproduct_id) async {
     final url = Uri.parse('$_baseUrl/api/chats/insert');
 
@@ -213,12 +217,33 @@ static Future<int> insertChat(userID1, userID2, product_id, type, sproduct_id) a
     }
   }
 
+  static Future<Map<String, dynamic>> getChatProduct(int chatId) async {
+  final url = '$_baseUrl/api/chat/$chatId/product';
+  final response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    final chatJson = json.decode(response.body);
+    final productId = chatJson[0];
+    final sProductId = chatJson[1];
+    return {
+      'product_id': productId,
+      'sproduct_id': sProductId,
+    };
+  } else {
+    throw Exception('FE: Error getting chat product');
+  }
+}
+
   
   // MESSAGES
   static Future<List<MessageModel>> fetchMessagesByChatId(int chatId) async {
     final response = await http.get(Uri.parse('$_baseUrl/api/messages/$chatId'));
 
     if (response.statusCode == 200) {
+      if (json.decode(response.body) == false ) {
+      // Return an empty list if no messages were found
+      return [];
+    }
       final List<dynamic> data = json.decode(response.body);
       return data.map((json) => MessageModel.fromJson(json)).toList();
     } else {

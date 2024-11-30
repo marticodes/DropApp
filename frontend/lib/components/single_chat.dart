@@ -6,7 +6,7 @@ class ChatItem extends StatelessWidget {
   final String userAvatarUrl;
   final String? itemImageUrl; // Assumes this now refers to an asset path
   final String date;
-  final String category;
+  final int category;
 
   const ChatItem({
     required this.userName,

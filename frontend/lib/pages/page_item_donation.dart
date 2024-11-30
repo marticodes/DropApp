@@ -121,16 +121,16 @@ class ItemDetailPageState extends State<ItemDetailPage> {
               ),
               onPressed: () async {
                 int requestedById = item.donorId; // Ensure this is valid
-                int sproductId = item.productId; // Ensure this is valid
+                int productId = item.productId; // Ensure this is valid
                 int productType = 0;
-                int chatId = await insertChat(1, requestedById, item.donorId, productType, sproductId);
+                int chatId = await insertChat(globals.userData, requestedById, productId, productType, 0);
                 ChatModel chat = ChatModel(
                     chatId: chatId,
                     userId1: globals.userData,
                     userId2: requestedById,
-                    productId: item.productId,
+                    productId: productId,
                     type: productType,
-                    sproductId: sproductId
+                    sproductId: 0
                   );
 
                   // Navigate to the MessagePage only after the API call completes
