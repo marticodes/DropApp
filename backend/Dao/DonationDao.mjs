@@ -50,6 +50,7 @@ const DonationDAO = {
         });
     },
     async listActiveDonations(){   //V
+        console.log("hello");
         return new Promise((resolve, reject) => {
             try {         
                 const sql = 'SELECT * FROM Donation WHERE active = ?';

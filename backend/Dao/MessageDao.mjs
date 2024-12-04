@@ -32,25 +32,33 @@ const MessageDAO = {
         });
     },
     
-    async getMessagesByChatId(chatId){  //gets all messages from the chat
+    async getMessagesByChatId(chat_id) {
+        console.log("Entered messageDao.getMessagesByChatId with chat_id:", chat_id);
+    
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'SELECT * FROM Message WHERE chat_id = ?';
-                return db.all(sql, [chatId], (err, rows) => {
+                console.log(`Executing SQL query: ${sql} with chat_id: ${chat_id}`);
+    
+                db.all(sql, [chat_id], (err, rows) => {
                     if (err) {
+                        console.error("Database error:", err);
                         reject(err);
                     } else if (rows.length === 0) {
-                        resolve(false);
+                        console.log("No messages found for chat_id:", chat_id);
+                        resolve([]);
                     } else {
-                        const messages = rows.map(row => new Message(row.chat_id, row.message_id, row.message_time, row.content, row.image, row.sender_id));
-                        resolve(messages);
+                        console.log(`Found ${rows.length} messages for chat_id: ${chat_id}`);
+                        resolve(rows);
                     }
                 });
             } catch (error) {
+                console.error("Caught error in messageDao.getMessagesByChatId:", error);
                 reject(error);
             }
         });
     }
+    
 };
 
 export default MessageDAO;
