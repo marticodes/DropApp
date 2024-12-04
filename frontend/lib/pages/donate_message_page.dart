@@ -13,10 +13,10 @@ import 'package:intl/intl.dart';
 const serverUrl = 'http://localhost:3001/';
 
 class DonationMessagePage extends StatefulWidget {
-   final DonationModel dpost;
+   final DonationModel post;
    final ChatModel chat;
    final UserModel user;
- DonationMessagePage({super.key, required this.dpost, required this.chat, required this.user});
+ DonationMessagePage({super.key, required this.post, required this.chat, required this.user});
 
   @override
   _DonationMessagePageState createState() => _DonationMessagePageState();
@@ -28,8 +28,11 @@ class _DonationMessagePageState extends State<DonationMessagePage> {
 
     @override
 void initState() {
-  super.initState();
+  // print(widget.chat.chatId);
   fetchMessagesByChatId(widget.chat.chatId);
+  // print('hel');
+  super.initState();
+
 }
 
   Future<void> fetchMessagesByChatId(int chatId) async {
@@ -41,6 +44,13 @@ void initState() {
       _messageModelPosts.addAll(posts);
     });
 
+  }
+
+Future<void> updateDonationMoney(productId, coinValue,userId) async {
+    int Id = (await ApiService.donationCoinExchange(productId, coinValue, userId)) as int;
+    setState(() {
+    inactiveDonation(Id);
+    });
   }
 
  Future<int> insertMessage(
@@ -60,6 +70,15 @@ void initState() {
 
   }
 
+
+  Future<void> inactiveDonation(
+        productId,) async {
+      await ApiService.inactiveDonation(
+        productId,
+      );
+
+  }
+
   final TextEditingController _messageController = TextEditingController();
 
 
@@ -67,7 +86,7 @@ void initState() {
   Widget build(BuildContext context) {
     ChatModel chat = widget.chat;
     UserModel user = widget.user;
-    DonationModel post = widget.dpost;
+    DonationModel post = widget.post;
 
     String formatMessageTime(DateTime dateTime) {
   // Format the DateTime object to display HH:MM AM/PM
@@ -175,7 +194,7 @@ void initState() {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                       formatMessageTime(DateTime.parse(message.messageTime)),
+                       formatMessageTime(DateParse(message.messageTime)),
                         style: const TextStyle(color: Colors.grey, fontSize: 12),
                       ),
                     ],
@@ -247,30 +266,31 @@ void initState() {
     );
   }
 
-
+  DateTime DateParse(String date){try {
+    // Extract only the necessary part before "GMT"
+    String trimmedDate = date.split("GMT")[0].trim();
+    // Use the correct pattern to parse the date
+    return DateFormat("EEE MMM dd yyyy HH:mm:ss").parse(trimmedDate);
+  } catch (e) {
+    print("Date parsing failed for $date: $e");
+    return DateTime.now(); // Fallback to current time
+  }}
 
   String buttonState = "Confirm"; // Initial state
   Color buttonColor = const Color.fromARGB(255, 108, 106, 157); // Initial color
 
   void _onButtonPressed() {
+    DonationModel post = widget.post;
+    UserModel user = widget.user;
     if (buttonState == "Confirm") 
      {
       setState(() {
               moneycount = 8;
               buttonState = "Completed";
               buttonColor = Colors.grey; // Make the button gray
+              updateDonationMoney(post.productId, post.coinValue,user.userId); 
+            print('Helooooooooooooo');   
             });
-      // Show the RatingWidget popup
-      showDialog(
-        context: context,
-        builder: (context) => RatingWidget(
-          onPressed: () {
-            // Update moneycount to 8
-            
-            Navigator.of(context).pop(); // Close the dialog
-          },
-        ),
-      );
     }
   }
 }

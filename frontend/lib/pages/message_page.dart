@@ -13,11 +13,10 @@ import 'package:drop_app/components/rating.dart';
 const serverUrl = 'http://localhost:3001/';
 
 class MessagePage extends StatefulWidget {
-   DonationModel? dpost;
-   SharingModel? spost;
+   final post;
    final ChatModel chat;
    final UserModel user;
- MessagePage({super.key, this.dpost, this.spost, required this.chat, required this.user});
+ MessagePage({super.key, this.post, required this.chat, required this.user});
 
   @override
   _MessagePageState createState() => _MessagePageState();
@@ -29,9 +28,9 @@ class _MessagePageState extends State<MessagePage> {
     ChatModel chat = widget.chat;
     UserModel user = widget.user;
     if(chat.type == 0) 
-      {return DonationMessagePage(chat: chat, dpost: widget.dpost!, user:user );}
+      {return DonationMessagePage(chat: chat, post: widget.post!, user:user );}
     else{
-      return ShareMessagePage(chat: chat, spost: widget.spost!, user:user );
+      return ShareMessagePage(chat: chat, post: widget.post!, user:user );
     }
   }
 

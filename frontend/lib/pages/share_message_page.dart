@@ -13,10 +13,10 @@ import 'package:intl/intl.dart';
 const serverUrl = 'http://localhost:3001/';
 
 class ShareMessagePage extends StatefulWidget {
-   SharingModel spost;
+   final SharingModel post;
    final ChatModel chat;
    final UserModel user;
- ShareMessagePage({super.key, required this.spost, required this.chat, required this.user});
+ ShareMessagePage({super.key, required this.post, required this.chat, required this.user});
 
   @override
   _ShareMessagePageState createState() => _ShareMessagePageState();
@@ -28,8 +28,10 @@ class _ShareMessagePageState extends State<ShareMessagePage> {
 
   @override
 void initState() {
-  super.initState();
+   print(widget.chat.chatId);
+  print('hel');
   fetchMessagesByChatId(widget.chat.chatId);
+  super.initState();
 }
 
 
@@ -40,9 +42,18 @@ void initState() {
       _messageModelPosts.clear();
       // Reverse the posts and add them to the list
       _messageModelPosts.addAll(posts);
+      print(_messageModelPosts.length);
     });
 
   }
+
+  Future<void> updateSharingMoney(sproductId, coinValue,userId) async {
+    int sId = (await ApiService.sharingCoinExchange(sproductId, coinValue, userId)) as int;
+    setState(() {
+    inactiveSharing(sId);
+    });
+  }
+
 
   Future<int> insertMessage(
         chatId,
@@ -62,13 +73,22 @@ void initState() {
   }
 
 
+  Future<void> inactiveSharing(
+        sproductId,) async {
+      await ApiService.inactiveSharing(
+        sproductId,
+      );
+
+  }
+
+
   final TextEditingController _messageController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     ChatModel chat = widget.chat;
     UserModel user = widget.user;
-    SharingModel post = widget.spost;
+    SharingModel post = widget.post;
 
     String formatMessageTime(DateTime dateTime) {
   // Format the DateTime object to display HH:MM AM/PM
@@ -176,7 +196,7 @@ void initState() {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                       formatMessageTime(DateTime.parse(message.messageTime)),
+                       formatMessageTime(DateParse(message.messageTime)),
                         style: const TextStyle(color: Colors.grey, fontSize: 12),
                       ),
                     ],
@@ -249,11 +269,22 @@ void initState() {
   }
 
 
+  DateTime DateParse(String date){try {
+    // Extract only the necessary part before "GMT"
+    String trimmedDate = date.split("GMT")[0].trim();
+    // Use the correct pattern to parse the date
+    return DateFormat("EEE MMM dd yyyy HH:mm:ss").parse(trimmedDate);
+  } catch (e) {
+    print("Date parsing failed for $date: $e");
+    return DateTime.now(); // Fallback to current time
+  }}
 
   String buttonState = "Confirm"; // Initial state
   Color buttonColor = const Color.fromARGB(255, 108, 106, 157); // Initial color
 
   void _onButtonPressed() {
+    SharingModel post = widget.post;
+    UserModel user = widget.user;
     if (buttonState == "Confirm") {
       setState(() {
         buttonState = "Returned";
@@ -263,14 +294,14 @@ void initState() {
               moneycount = 8;
               buttonState = "Completed";
               buttonColor = Colors.grey; // Make the button gray
+              updateSharingMoney(post.sproductId, post.coinValue,user.userId);
+            print('Helooooooooooooo');   
             });
       // Show the RatingWidget popup
       showDialog(
         context: context,
         builder: (context) => RatingWidget(
-          onPressed: () {
-            // Update moneycount to 8
-            
+          onPressed: () {        
             Navigator.of(context).pop(); // Close the dialog
           },
         ),

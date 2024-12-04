@@ -166,34 +166,19 @@ class ShareDetailPage extends StatefulWidget {
                 int requestedById = user.userId; // Ensure this is valid
                 int sproductId = sharepost.sproductId; // Ensure this is valid
                 int productType = 1;
-                int chatId = await insertChat(1, requestedById, sharepost.borrowerID, productType, sproductId);
+                int chatId = await insertChat(globals.userData, requestedById, 0, productType, sproductId);
                 ChatModel chat = ChatModel(
                     chatId: chatId,
                     userId1: globals.userData,
                     userId2: requestedById,
-                    productId: sharepost.sproductId,
+                    productId: 0,
                     type: productType,
                     sproductId: sproductId
                   );
-
-                  // Navigate to the MessagePage only after the API call completes
-                  DonationModel d = DonationModel(
-                    productId: 0,
-                    productName: 'Nope',
-                    productCategory: '',
-                    productDescription: '',
-                    productPicture: '',
-                    donorId: 0,
-                    coinValue: 0,
-                    active: 0,
-                    postingTime: '',
-                    status: ''
-                  );
-
                 
                 Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MessagePage(dpost: d, spost: sharepost, chat: chat, user: user)),
+                        MaterialPageRoute(builder: (context) => MessagePage(post: sharepost, chat: chat, user: user)),
                       );
                       },
               
