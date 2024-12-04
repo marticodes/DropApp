@@ -491,7 +491,7 @@ app.get('/api/donations/:user_id',
       res.status(500).json({ error: `BE: Error listing all my donations ${err}` });
     }
   });
-
+/*
 app.get('/api/donations/:min/:max',
   async (req, res) => {
     try {
@@ -517,8 +517,27 @@ app.get('/api/donations/:min/:max',
         res.status(500).json({ error: `BE: Error filtering donations by categories ${err.message}` });
     }
 });
+*/
+app.get('/api/:min/:max/donations', async (req, res) => {
+  try {
+      const categories = req.query.categories;
+      const min = parseInt(req.params.min, 10);
+      const max = parseInt(req.params.max, 10);
+      
+      if (!categories || categories.length === 0) {
+          return res.status(400).json({ error: 'Categories parameter is required and must contain at least one category.' });
+      }
+      
+      const categoriesArray = Array.isArray(categories) ? categories : [categories];
+      console.log('Categories Array:', categoriesArray);
 
-  
+      const filtDonations = await donationDao.filterDonations(min, max, categoriesArray);
+      res.status(200).json(filtDonations);
+  } catch (err) {
+      res.status(500).json({ error: "BE: Error filtering donations ${err.message"});
+  }
+});
+
 //SHARE API
 app.post('/api/sharing/insert', /* [], */
   async (req, res) => {
@@ -585,7 +604,7 @@ app.get('/api/sharing/:user_id',
       res.status(500).json({ error: `BE: Error listing all my sharing quests ${err}` });
     }
   });
-
+/*
 app.get('/api/sharing/:min/:max',
   async (req, res) => {
     try {
@@ -608,7 +627,7 @@ app.get('/api/sharing/:categories',
     }
   });
 
-  app.get('/api/sharing', async (req, res) => {
+    app.get('/api/sharing', async (req, res) => {
     try {
         const categories = req.query.categories
         if (!categories || categories.length === 0) {
@@ -621,6 +640,26 @@ app.get('/api/sharing/:categories',
         res.status(500).json({ error: `BE: Error filtering sharing quests by categories ${err.message}` });
     }
 });
+
+*/
+app.get('/api/:min/:max/sharing', async (req, res) => {
+  try {
+      const categories = req.query.categories
+      const min = parseInt(req.params.min, 10);
+      const max = parseInt(req.params.max, 10);
+      if (!categories || categories.length === 0) {
+          return res.status(400).json({ error: 'Categories parameter is required and must contain at least one category.' });
+      }
+      const categoriesArray = Array.isArray(categories) ? categories : [categories];
+      const filtSharing = await shareDao.filterSharing(min, max, categoriesArray);
+      res.status(200).json(filtSharing);
+  } catch (err) {
+      res.status(500).json({ error: "BE: Error filtering sharing quests ${err.message"});
+  }
+});
+
+
+
 
   
 

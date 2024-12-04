@@ -511,6 +511,8 @@ const listAllMyDonations = async (user_id) => {
     }
 };
 
+/*
+
 const filterDonationsByCoin = async (min, max) => {
     const response = await fetch(SERVER_URL + `/api/donations/${min}/${max}`, {
         method: 'GET',
@@ -526,6 +528,22 @@ const filterDonationsByCategory = async (categories) => {
     const response = await fetch(`${SERVER_URL}/api/donations?categories=${categories.join('&categories=')}`, {
         method: 'GET',
     });
+    if (response.ok) {
+        const donationsJson = await response.json();
+        return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time, d.status));
+    } else {
+        throw new Error('FE: Error filtering donations by categories');
+    }
+};
+
+*/
+
+const filterDonations = async (min, max, categories) => {
+    const queryString = categories.map(c => `categories=${encodeURIComponent(c)}`).join('&');
+    const response = await fetch(SERVER_URL + `/api/${min}/${max}/donations?${queryString}`, {
+        method: 'GET',
+    });
+
     if (response.ok) {
         const donationsJson = await response.json();
         return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time, d.status));
@@ -625,6 +643,7 @@ const listAllMySharing = async (user_id) => {
         throw new Error('FE: Error listing all my  sharing');
     }
 };
+/*
 
 const filterSharingByCoin = async (min, max) => {
     const response = await fetch(SERVER_URL + `/api/sharing/${min}/${max}`, {
@@ -647,6 +666,21 @@ const filterSharingByCategory = async (categories) => {
         return donationsJson.map(d => new Share(d.sproduct_id, d.sproduct_name, d.sproduct_category, d.sproduct_description, d.sproduct_start_time, d.sproduct_end_time, d.borrower_id, d.coin_value, d.active, d.posting_time, d.status));
     } else {
         throw new Error('FE: Error filtering sharing by categories');
+    }
+};
+
+*/
+
+const filterSharing = async (min, max, categories) => {
+    const queryString = categories.map(c => `categories=${encodeURIComponent(c)}`).join('&');
+    const response = await fetch(SERVER_URL + `/api/${min}/${max}/sharing?${queryString}`, {
+        method: 'GET',
+    });
+    if (response.ok) {
+        const donationsJson = await response.json();
+        return donationsJson.map(d => new Share(d.sproduct_id, d.sproduct_name, d.sproduct_category, d.sproduct_description, d.sproduct_start_time, d.sproduct_end_time, d.borrower_id, d.coin_value, d.active, d.posting_time, d.status));
+    } else {
+        throw new Error('FE: Error filtering sharing');
     }
 };
 
@@ -702,7 +736,7 @@ const API = {logIn, getUserInfo, logOut, handleInvalidResponse, getCategoriesLis
     getChatUsers, getChatProduct, getChatType, insertChat, getMessagesByChatId, insertMessage, insertDonation, inactiveDonation, listActiveDonations, listMyActiveDonations,
     listAllMyDonations, filterDonationsByCoin, filterDonationsByCategory, insertSharing, inactiveSharing, listActiveSharing, listMyActiveSharing, listAllMySharing,
     filterSharingByCoin, filterSharingByCategory, setUserAsGraduate, getUserProfileInfo, isUserActive, setUserAsInactive, insertUser, getAllChatsForUser, getChatIdByUserAndProduct,
-    getUserRating, addAReview, removeUserPicture, addUserPicture, donationCoinExchange, sharingCoinExchange};
+    getUserRating, addAReview, removeUserPicture, addUserPicture, donationCoinExchange, sharingCoinExchange, filterSharing, filterDonations};
 
 //TO DO: discuss about API for coin assignment
 //TO DO: discuss about login (Might need to change db attributes for user)

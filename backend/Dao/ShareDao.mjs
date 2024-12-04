@@ -122,6 +122,7 @@ const ShareDAO = {
     Categories should be a list that is updated every time the users clicks a filter
     If the filter is pressed add the name of the category, otherwise remove it and pass again the list as input
     */
+   /*
     async filterSharingByCategories(categories) {
         return new Promise((resolve, reject) => {
             try {
@@ -178,7 +179,41 @@ const ShareDAO = {
                 reject(error);
             }
         });
-    }
+    }*/
+
+    async filterSharing(min, max, categories) {
+        return new Promise((resolve, reject) => {
+            try {
+                const placeholders = categories.map(() => '?').join(', ');
+                const sql =  `SELECT * FROM Share WHERE coin_value >= ? AND coin_value <= ? AND sproduct_category IN (${placeholders})`;
+                const params = [min, max, ...categories];
+                db.all(sql, params, (err, rows) => {
+                    if (err) {
+                        reject(err);  
+                    } else if (rows.length === 0) {
+                        resolve([]); 
+                    } else {
+                        const sharing = rows.map(d => new Share(
+                            d.sproduct_id, 
+                            d.sproduct_name, 
+                            d.sproduct_category, 
+                            d.sproduct_description, 
+                            d.sproduct_start_time, 
+                            d.sproduct_end_time, 
+                            d.borrower_id, 
+                            d.coin_value, 
+                            d.active, 
+                            d.posting_time, 
+                            d.status
+                        ));
+                        resolve(sharing); 
+                    }
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    },
 
     /*
     async deleteSharingQuest(sproduct_id){ 

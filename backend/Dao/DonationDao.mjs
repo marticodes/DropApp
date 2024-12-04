@@ -120,7 +120,7 @@ const DonationDAO = {
             }
         });
     },
-
+/*
     async filterDonationsByCategories(categories) {
         return new Promise((resolve, reject) => {
             try {
@@ -184,8 +184,40 @@ const DonationDAO = {
             }
         });
     }
+    */
+    async filterDonations(min, max, categories) {
+        return new Promise((resolve, reject) => {
+            try {
+                const placeholders = categories.map(() => '?').join(', ');
+                const sql = `SELECT * FROM Donation WHERE coin_value >= ? AND coin_value <= ? AND product_category IN (${placeholders})`;
+                const params = [min, max, ...categories];
     
-
+                db.all(sql, params, (err, rows) => {
+                    if (err) {
+                        reject(err);
+                    } else if (rows.length === 0) {
+                        resolve([]); 
+                    } else {
+                        const donations = rows.map(row => new Donation(
+                            row.product_id,
+                            row.product_name,
+                            row.product_description,
+                            row.product_picture,
+                            row.donor_id,
+                            row.coin_value,
+                            row.product_category,
+                            row.active,
+                            row.posting_time,
+                            row.status
+                        ));
+                        resolve(donations);
+                    }
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
     /*
     async listAllDonations(){
         const sql = 'SELECT * FROM Donation';
