@@ -237,7 +237,7 @@ static Future<int> insertChat(userID1, userID2, product_id, type, sproduct_id) a
   
   // MESSAGES
   static Future<List<MessageModel>> fetchMessagesByChatId(int chatId) async {
-    final response = await http.get(Uri.parse('$_baseUrl/api/messages/$chatId'));
+    final response = await http.get(Uri.parse('$_baseUrl/api/chats/messages/$chatId'));
 
     if (response.statusCode == 200) {
       if (json.decode(response.body) == false ) {

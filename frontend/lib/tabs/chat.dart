@@ -196,7 +196,7 @@ class _ChatListPageState extends State<ChatListPage> {
       userName: user.userName,
       itemName: product.productName,
       date: (messages.isNotEmpty)
-          ? DateFormat('dd/MM/yyyy hh:mm a').format(messages.last.time)
+          ? DateFormat('dd/MM/yyyy hh:mm a').format(DateParse(messages.last.messageTime))
           : DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
       userAvatarUrl: user.userPicture,
       category: 0,
@@ -212,7 +212,7 @@ class _ChatListPageState extends State<ChatListPage> {
       userName: user.userName,
       itemName: product.sproductName,
       date: (messages.isNotEmpty)
-          ? DateFormat('dd/MM/yyyy hh:mm a').format(messages.last.time)
+          ? DateFormat('dd/MM/yyyy hh:mm a').format(DateParse(messages.last.messageTime))
           : DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
       userAvatarUrl: user.userPicture,
       category: 1,
@@ -221,4 +221,15 @@ class _ChatListPageState extends State<ChatListPage> {
       product: product,
     );
   }
+
+
+  DateTime DateParse(String date){try {
+    // Extract only the necessary part before "GMT"
+    String trimmedDate = date.split("GMT")[0].trim();
+    // Use the correct pattern to parse the date
+    return DateFormat("EEE MMM dd yyyy HH:mm:ss").parse(trimmedDate);
+  } catch (e) {
+    print("Date parsing failed for $date: $e");
+    return DateTime.now(); // Fallback to current time
+  }}
 }

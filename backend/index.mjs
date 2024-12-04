@@ -394,15 +394,24 @@ app.post('/api/chats/insert', /* [], */
 
 //MESSAGE API
 
-app.get('/api/messages/:chat_id',
-  async (req, res) => {
-    try {
-      const messagesList = await messageDao.getMessagesByChatId(req.params.chat_id);
-      res.status(200).json(messagesList);
-    } catch (err) {
-      res.status(500).json({ error: `BE: Error getting messages of a chat ${err}` });
-    }
-  });
+app.get('/api/chats/messages/:chat_id', async (req, res) => {
+  console.log("Received API request for messages");
+
+  try {
+      const chat_id = req.params.chat_id;
+      console.log(`Received chat_id: ${chat_id}`);
+      
+      // Call messageDao.getMessagesByChatId and log the response
+      const messages = await messageDao.getMessagesByChatId(chat_id);
+      console.log("Messages fetched from database:", messages);
+      
+      res.status(200).json(messages);
+  } catch (err) {
+      console.error("Error in API route:", err);
+      res.status(500).json({ error: `BE: Error getting messages of a chat ${err.message}` });
+  }
+});
+
 
 app.post('/api/messages/insert', /* [], */
   async (req, res) => {

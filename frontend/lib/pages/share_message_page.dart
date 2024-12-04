@@ -28,8 +28,10 @@ class _ShareMessagePageState extends State<ShareMessagePage> {
 
   @override
 void initState() {
-  super.initState();
+   print(widget.chat.chatId);
+  print('hel');
   fetchMessagesByChatId(widget.chat.chatId);
+  super.initState();
 }
 
 
@@ -40,6 +42,7 @@ void initState() {
       _messageModelPosts.clear();
       // Reverse the posts and add them to the list
       _messageModelPosts.addAll(posts);
+      print(_messageModelPosts.length);
     });
 
   }
@@ -193,7 +196,7 @@ void initState() {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                       formatMessageTime(DateTime.parse(message.messageTime)),
+                       formatMessageTime(DateParse(message.messageTime)),
                         style: const TextStyle(color: Colors.grey, fontSize: 12),
                       ),
                     ],
@@ -266,6 +269,15 @@ void initState() {
   }
 
 
+  DateTime DateParse(String date){try {
+    // Extract only the necessary part before "GMT"
+    String trimmedDate = date.split("GMT")[0].trim();
+    // Use the correct pattern to parse the date
+    return DateFormat("EEE MMM dd yyyy HH:mm:ss").parse(trimmedDate);
+  } catch (e) {
+    print("Date parsing failed for $date: $e");
+    return DateTime.now(); // Fallback to current time
+  }}
 
   String buttonState = "Confirm"; // Initial state
   Color buttonColor = const Color.fromARGB(255, 108, 106, 157); // Initial color
