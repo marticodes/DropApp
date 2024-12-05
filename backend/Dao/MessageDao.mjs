@@ -38,7 +38,6 @@ const MessageDAO = {
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'SELECT * FROM Message WHERE chat_id = ?';
-                console.log(`Executing SQL query: ${sql} with chat_id: ${chat_id}`);
     
                 db.all(sql, [chat_id], (err, rows) => {
                     if (err) {
@@ -48,7 +47,6 @@ const MessageDAO = {
                         console.log("No messages found for chat_id:", chat_id);
                         resolve([]);
                     } else {
-                        console.log(`Found ${rows.length} messages for chat_id: ${chat_id}`);
                         resolve(rows);
                     }
                 });
