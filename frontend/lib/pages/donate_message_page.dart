@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:drop_app/top_bar/top_bar_go_back.dart';
 import 'package:drop_app/components/rating.dart';
 import 'package:intl/intl.dart';
+import 'package:drop_app/global.dart' as globals;
+
 
 
 const serverUrl = 'http://localhost:3001/';
@@ -167,7 +169,7 @@ Future<void> updateDonationMoney(productId, coinValue,userId) async {
               itemCount: _messageModelPosts.length,
               itemBuilder: (context, index) {
                 final message = _messageModelPosts[index];
-                final isUser = message.senderId == user.userId;
+                final isUser = message.senderId == globals.userData;
                 return Container(
                   margin:
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
@@ -240,20 +242,20 @@ Future<void> updateDonationMoney(productId, coinValue,userId) async {
                     String content = _messageController.text;
                     _messageController.clear();
 
-                    int msgId = await insertMessage(chat.chatId,content,"null",user.userId,DateTime.now().toString());
+                    int msgId = await insertMessage(chat.chatId,content,"null",globals.userData,DateTime.now().toString());
                     MessageModel newMessage = MessageModel(
                     messageId: msgId,
                     chatId: chat.chatId,
                     content: content,
                     image: null,
-                    senderId: user.userId,
+                    senderId:globals.userData,
                     messageTime: DateTime.now().toIso8601String(),
                   );
 
-    // Add the new message to the message list and update the UI
-    setState(() {
-      _messageModelPosts.add(newMessage);
-    });
+                    // Add the new message to the message list and update the UI
+                    setState(() {
+                      _messageModelPosts.add(newMessage);
+                    });
 
 
                   },
