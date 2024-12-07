@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:drop_app/api/api_service.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:drop_app/global.dart' as globals;
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 
 class Donate extends StatefulWidget {
@@ -28,6 +32,32 @@ class _DonateState extends State<Donate> {
   ];
 
   final List<String> conditionList = ['New', 'Good conditions', 'Used'];
+
+Future<String> pickAndUploadImage() async {
+  try {
+    // Pick image from gallery
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    // Check if an image was selected
+    if (pickedFile == null) {
+      throw Exception("No image selected");
+    }
+    final path = 'images/${pickedFile.name}';
+
+    // Create a reference to Firebase Storage
+    final ref = FirebaseStorage.instance.ref(path);
+
+    // Upload the image file
+    await ref.putFile(File(pickedFile.path));
+
+    // Get the download URL of the uploaded image
+    final url = await ref.getDownloadURL();
+
+    return url;
+  } catch (e) {
+    throw Exception("Something went wrong: $e");
+  }
+}
 
   Future<void> insertDonation(
     String productName,
@@ -147,16 +177,20 @@ class _DonateState extends State<Donate> {
         const SizedBox(height: 5),
         GestureDetector(
           onTap: () async {
-            // final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
-            // if (pickedImage != null) {
-            //   setState(() {
-            //     image = pickedImage;
-            //   });
-            // }
+            try {
+              // Pick and upload the image when tapped
+              String url = await pickAndUploadImage();
+              setState(() {
+                productPicture = url; // Store the URL after uploading
+              });
+            } catch (e) {
+              // Handle error here
+              print("Error uploading image: $e");
+            }
           },
           child: Container(
             width: double.infinity,
-            height: 100,
+            height: 50,  // Adjust height as needed for a button-like appearance
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(8),
@@ -164,13 +198,13 @@ class _DonateState extends State<Donate> {
             ),
             child: Center(
               child: Text(
-                "Image uploading not available yet",
+                "Upload Image",
                 style: TextStyle(
-                  color: Colors.grey, 
-                  fontSize: 16,        
-                  fontStyle: FontStyle.italic,
+                  color: Colors.grey[700], // Darker text for better readability
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold, // Make text bold for button look
                 ),
-                textAlign: TextAlign.center, 
+                textAlign: TextAlign.center,
               ),
             ),
           ),
