@@ -425,7 +425,7 @@ app.post('/api/messages/insert', /* [], */
 app.post('/api/donation/insert', async (req, res) => {
   try {
       const { product_name, product_description, product_category, product_picture, donor_id, status } = req.body;
-      const product_id = await userCategoriesDao.insertDonation(
+      const product_id = await donationDao.insertDonation(
           req.body.product_name, 
           req.body.product_description, 
           req.body.product_category, 
@@ -473,6 +473,16 @@ app.get('/api/donations/all/active',
       res.status(200).json(activeDonations);
     } catch (err) {
       res.status(500).json({ error: `BE: Error listing all active donations ${err}` });
+    }
+  });
+
+app.get('/api/try/all/donations',
+  async (req, res) => {
+    try {
+      const donations = await donationDao.listAllDonations();
+      res.status(200).json(donations);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error listing all donations ${err}` });
     }
   });
 
@@ -566,6 +576,16 @@ app.get('/api/sharing/all/active',
       res.status(200).json(activeSharing);
     } catch (err) {
       res.status(500).json({ error: `BE: Error listing all active sharing quests ${err}` });
+    }
+  });
+
+app.get('/api/done/all/sharing',
+  async (req, res) => {
+    try {
+      const sharing = await shareDao.listAllSharing();
+      res.status(200).json(sharing);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error listing all sharing quests ${err}` });
     }
   });
 

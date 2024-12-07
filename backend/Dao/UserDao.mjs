@@ -359,7 +359,7 @@ export default function UserDao() {
                         // Mark sharing as inactive
                         db.run('UPDATE Share SET active = 0 WHERE sproduct_id = ?', [sproduct_id], (err) => {
                             if (err) {
-                                reject('Error deactivating donation');
+                                reject('Error deactivating sharing');
                                 return;
                             }
     
@@ -368,7 +368,7 @@ export default function UserDao() {
                                 if (err) {
                                     reject('Error committing transaction');
                                 } else {
-                                    resolve('Donation processed successfully');
+                                    resolve('Sharing processed successfully');
                                 }
                             });
                         });

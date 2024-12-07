@@ -67,6 +67,7 @@ class _ChatListPageState extends State<ChatListPage> {
       final sproductId = productData['sproduct_id'];
       final productId = productData['product_id'];
       final product = await fetchPostByProductId(chat, sproductId, productId);
+      print('I AM HERRREEE');
       final List<MessageModel> messages =
           await ApiService.fetchMessagesByChatId(chat.chatId);
 
@@ -84,15 +85,14 @@ class _ChatListPageState extends State<ChatListPage> {
   Future<dynamic> fetchPostByProductId(ChatModel chat, final sproductId, final productId) async {
     if (chat.type == 1) {
       try {
-        final posts = await ApiService.listAllSharing();
-        print('Infetchfunc');
-        print(posts.length);
+        final List<SharingModel>posts = await ApiService.listAllSharing();
         return posts.firstWhere((post) => post.sproductId == sproductId);
       } catch (error) {
         print('Error processing sharing posts: $error');
       }
     } else {
       try {
+        print('I am kinda here now');
         final donationPosts = await ApiService.fetchActiveDonationPosts();
         return donationPosts.firstWhere((post) => post.productId == productId);
       } catch (error) {

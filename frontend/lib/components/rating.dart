@@ -81,7 +81,7 @@ class RatingWidgetState extends State<RatingWidget> {
                       SizedBox(height: 4),
                       Text(
                         "Rate the borrower:",
-                        style: TextStyle(fontSize: 14, color: Colors.grey),
+                        style: TextStyle(fontSize: 14, color: Colors.black),
                       ),
                     ],
                   ),
@@ -106,6 +106,26 @@ class RatingWidgetState extends State<RatingWidget> {
               }),
             ),
             const SizedBox(height: 8),
+
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromRGBO(108, 106, 157, 1),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                ),
+                onPressed: () {
+                  
+                },
+                child: const Text(
+                  "Submit",
+                  style: TextStyle(
+                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 24,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
           ],
         ),
       ),
