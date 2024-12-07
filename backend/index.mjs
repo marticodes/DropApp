@@ -35,6 +35,9 @@ app.use('./notifications', notificationsRouter);
 */
 
 //init express and set up the middlewares
+const express = require('express');
+const multer = require('multer');
+const path = require('path');
 const app = express();
 const port = 3001;
 app.use(morgan('dev'));
@@ -425,7 +428,7 @@ app.post('/api/messages/insert', /* [], */
 app.post('/api/donation/insert', async (req, res) => {
   try {
       const { product_name, product_description, product_category, product_picture, donor_id, status } = req.body;
-      const product_id = await userCategoriesDao.insertDonation(
+      const product_id = await DonationDAO.insertDonation(
           req.body.product_name, 
           req.body.product_description, 
           req.body.product_category, 
@@ -497,6 +500,7 @@ app.get('/api/donations/:user_id',
     }
   });
 
+/*
 app.get('/api/donations/:min/:max',
   async (req, res) => {
     try {
@@ -521,6 +525,26 @@ app.get('/api/donations/:min/:max',
     } catch (err) {
         res.status(500).json({ error: `BE: Error filtering donations by categories ${err.message}` });
     }
+});
+*/
+app.get('/api/:min/:max/donations', async (req, res) => {
+  try {
+      const categories = req.query.categories;
+      const min = parseInt(req.params.min, 10);
+      const max = parseInt(req.params.max, 10);
+      
+      if (!categories || categories.length === 0) {
+          return res.status(400).json({ error: 'Categories parameter is required and must contain at least one category.' });
+      }
+      
+      const categoriesArray = Array.isArray(categories) ? categories : [categories];
+      console.log('Categories Array:', categoriesArray);
+
+      const filtDonations = await donationDao.filterDonations(min, max, categoriesArray);
+      res.status(200).json(filtDonations);
+  } catch (err) {
+      res.status(500).json({ error: "BE: Error filtering donations ${err.message"});
+  }
 });
 
   

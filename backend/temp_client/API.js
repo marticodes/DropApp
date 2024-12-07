@@ -511,6 +511,8 @@ const listAllMyDonations = async (user_id) => {
     }
 };
 
+/*
+
 const filterDonationsByCoin = async (min, max) => {
     const response = await fetch(SERVER_URL + `/api/donations/${min}/${max}`, {
         method: 'GET',
@@ -526,6 +528,22 @@ const filterDonationsByCategory = async (categories) => {
     const response = await fetch(`${SERVER_URL}/api/donations?categories=${categories.join('&categories=')}`, {
         method: 'GET',
     });
+    if (response.ok) {
+        const donationsJson = await response.json();
+        return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time, d.status));
+    } else {
+        throw new Error('FE: Error filtering donations by categories');
+    }
+};
+
+*/
+
+const filterDonations = async (min, max, categories) => {
+    const queryString = categories.map(c => `categories=${encodeURIComponent(c)}`).join('&');
+    const response = await fetch(SERVER_URL + `/api/${min}/${max}/donations?${queryString}`, {
+        method: 'GET',
+    });
+
     if (response.ok) {
         const donationsJson = await response.json();
         return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time, d.status));
@@ -700,7 +718,7 @@ const sharingCoinExchange = async (sproduct_id, coin_value, user_id) => { // use
 
 const API = {logIn, getUserInfo, logOut, handleInvalidResponse, getCategoriesList, getAllCategoriesByUserId, getSingleCategoryByUserId, insertUserCategory, deleteUserCategory,
     getChatUsers, getChatProduct, getChatType, insertChat, getMessagesByChatId, insertMessage, insertDonation, inactiveDonation, listActiveDonations, listMyActiveDonations,
-    listAllMyDonations, filterDonationsByCoin, filterDonationsByCategory, insertSharing, inactiveSharing, listActiveSharing, listMyActiveSharing, listAllMySharing,
+    listAllMyDonations, filterDonations, insertSharing, inactiveSharing, listActiveSharing, listMyActiveSharing, listAllMySharing,
     filterSharingByCoin, filterSharingByCategory, setUserAsGraduate, getUserProfileInfo, isUserActive, setUserAsInactive, insertUser, getAllChatsForUser, getChatIdByUserAndProduct,
     getUserRating, addAReview, removeUserPicture, addUserPicture, donationCoinExchange, sharingCoinExchange};
 
