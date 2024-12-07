@@ -67,7 +67,6 @@ class _ChatListPageState extends State<ChatListPage> {
       final sproductId = productData['sproduct_id'];
       final productId = productData['product_id'];
       final product = await fetchPostByProductId(chat, sproductId, productId);
-      print('I AM HERRREEE');
       final List<MessageModel> messages =
           await ApiService.fetchMessagesByChatId(chat.chatId);
 
@@ -93,7 +92,7 @@ class _ChatListPageState extends State<ChatListPage> {
     } else {
       try {
         print('I am kinda here now');
-        final donationPosts = await ApiService.fetchActiveDonationPosts();
+        final donationPosts = await ApiService.fetchAllDonationPosts();
         return donationPosts.firstWhere((post) => post.productId == productId);
       } catch (error) {
         print('Error processing donation posts: $error');
