@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:drop_app/components/calendar.dart';
 import 'package:drop_app/components/clock.dart';
 import 'package:drop_app/pages/homepage.dart';
-
+import 'package:drop_app/global.dart' as globals;
 
 class Share extends StatefulWidget {
   const Share({super.key});
@@ -228,7 +228,7 @@ class _ShareState extends State<Share> {
                   DateTime combinedStart = DateTime(sproductStartDay.year,sproductStartDay.month, sproductStartDay.day,sproductStartShigan.hour,sproductStartShigan.minute,);
                   DateTime combinedEnd = DateTime(sproductStartDay.year,sproductStartDay.month, sproductStartDay.day,sproductStartShigan.hour,sproductStartShigan.minute,);
 
-                  insertSharing(sproductName, sproductCategory, sproductDescription, combinedStart.toString(), combinedEnd.toString(),1, "New");
+                  insertSharing(sproductName, sproductCategory, sproductDescription, combinedStart.toString(), combinedEnd.toString(),globals.userData, "New");
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(

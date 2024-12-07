@@ -1,6 +1,8 @@
 import 'package:drop_app/api/api_service.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:drop_app/global.dart' as globals;
+
 
 class Donate extends StatefulWidget {
   const Donate({super.key});
@@ -17,7 +19,7 @@ class _DonateState extends State<Donate> {
   String? status;
   String productDescription = '';
   String productPicture = '';
-  int donorId = 1; // Example donor ID, replace with actual value in production
+  int donorId = globals.userData; // Example donor ID, replace with actual value in production
 
   final List<String> categoryList = [
     'Books', 'Clothing', 'Decoration', 'Electronics', 'Food', 'Health',
