@@ -91,7 +91,6 @@ class _ChatListPageState extends State<ChatListPage> {
       }
     } else {
       try {
-        print('I am kinda here now');
         final donationPosts = await ApiService.fetchAllDonationPosts();
         return donationPosts.firstWhere((post) => post.productId == productId);
       } catch (error) {

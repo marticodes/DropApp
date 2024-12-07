@@ -1,3 +1,4 @@
+import 'package:drop_app/pages/homepage.dart';
 import 'package:drop_app/tabs/chat.dart';
 import 'package:drop_app/api/api_service.dart'; 
 import 'package:drop_app/models/user_model.dart'; 
@@ -22,7 +23,13 @@ class BackTopBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         icon: Icon(Icons.arrow_back, color: const Color.fromARGB(255, 30, 30, 30)),
         onPressed: () {
-          ChatListPage();
+          // ChatListPage();
+          Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MyHomePage(title: 'Home', initialTabIndex: 3), // Set the Profile tab index
+                    ),
+                  );
         },
       ),
       actions: [

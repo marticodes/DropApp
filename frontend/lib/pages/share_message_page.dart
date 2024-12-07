@@ -30,8 +30,6 @@ class _ShareMessagePageState extends State<ShareMessagePage> {
 
   @override
 void initState() {
-   print(widget.chat.chatId);
-  print('hel');
   fetchMessagesByChatId(widget.chat.chatId);
   super.initState();
 }
@@ -44,17 +42,13 @@ void initState() {
       _messageModelPosts.clear();
       // Reverse the posts and add them to the list
       _messageModelPosts.addAll(posts);
-      print(_messageModelPosts.length);
     });
 
   }
 
   Future<void> updateSharingMoney(sproductId, coinValue,userId) async {
     int sId = (await ApiService.sharingCoinExchange(sproductId, coinValue, userId)) as int;
-    print('here');
-    print(sId);
     setState(() {
-    // inactiveSharing(sId);
     });
   }
 
@@ -148,17 +142,17 @@ void initState() {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
-              onPressed: buttonColor == Colors.grey
+              onPressed: (post.active == 0 || buttonColor == Colors.grey)
                   ? null // Disable the button when it's gray
                   : _onButtonPressed,
               style: ElevatedButton.styleFrom(
-                backgroundColor: buttonColor,
+                backgroundColor: (post.active == 1)? buttonColor : Colors.grey,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
               child: Text(
-                buttonState,
+                (post.active == 1)? buttonState : 'Returned',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -299,7 +293,6 @@ void initState() {
               buttonState = "Completed";
               buttonColor = Colors.grey; // Make the button gray
               updateSharingMoney(post.sproductId, post.coinValue,globals.userData);
-            print('Helooooooooooooo');   
             });
       // Show the RatingWidget popup
       showDialog(
@@ -313,5 +306,4 @@ void initState() {
     }
   }
 }
-
 
