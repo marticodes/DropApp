@@ -30,7 +30,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-    # image_picker: ^0.8.5+3  #should be enabled
+  flutter_web_plugins:
+    sdk: flutter
 
 
 

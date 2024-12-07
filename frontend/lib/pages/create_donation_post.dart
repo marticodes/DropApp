@@ -1,12 +1,14 @@
-import 'dart:io';
-
+import 'dart:io' as io;
 import 'package:drop_app/api/api_service.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:drop_app/global.dart' as globals;
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'dart:html' as html;
+import 'package:flutter/foundation.dart';
+import 'dart:typed_data';
 
 class Donate extends StatefulWidget {
   const Donate({super.key});
@@ -35,25 +37,33 @@ class _DonateState extends State<Donate> {
 
 Future<String> pickAndUploadImage() async {
   try {
-    // Pick image from gallery
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    // Step 1: Use ImagePicker to select an image
+    final imagePicker = ImagePicker();
+    XFile? image = await imagePicker.pickImage(
+      source: ImageSource.gallery,
+      maxHeight: 1000,  // Optional max height
+      maxWidth: 1000,   // Optional max width
+    );
 
-    // Check if an image was selected
-    if (pickedFile == null) {
+    // Step 2: Check if an image was selected
+    if (image == null) {
       throw Exception("No image selected");
     }
-    final path = 'images/${pickedFile.name}';
 
-    // Create a reference to Firebase Storage
-    final ref = FirebaseStorage.instance.ref(path);
+    // Convert the selected image to Uint8List
+    final imageData = await image.readAsBytes();
 
-    // Upload the image file
-    await ref.putFile(File(pickedFile.path));
+    // Step 3: Upload to Firebase Storage
+    final path = 'images/${image.name}'; // Path where image will be stored
+    final ref = FirebaseStorage.instance.ref(path); // Reference to Firebase Storage
+
+    // Upload the image data as Uint8List
+     ref.putData(imageData);
 
     // Get the download URL of the uploaded image
     final url = await ref.getDownloadURL();
-
-    return url;
+    print(url);
+    return url;  // Return the download URL
   } catch (e) {
     throw Exception("Something went wrong: $e");
   }
@@ -179,6 +189,7 @@ Future<String> pickAndUploadImage() async {
           onTap: () async {
             try {
               // Pick and upload the image when tapped
+              print("hello clicked");
               String url = await pickAndUploadImage();
               setState(() {
                 productPicture = url; // Store the URL after uploading
