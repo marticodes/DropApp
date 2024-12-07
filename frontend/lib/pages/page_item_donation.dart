@@ -121,38 +121,25 @@ class ItemDetailPageState extends State<ItemDetailPage> {
               ),
               onPressed: () async {
                 int requestedById = item.donorId; // Ensure this is valid
-                int sproductId = item.productId; // Ensure this is valid
+                int productId = item.productId; // Ensure this is valid
                 int productType = 0;
-                int chatId = await insertChat(1, requestedById, item.donorId, productType, sproductId);
+                int chatId = await insertChat(globals.userData, requestedById, productId, productType, 0);
                 ChatModel chat = ChatModel(
                     chatId: chatId,
                     userId1: globals.userData,
                     userId2: requestedById,
-                    productId: item.productId,
+                    productId: productId,
                     type: productType,
-                    sproductId: sproductId
-                  );
-
-                  // Navigate to the MessagePage only after the API call completes
-                  SharingModel d = SharingModel(
-                    sproductId: 0,
-                    sproductName: 'Eh',
-                    sproductCategory: '',
-                    sproductDescription: '',
-                    borrowerID: 0,
-                    coinValue: 0,
-                    active: 0,
-                    postingTime: '',
-                    status: '',
-                    sproductEndTime: '',
-                    sproductStartTime: ''
+                    sproductId: 0
                   );
 
                 UserModel user = await fetchUserById(item);
                 
+
+
                 Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MessagePage(dpost: item, spost: d, chat: chat, user: user)),
+                        MaterialPageRoute(builder: (context) => MessagePage(post: item, chat: chat, user: user)),
                       );
               },
               child: Center(child: Text('Chat', style: TextStyle(fontSize: 18, color:  const Color.fromARGB(221, 255, 255, 255)))),

@@ -399,12 +399,8 @@ app.get('/api/chats/messages/:chat_id', async (req, res) => {
 
   try {
       const chat_id = req.params.chat_id;
-      console.log(`Received chat_id: ${chat_id}`);
-      
       // Call messageDao.getMessagesByChatId and log the response
       const messages = await messageDao.getMessagesByChatId(chat_id);
-      console.log("Messages fetched from database:", messages);
-      
       res.status(200).json(messages);
   } catch (err) {
       console.error("Error in API route:", err);

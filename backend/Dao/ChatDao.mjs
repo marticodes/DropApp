@@ -53,7 +53,7 @@ const ChatDAO = {
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'SELECT product_id, sproduct_id FROM Chat WHERE chat_id = ?';
-                return db.get(sql, [chatId], (err, row) => {
+                db.get(sql, [chatId], (err, row) => {
                     if (err) {
                         reject(err);
                     } else if (row.length === 0) {
