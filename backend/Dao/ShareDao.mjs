@@ -178,18 +178,19 @@ const ShareDAO = {
                 reject(error);
             }
         });
-    }
+    },
 
     /*
     async deleteSharingQuest(sproduct_id){ 
         const sql = 'DELETE * FROM Share WHERE sproduct_id'; 
         return db.run(sql, [sproduct_id]);
     },
+    */
+
     async listAllSharingQuest(){
         const sql = 'SELECT * FROM Share';
         return db.all(sql, [1]);
     },
-    */
 }
 
 function get_coin_value(productName, productStatus, category) {

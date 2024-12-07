@@ -51,8 +51,10 @@ void initState() {
 
   Future<void> updateSharingMoney(sproductId, coinValue,userId) async {
     int sId = (await ApiService.sharingCoinExchange(sproductId, coinValue, userId)) as int;
+    print('here');
+    print(sId);
     setState(() {
-    inactiveSharing(sId);
+    // inactiveSharing(sId);
     });
   }
 
@@ -296,7 +298,7 @@ void initState() {
               moneycount = 8;
               buttonState = "Completed";
               buttonColor = Colors.grey; // Make the button gray
-              updateSharingMoney(post.sproductId, post.coinValue,user.userId);
+              updateSharingMoney(post.sproductId, post.coinValue,globals.userData);
             print('Helooooooooooooo');   
             });
       // Show the RatingWidget popup

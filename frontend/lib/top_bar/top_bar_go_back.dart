@@ -12,23 +12,23 @@ class BackTopBar extends StatefulWidget implements PreferredSizeWidget {
         super(key: key);
 
   @override
-  _BackTopBarState createState() => _BackTopBarState();
+  BackTopBarState createState() => BackTopBarState();
 }
 
-class _BackTopBarState extends State<BackTopBar> {
-  int? _moneyCount; // To store the coinsNum value
+class BackTopBarState extends State<BackTopBar> {
+  int? _moneyCount;
 
   @override
   void initState() {
     super.initState();
-    _fetchUserCoins(); // Fetch coins when the widget initializes
+    _fetchUserCoins(); // Fetch coins when the app bar is initialized
   }
 
   Future<void> _fetchUserCoins() async {
     try {
-      final user = await ApiService.fetchUserById(globals.userData); // Fetch user data
+      final user = await ApiService.fetchUserById(globals.userData);
       setState(() {
-        _moneyCount = user.coinsNum; // Update the state with fetched coinsNum
+        _moneyCount = user.coinsNum; // Update the coin count
       });
     } catch (error) {
       setState(() {
@@ -36,6 +36,11 @@ class _BackTopBarState extends State<BackTopBar> {
       });
       debugPrint('Error fetching user coins: $error');
     }
+  }
+
+  // New method to refresh the coin count
+  void refreshCoins() {
+    _fetchUserCoins(); // Call the existing method to fetch coins
   }
 
   @override

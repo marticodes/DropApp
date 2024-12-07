@@ -85,6 +85,8 @@ class _ChatListPageState extends State<ChatListPage> {
     if (chat.type == 1) {
       try {
         final posts = await ApiService.listAllSharing();
+        print('Infetchfunc');
+        print(posts.length);
         return posts.firstWhere((post) => post.sproductId == sproductId);
       } catch (error) {
         print('Error processing sharing posts: $error');

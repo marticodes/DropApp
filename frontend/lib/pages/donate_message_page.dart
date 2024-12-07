@@ -18,6 +18,8 @@ class DonationMessagePage extends StatefulWidget {
    final DonationModel post;
    final ChatModel chat;
    final UserModel user;
+   final GlobalKey<BackTopBarState> _appBarKey = GlobalKey<BackTopBarState>();
+
  DonationMessagePage({super.key, required this.post, required this.chat, required this.user});
 
   @override
@@ -49,10 +51,13 @@ void initState() {
   }
 
 Future<void> updateDonationMoney(productId, coinValue,userId) async {
-    int Id = (await ApiService.donationCoinExchange(productId, coinValue, userId)) as int;
+    final msg = await ApiService.donationCoinExchange(productId, coinValue, userId);
     setState(() {
-    inactiveDonation(Id);
+    print('here in D');
     });
+    print('I am richhhhhh');
+    print(widget.user.coinsNum);
+    widget._appBarKey.currentState?.refreshCoins();
   }
 
  Future<int> insertMessage(
@@ -96,7 +101,7 @@ Future<void> updateDonationMoney(productId, coinValue,userId) async {
 }
 
     return Scaffold(
-      appBar: BackTopBar(),
+      appBar: BackTopBar(key: widget._appBarKey),
       body: Column(
         children: [
           // User Banner
@@ -284,16 +289,12 @@ Future<void> updateDonationMoney(productId, coinValue,userId) async {
   void _onButtonPressed() {
     DonationModel post = widget.post;
     UserModel user = widget.user;
-    if (buttonState == "Confirm") 
-     {
       setState(() {
-              moneycount = 8;
               buttonState = "Completed";
               buttonColor = Colors.grey; // Make the button gray
-              updateDonationMoney(post.productId, post.coinValue,user.userId); 
+              updateDonationMoney(post.productId, post.coinValue,globals.userData); 
             print('Helooooooooooooo');   
             });
-    }
   }
 }
 

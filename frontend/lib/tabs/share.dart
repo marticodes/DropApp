@@ -31,7 +31,7 @@ class ShareQuestListState extends State<ShareQuestList> {
   // Fetch all sharing posts and reverse the order
   Future<void> fetchActiveSharingPosts() async {
     try {
-      List<SharingModel> posts = await ApiService.listAllSharing();
+      List<SharingModel> posts = await ApiService.listAllActiveSharing();
 
       setState(() {
         _sharingModelPosts.clear();
