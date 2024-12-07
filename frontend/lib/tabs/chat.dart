@@ -84,14 +84,15 @@ class _ChatListPageState extends State<ChatListPage> {
   Future<dynamic> fetchPostByProductId(ChatModel chat, final sproductId, final productId) async {
     if (chat.type == 1) {
       try {
-        final posts = await ApiService.listAllSharing();
+        final List<SharingModel>posts = await ApiService.listAllSharing();
         return posts.firstWhere((post) => post.sproductId == sproductId);
       } catch (error) {
         print('Error processing sharing posts: $error');
       }
     } else {
       try {
-        final donationPosts = await ApiService.fetchActiveDonationPosts();
+        print('I am kinda here now');
+        final donationPosts = await ApiService.fetchAllDonationPosts();
         return donationPosts.firstWhere((post) => post.productId == productId);
       } catch (error) {
         print('Error processing donation posts: $error');

@@ -12,12 +12,13 @@ class ApiService {
   static const String _baseUrl = 'http://localhost:3001';
 
   //SHARING
-  static Future<List<SharingModel>> listAllSharing() async {
+  static Future<List<SharingModel>> listAllActiveSharing() async {
     final response = await http.get(Uri.parse('$_baseUrl/api/sharing/all/active'));
 
     if (response.statusCode == 200) {
       final List<dynamic> responseData = json.decode(response.body);
-      return responseData.map((data) => SharingModel.fromJson(data)).toList();
+      List<SharingModel> sm = responseData.map((data) => SharingModel.fromJson(data)).toList();
+      return sm;
     } else {
       throw Exception('Failed to load active sharing posts');
     }
@@ -427,7 +428,7 @@ static Future<int> insertUser({
 
 //COINS
 
-  static Future<int> donationCoinExchange(int productId, int coinValue, int userId) async {
+  static Future<String> donationCoinExchange(int productId, int coinValue, int userId) async {
 
     final response = await http.post(
       Uri.parse('$_baseUrl/api/donation/coins'),
@@ -439,7 +440,7 @@ static Future<int> insertUser({
       }),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       final Map<String, dynamic> data = json.decode(response.body);
       return data['product_id']; // Adjust based on the actual response
     } else {
@@ -461,7 +462,7 @@ static Future<int> insertUser({
         }),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         final Map<String, dynamic> data = json.decode(response.body);
         return data['product_id']; // Adjust based on actual response data
       } else {
@@ -519,6 +520,30 @@ static Future<void> inactiveSharing(String sproductId,) async {
     }
   }
 
+
+static Future<List<SharingModel>> listAllSharing() async {
+    final response = await http.get(Uri.parse('$_baseUrl/api/done/all/sharing'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> responseData = json.decode(response.body);
+      List<SharingModel> sm = responseData.map((data) => SharingModel.fromJson(data)).toList();
+      return sm;
+    } else {
+      throw Exception('Failed to load active sharing posts');
+    }
+  }
+
+   //DONATION
+  static Future<List<DonationModel>> fetchAllDonationPosts() async {
+    final response = await http.get(Uri.parse('$_baseUrl/api/try/all/donations'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return data.map((json) => DonationModel.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load active donation posts');
+    }
+  }
 
 
 
