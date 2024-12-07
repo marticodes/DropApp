@@ -178,16 +178,32 @@ const ShareDAO = {
                 reject(error);
             }
         });
+    },
+
+    async listAllSharing(){
+        return new Promise((resolve, reject) => {
+            try { 
+                const sql = 'SELECT * FROM Share';
+                db.all(sql, [], (err, rows) => {
+                    if (err) {
+                        reject(err);
+                    } else if (rows.length === 0) {
+                        resolve([]);
+                    } else {
+                        const sharing= rows.map(d => new Share(d.sproduct_id, d.sproduct_name, d.sproduct_category, d.sproduct_description, d.sproduct_start_time, d.sproduct_end_time, d.borrower_id, d.coin_value, d.active, d.posting_time, d.status));
+                        resolve(sharing);
+                    }
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
     }
 
     /*
     async deleteSharingQuest(sproduct_id){ 
         const sql = 'DELETE * FROM Share WHERE sproduct_id'; 
         return db.run(sql, [sproduct_id]);
-    },
-    async listAllSharingQuest(){
-        const sql = 'SELECT * FROM Share';
-        return db.all(sql, [1]);
     },
     */
 }
