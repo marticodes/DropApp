@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:drop_app/pages/category_selection_page.dart';
-//import 'package:drop_app/top_bar/top_bar_go_back.dart';
 import 'package:drop_app/top_bar/bar_only_coins.dart';
 import 'package:drop_app/global.dart' as globals;
 import 'package:drop_app/api/api_service.dart';
@@ -8,6 +7,8 @@ import 'package:drop_app/models/user_model.dart';
 
 class UserProfilePage extends StatelessWidget {
   const UserProfilePage({Key? key}) : super(key: key);
+
+  final serverUrl = 'http://localhost:3001/';
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,13 @@ class UserProfilePage extends StatelessWidget {
                   // Profile Image
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: NetworkImage(user.userPicture),
+                    backgroundImage: user.userPicture != null && user.userPicture!.isNotEmpty
+                        ? NetworkImage(serverUrl + user.userPicture!) // Display user's profile picture
+                        : null,
+                    backgroundColor: Colors.grey[300],
+                    child: user.userPicture == null || user.userPicture!.isEmpty
+                        ? const Icon(Icons.person, size: 50, color: Colors.white)
+                        : null,
                   ),
                   const SizedBox(height: 20),
 

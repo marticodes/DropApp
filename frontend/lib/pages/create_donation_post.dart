@@ -20,6 +20,7 @@ class Donate extends StatefulWidget {
 Color purpleDrop = const Color.fromRGBO(108, 106, 157, 1);
 
 class _DonateState extends State<Donate> {
+  bool _isUploading = false;
   String productName = '';
   String? productCategory;
   String? status;
@@ -35,37 +36,39 @@ class _DonateState extends State<Donate> {
 
   final List<String> conditionList = ['New', 'Good conditions', 'Used'];
 
-Future<String> pickAndUploadImage() async {
-  try {
-    // Step 1: Use ImagePicker to select an image
-    final imagePicker = ImagePicker();
-    XFile? image = await imagePicker.pickImage(
-      source: ImageSource.gallery,
-    );
+  Future<String> pickAndUploadImage() async {
+    try {
+      // Step 1: Use ImagePicker to select an image
+      final imagePicker = ImagePicker();
+      XFile? image = await imagePicker.pickImage(
+        source: ImageSource.gallery,
+      );
 
-    // Step 2: Check if an image was selected
-    if (image == null) {
-      throw Exception("No image selected");
+      // Step 2: Check if an image was selected
+      if (image == null) {
+        throw Exception("No image selected");
+      }
+
+      // Convert the selected image to Uint8List
+      final imageData = await image.readAsBytes();
+
+      // Step 3: Upload to Firebase Storage
+      final path = 'images/${image.name}'; // Path where image will be stored
+      final ref = FirebaseStorage.instance.ref(path); // Reference to Firebase Storage
+
+      // Upload the image data as Uint8List
+      await ref.putData(imageData);
+
+      // Get the download URL of the uploaded image
+      final url = await ref.getDownloadURL();
+      print(url);
+
+      productPicture = url;
+      return url;  // Return the download URL
+    } catch (e) {
+      throw Exception("Something went wrong: $e");
     }
-
-    // Convert the selected image to Uint8List
-    final imageData = await image.readAsBytes();
-
-    // Step 3: Upload to Firebase Storage
-    final path = 'images/${image.name}'; // Path where image will be stored
-    final ref = FirebaseStorage.instance.ref(path); // Reference to Firebase Storage
-
-    // Upload the image data as Uint8List
-     ref.putData(imageData);
-
-    // Get the download URL of the uploaded image
-    final url = await ref.getDownloadURL();
-    print(url);
-    return url;  // Return the download URL
-  } catch (e) {
-    throw Exception("Something went wrong: $e");
   }
-}
 
   Future<void> insertDonation(
     String productName,
@@ -126,99 +129,119 @@ Future<String> pickAndUploadImage() async {
                   hintStyle: hintTextStyle,
                   border: const OutlineInputBorder(),
                 ),
-              onChanged: (value) => productName = value,
+                onChanged: (value) => productName = value,
               ),
             ),
             const SizedBox(height: 10),
 
-          // Category
-          getLabel("Category"),
-          const SizedBox(height: 5),
-          SizedBox(
-            width: 200,  // Set width to 200
-            child: DropdownButtonFormField<String>(
-              value: productCategory,
-              hint: Text(
-                'Select Category',
-                style: hintTextStyle,
-              ),
-              items: categoryList.map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (value) => setState(() {
-                productCategory = value;
-              }),
-              decoration: const InputDecoration(border: OutlineInputBorder()),
-            ),
-          ),
-          const SizedBox(height: 10),
-
-          // Item Condition
-          getLabel("Item Condition"),
-          const SizedBox(height: 5),
-          SizedBox(
-            width: 200,  // Set width to 200
-            child: DropdownButtonFormField<String>(
-              value: status,
-              hint: Text('Select Condition', style: hintTextStyle),
-              items: conditionList.map((value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (value) => setState(() {
-                status = value;
-              }),
-              decoration: const InputDecoration(border: OutlineInputBorder()),
-            ),
-          ),
-          const SizedBox(height: 10),
-
-
-            
-        // Add Image
-        getLabel("Add Image"),
-        const SizedBox(height: 5),
-        GestureDetector(
-          onTap: () async {
-            try {
-              // Pick and upload the image when tapped
-              print("hello clicked");
-              String url = await pickAndUploadImage();
-              setState(() {
-                productPicture = url; // Store the URL after uploading
-              });
-            } catch (e) {
-              // Handle error here
-              print("Error uploading image: $e");
-            }
-          },
-          child: Container(
-            width: double.infinity,
-            height: 50,  // Adjust height as needed for a button-like appearance
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(8),
-              color: Colors.grey[200],
-            ),
-            child: Center(
-              child: Text(
-                "Upload Image",
-                style: TextStyle(
-                  color: Colors.grey[700], // Darker text for better readability
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold, // Make text bold for button look
+            // Category
+            getLabel("Category"),
+            const SizedBox(height: 5),
+            SizedBox(
+              width: 200,  // Set width to 200
+              child: DropdownButtonFormField<String>(
+                value: productCategory,
+                hint: Text(
+                  'Select Category',
+                  style: hintTextStyle,
                 ),
-                textAlign: TextAlign.center,
+                items: categoryList.map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (value) => setState(() {
+                  productCategory = value;
+                }),
+                decoration: const InputDecoration(border: OutlineInputBorder()),
               ),
             ),
-          ),
-        ),
-        const SizedBox(height: 15),
+            const SizedBox(height: 10),
+
+            // Item Condition
+            getLabel("Item Condition"),
+            const SizedBox(height: 5),
+            SizedBox(
+              width: 200,  // Set width to 200
+              child: DropdownButtonFormField<String>(
+                value: status,
+                hint: Text('Select Condition', style: hintTextStyle),
+                items: conditionList.map((value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (value) => setState(() {
+                  status = value;
+                }),
+                decoration: const InputDecoration(border: OutlineInputBorder()),
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            // Add Image
+            getLabel("Add Image"),
+            const SizedBox(height: 5),
+            GestureDetector(
+              onTap: () async {
+                setState(() {
+                  _isUploading = true;  // Start loading
+                });
+
+                try {
+                  // Pick and upload the image when tapped
+                  String url = await pickAndUploadImage();
+
+                  // Ensure the widget is still mounted before calling setState
+                  if (mounted) {
+                    setState(() {
+                      productPicture = url;  // Store the URL after uploading
+                      _isUploading = false;  // Stop loading
+                    });
+                  }
+                } catch (e) {
+                  print("Error uploading image: $e");
+                  setState(() {
+                    _isUploading = false;  // Stop loading if there's an error
+                  });
+                }
+              },
+              child: Container(
+                width: double.infinity,
+                height: 50,  // Adjust height as needed for a button-like appearance
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.grey[200],
+                ),
+                child: Center(
+                  child: _isUploading
+                      ? const CircularProgressIndicator()  // Show loading spinner
+                      : Text(
+                          "Upload Image",
+                          style: TextStyle(
+                            color: Colors.grey[700],
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
+
+            // Image uploaded message
+            if (!_isUploading && productPicture.isNotEmpty)
+              const Text(
+                "Image uploaded successfully!",
+                style: TextStyle(
+                  color: Colors.green,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
 
             // Description
             getLabel("Description"),
@@ -281,4 +304,3 @@ TextStyle hintTextStyle = const TextStyle(
   fontFamily: 'Roboto',
   color: Color.fromARGB(255, 148, 147, 147),
 );
-
