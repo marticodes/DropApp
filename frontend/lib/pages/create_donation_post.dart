@@ -41,8 +41,6 @@ Future<String> pickAndUploadImage() async {
     final imagePicker = ImagePicker();
     XFile? image = await imagePicker.pickImage(
       source: ImageSource.gallery,
-      maxHeight: 1000,  // Optional max height
-      maxWidth: 1000,   // Optional max width
     );
 
     // Step 2: Check if an image was selected
