@@ -11,7 +11,7 @@ import LocalStrategy from 'passport-local';
 /** Creating the session */
 import session from 'express-session';
 
-import CategoriesDAO from "./Dao/CategoriesDao.mjs"
+import CategoriesDAO from "./Dao/CategoriesDAO.mjs"
 import ChatDAO from "./Dao/ChatDao.mjs"
 import DonationDAO from "./Dao/DonationDao.mjs"
 import ShareDAO from "./Dao/ShareDao.mjs"
@@ -507,17 +507,37 @@ app.get('/api/donations/:user_id',
     }
   });
 
-app.get('/api/donations/:min/:max',
-  async (req, res) => {
-    try {
+// app.get('/api/donations/:min/:max',
+//   async (req, res) => {
+//     try {
+//       const min = parseInt(req.params.min, 10);
+//       const max = parseInt(req.params.max, 10);
+//       const filtDonations = await donationDao.filterDonationByCoin(min, max);
+//       res.status(200).json(filtDonations);
+//     } catch (err) {
+//       res.status(500).json({ error: `BE: Error filtering donations by coin value ${err}` });
+//     }
+//   });
+
+app.get('/api/:min/:max/donations', async (req, res) => {
+  try {
+      const categories = req.query.categories;
       const min = parseInt(req.params.min, 10);
       const max = parseInt(req.params.max, 10);
-      const filtDonations = await donationDao.filterDonationByCoin(min, max);
+
+      if (!categories || categories.length === 0) {
+          return res.status(400).json({ error: 'Categories parameter is required and must contain at least one category.' });
+      }
+
+      const categoriesArray = Array.isArray(categories) ? categories : [categories];
+      console.log('Categories Array:', categoriesArray);
+
+      const filtDonations = await donationDao.filterDonations(min, max, categoriesArray);
       res.status(200).json(filtDonations);
-    } catch (err) {
-      res.status(500).json({ error: `BE: Error filtering donations by coin value ${err}` });
-    }
-  });
+  } catch (err) {
+      res.status(500).json({ error: "BE: Error filtering donations ${err.message"});
+  }
+});
 
   app.get('/api/donations', async (req, res) => {
     try {
