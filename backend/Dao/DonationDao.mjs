@@ -120,12 +120,13 @@ const DonationDAO = {
             }
         });
     },
-/*
+
+    /*
     async filterDonationsByCategories(categories) {
         return new Promise((resolve, reject) => {
             try {
                 const placeholders = categories.map(() => '?').join(', ');
-                const sql = `SELECT * FROM Donation WHERE product_category IN (${placeholders})`;
+                const sql = SELECT * FROM Donation WHERE product_category IN (${placeholders});
                 db.all(sql, categories, (err, rows) => {
                     if (err) {
                         reject(err);
@@ -157,7 +158,7 @@ const DonationDAO = {
     async filterDonationByCoin(min, max) {  
         return new Promise((resolve, reject) => {
             try {
-                const sql = `SELECT * FROM Donation WHERE coin_value >= ? AND coin_value <= ?`; 
+                const sql = SELECT * FROM Donation WHERE coin_value >= ? AND coin_value <= ?; 
                 db.all(sql, [min, max], (err, rows) => {
                     if (err) {
                         reject(err);
@@ -217,12 +218,29 @@ const DonationDAO = {
                 reject(error);
             }
         });
-    }
-    /*
-    async listAllDonations(){
-        const sql = 'SELECT * FROM Donation';
-        return db.all(sql, [1]);
     },
+    
+    async listAllDonations(){
+        return new Promise((resolve, reject) => {
+            try {         
+                const sql = 'SELECT * FROM Donation';
+                db.all(sql, [], (err, rows) => {
+                    if (err) {
+                        reject(err);
+                    } else if (rows.length === 0) {
+                        resolve([]);
+                    } else {
+                        const donations= rows.map(row => new Donation(row.product_id, row.product_name, row.product_description, row.product_picture, row.donor_id, row.coin_value, row.product_category, row.active, row.posting_time, row.status));
+                        resolve(donations);
+                    }
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    /*
     async deleteDonation(product_id){
         const sql = 'DELETE * FROM Donation WHERE product_id'; 
         return db.run(sql, [product_id]);

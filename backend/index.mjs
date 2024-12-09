@@ -1,4 +1,3 @@
-
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -35,9 +34,6 @@ app.use('./notifications', notificationsRouter);
 */
 
 //init express and set up the middlewares
-//const express = require('express');
-//const multer = require('multer');
-//const path = require('path');
 const app = express();
 const port = 3001;
 app.use(morgan('dev'));
@@ -428,7 +424,7 @@ app.post('/api/messages/insert', /* [], */
 app.post('/api/donation/insert', async (req, res) => {
   try {
       const { product_name, product_description, product_category, product_picture, donor_id, status } = req.body;
-      const product_id = await DonationDAO.insertDonation(
+      const product_id = await donationDao.insertDonation(
           req.body.product_name, 
           req.body.product_description, 
           req.body.product_category, 
@@ -479,6 +475,16 @@ app.get('/api/donations/all/active',
     }
   });
 
+app.get('/api/try/all/donations',
+  async (req, res) => {
+    try {
+      const donations = await donationDao.listAllDonations();
+      res.status(200).json(donations);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error listing all donations ${err}` });
+    }
+  });
+
   app.get('/api/donations/:user_id/active', async (req, res) => {
     try {
       const user_id = req.params.user_id; 
@@ -500,18 +506,37 @@ app.get('/api/donations/:user_id',
     }
   });
 
-/*
-app.get('/api/donations/:min/:max',
-  async (req, res) => {
-    try {
+// app.get('/api/donations/:min/:max',
+//   async (req, res) => {
+//     try {
+//       const min = parseInt(req.params.min, 10);
+//       const max = parseInt(req.params.max, 10);
+//       const filtDonations = await donationDao.filterDonationByCoin(min, max);
+//       res.status(200).json(filtDonations);
+//     } catch (err) {
+//       res.status(500).json({ error: `BE: Error filtering donations by coin value ${err}` });
+//     }
+//   });
+
+app.get('/api/:min/:max/donations', async (req, res) => {
+  try {
+      const categories = req.query.categories;
       const min = parseInt(req.params.min, 10);
       const max = parseInt(req.params.max, 10);
-      const filtDonations = await donationDao.filterDonationByCoin(min, max);
+
+      if (!categories || categories.length === 0) {
+          return res.status(400).json({ error: 'Categories parameter is required and must contain at least one category.' });
+      }
+
+      const categoriesArray = Array.isArray(categories) ? categories : [categories];
+      console.log('Categories Array:', categoriesArray);
+
+      const filtDonations = await donationDao.filterDonations(min, max, categoriesArray);
       res.status(200).json(filtDonations);
-    } catch (err) {
-      res.status(500).json({ error: `BE: Error filtering donations by coin value ${err}` });
-    }
-  });
+  } catch (err) {
+      res.status(500).json({ error: "BE: Error filtering donations ${err.message"});
+  }
+});
 
   app.get('/api/donations', async (req, res) => {
     try {
@@ -525,26 +550,6 @@ app.get('/api/donations/:min/:max',
     } catch (err) {
         res.status(500).json({ error: `BE: Error filtering donations by categories ${err.message}` });
     }
-});
-*/
-app.get('/api/:min/:max/donations', async (req, res) => {
-  try {
-      const categories = req.query.categories;
-      const min = parseInt(req.params.min, 10);
-      const max = parseInt(req.params.max, 10);
-      
-      if (!categories || categories.length === 0) {
-          return res.status(400).json({ error: 'Categories parameter is required and must contain at least one category.' });
-      }
-      
-      const categoriesArray = Array.isArray(categories) ? categories : [categories];
-      console.log('Categories Array:', categoriesArray);
-
-      const filtDonations = await donationDao.filterDonations(min, max, categoriesArray);
-      res.status(200).json(filtDonations);
-  } catch (err) {
-      res.status(500).json({ error: "BE: Error filtering donations ${err.message"});
-  }
 });
 
   
@@ -590,6 +595,16 @@ app.get('/api/sharing/all/active',
       res.status(200).json(activeSharing);
     } catch (err) {
       res.status(500).json({ error: `BE: Error listing all active sharing quests ${err}` });
+    }
+  });
+
+app.get('/api/done/all/sharing',
+  async (req, res) => {
+    try {
+      const sharing = await shareDao.listAllSharing();
+      res.status(200).json(sharing);
+    } catch (err) {
+      res.status(500).json({ error: `BE: Error listing all sharing quests ${err}` });
     }
   });
 
