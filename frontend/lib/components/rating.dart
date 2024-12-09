@@ -81,7 +81,7 @@ class RatingWidgetState extends State<RatingWidget> {
                       SizedBox(height: 4),
                       Text(
                         "Rate the borrower:",
-                        style: TextStyle(fontSize: 14, color: Colors.black),
+                        style: TextStyle(fontSize: 14, color: Colors.grey),
                       ),
                     ],
                   ),
@@ -114,7 +114,7 @@ class RatingWidgetState extends State<RatingWidget> {
                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                 ),
                 onPressed: () {
-                  
+                  Navigator.of(context).pop();
                 },
                 child: const Text(
                   "Submit",
