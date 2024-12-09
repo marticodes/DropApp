@@ -63,15 +63,12 @@ class ShareQuestItem extends StatefulWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-           CircleAvatar(
-                  backgroundColor: Colors.blue, // Placeholder for user image color
-                  radius: 10,
-                  child: Center(
-                    child: Text(
-                      user.userName[0], // Use the first letter of the user name as avatar
-                      style: const TextStyle(color: Colors.white, fontSize: 12),
-                      textAlign: TextAlign.center,
-                    ),
+           ClipOval(
+                  child: Image.network(
+                    user.userPicture!,
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
                   ),
                 ),
             const SizedBox(width: 8),

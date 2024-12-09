@@ -46,7 +46,7 @@ class PostCard extends StatelessWidget {
                       return CircleAvatar(
                         radius: 13,
                         backgroundImage: user.userPicture != null && user.userPicture!.isNotEmpty
-                            ? NetworkImage(serverUrl + user.userPicture!) // Display the profile picture
+                            ? NetworkImage(user.userPicture!) // Display the profile picture
                             : null,
                         backgroundColor: Colors.grey[400],
                         child: user.userPicture == null || user.userPicture!.isEmpty
