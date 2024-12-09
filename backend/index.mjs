@@ -11,7 +11,7 @@ import LocalStrategy from 'passport-local';
 /** Creating the session */
 import session from 'express-session';
 
-import CategoriesDAO from "./Dao/CategoriesDao.mjs"
+import CategoriesDAO from "./Dao/CategoriesDAO.mjs"
 import ChatDAO from "./Dao/ChatDao.mjs"
 import DonationDAO from "./Dao/DonationDao.mjs"
 import ShareDAO from "./Dao/ShareDao.mjs"
