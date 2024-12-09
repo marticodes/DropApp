@@ -48,14 +48,32 @@ class _BackTopBarrState extends State<BackTopBar> {
       leading: IconButton(
         icon: Icon(Icons.arrow_back, color: const Color.fromARGB(255, 30, 30, 30)),
         onPressed: () {
-          // ChatListPage();
-          Navigator.pop(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MyHomePage(title: 'Home', initialTabIndex: 2), // Set the Profile tab index
-                    ),
-                  );
-        },
+  Navigator.push(
+    context,
+    PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => MyHomePage(
+        title: 'Home',
+        initialTabIndex: 2, // Set the Profile tab index
+      ),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(-1.0, 0.0); // Start from the left
+        const end = Offset.zero;         // End at the current position
+        const curve = Curves.easeInOut;
+
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var offsetAnimation = animation.drive(tween);
+
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 200), // Shorter animation duration
+
+    ),
+  );
+},
+
       ),
       actions: [
         Row(
