@@ -6,7 +6,7 @@ import 'package:drop_app/models/user_model.dart';
 class PostCard extends StatelessWidget {
   final DonationModel item;
 
-  final serverUrl = 'http://localhost:3001/';
+  final serverUrl = 'https://dropapp-eq8l.onrender.com';
 
   const PostCard({Key? key, required this.item}) : super(key: key);
 
@@ -26,10 +26,41 @@ class PostCard extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
-                CircleAvatar(
-                  radius: 13,
-                  backgroundColor: Colors.grey[400],
-                  child: Icon(Icons.person, color: Colors.white),
+                FutureBuilder<UserModel>(
+                  future: _fetchUser(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircleAvatar(
+                        radius: 13,
+                        backgroundColor: Colors.grey[400],
+                        child: Icon(Icons.person, color: Colors.white),
+                      );
+                    } else if (snapshot.hasError) {
+                      return CircleAvatar(
+                        radius: 13,
+                        backgroundColor: Colors.grey[400],
+                        child: Icon(Icons.error, color: Colors.white),
+                      );
+                    } else if (snapshot.hasData) {
+                      final user = snapshot.data!;
+                      return CircleAvatar(
+                        radius: 13,
+                        backgroundImage: user.userPicture != null && user.userPicture!.isNotEmpty
+                            ? NetworkImage(serverUrl + user.userPicture!) // Display the profile picture
+                            : null,
+                        backgroundColor: Colors.grey[400],
+                        child: user.userPicture == null || user.userPicture!.isEmpty
+                            ? Icon(Icons.person, color: Colors.white)
+                            : null,
+                      );
+                    } else {
+                      return CircleAvatar(
+                        radius: 13,
+                        backgroundColor: Colors.grey[400],
+                        child: Icon(Icons.person, color: Colors.white),
+                      );
+                    }
+                  },
                 ),
                 const SizedBox(width: 6),
                 FutureBuilder<UserModel>(
@@ -65,7 +96,7 @@ class PostCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(0.0),
             child: Image.network(
-              serverUrl + item.productPicture,
+              item.productPicture,
               height: 180,
               width: double.infinity,
               fit: BoxFit.cover,
@@ -109,4 +140,5 @@ class PostCard extends StatelessWidget {
     );
   }
 }
+
 

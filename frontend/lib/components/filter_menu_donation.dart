@@ -100,14 +100,22 @@ class _FilterMenuState extends State<FilterMenu> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Extract selected categories and coin range
-                  List<String> selectedCategories = categories.entries
+  // Extract selected categories
+                List<String> selectedCategories = categories.entries
                       .where((entry) => entry.value)
                       .map((entry) => entry.key)
                       .toList();
+
+                  // If no categories are selected, include all categories
+                  if (selectedCategories.isEmpty) {
+                    selectedCategories = categories.keys.toList();
+                  }
+
+                  // Extract coin range
                   int minCoins = int.tryParse(minController.text) ?? 1;
                   int maxCoins = int.tryParse(maxController.text) ?? 10;
 
+                  // Apply filters
                   widget.onApplyFilters(selectedCategories, minCoins, maxCoins);
                   Navigator.pop(context); // Close the drawer
                 },

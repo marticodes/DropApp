@@ -10,7 +10,7 @@ import 'package:drop_app/top_bar/top_bar_go_back.dart';
 import 'package:drop_app/components/rating.dart';
 
 
-const serverUrl = 'http://localhost:3001/';
+const serverUrl = 'https://dropapp-eq8l.onrender.com';
 
 class MessagePage extends StatefulWidget {
    final post;

@@ -9,7 +9,7 @@ import '../models/user_categories_model.dart';
 import '../models/chat_model.dart';
 
 class ApiService {
-  static const String _baseUrl = 'http://localhost:3001';
+  static const String _baseUrl = 'https://dropapp-eq8l.onrender.com';
 
   //SHARING
   static Future<List<SharingModel>> listAllActiveSharing() async {
@@ -131,6 +131,7 @@ Future<List<SharingModel>> filterSharingByCategory(List<String> categories) asyn
       rethrow;
     }
   }
+/*
 
     Future<List<DonationModel>> filterDonationsByCategory(List<String> categories) async {
     try {
@@ -165,6 +166,21 @@ Future<List<SharingModel>> filterSharingByCategory(List<String> categories) asyn
       }
     } catch (e) {
       throw Exception('FE: Error filtering by coins: $e');
+    }
+  }
+*/
+
+  Future<List<DonationModel>> filterDonations(int min, int max, List<String> categories) async {
+    final queryString = categories.map((c) => 'categories=${Uri.encodeComponent(c)}').join('&');
+    final url = Uri.parse('$_baseUrl/api/$min/$max/donations?$queryString');
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return data.map((json) => DonationModel.fromJson(json)).toList();
+    } else {
+      throw Exception('Error filtering donations: ${response.statusCode}');
     }
   }
 

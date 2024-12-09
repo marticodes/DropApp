@@ -9,7 +9,6 @@ import 'package:drop_app/api/api_service.dart';
 import 'package:drop_app/models/donation_post_model.dart';
 import 'package:drop_app/pages/page_item_donation.dart';
 
-
 class DonatePage extends StatefulWidget {
   const DonatePage({super.key});
 
@@ -44,24 +43,15 @@ class _DonatePageState extends State<DonatePage> {
 
   Future<void> applyFilters(List<String> categories, int? minCoins, int? maxCoins) async {
     try {
-      if (categories.isNotEmpty) {
-
-        // Filter by categories
-        List<DonationModel> filteredPosts = await _apiService.filterDonationsByCategory(categories);
+      if (categories.isNotEmpty || (minCoins != null && maxCoins != null)) {
+        List<DonationModel> filteredPosts = await _apiService.filterDonations(
+          minCoins ?? 0, maxCoins ?? double.infinity.toInt(), categories,
+        );
         setState(() {
           _isFiltered = true;
           _donationPosts.clear();
           _donationPosts.addAll(filteredPosts.reversed);
         });
-      } else if (minCoins != null && maxCoins != null) {
-        // Filter by coin range
-        List<DonationModel> filteredPosts = await ApiService.filterDonationsByCoin(minCoins, maxCoins);
-        setState(() {
-          _isFiltered = true;
-          _donationPosts.clear();
-          _donationPosts.addAll(filteredPosts.reversed);
-        });
-        
       } else {
         await fetchDonationPosts(); // Reset to all posts
       }

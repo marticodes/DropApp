@@ -31,12 +31,12 @@ class ChatItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => MessagePage(chat: chat, user: user,post: product,)),
-                          );
-                        },
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => MessagePage(chat: chat, user: user,post: product,)),
+        );
+      },
       child: Container(
         padding: const EdgeInsets.all( 10.0),
         child: Row(
