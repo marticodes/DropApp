@@ -57,7 +57,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
             userId: item.donorId,
           ),
           Image.network(
-            SERVER_URL + item.productPicture,
+            item.productPicture,
             width: double.infinity,
             height: 300,
             fit: BoxFit.cover,
