@@ -20,7 +20,7 @@ class ItemDetailPage extends StatefulWidget {
 
 class ItemDetailPageState extends State<ItemDetailPage> {
   final int rating = 4;
-  final SERVER_URL = 'http://localhost:3001/';
+  final SERVER_URL = 'https://dropapp-eq8l.onrender.com';
 
   Future<int> insertChat( userID1,
         userID2,

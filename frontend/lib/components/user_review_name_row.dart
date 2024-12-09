@@ -5,7 +5,7 @@ import 'package:drop_app/models/user_model.dart';
 class UserProfileRow extends StatelessWidget {
   final int userId;
 
-  final serverUrl = 'http://localhost:3001/';
+  final serverUrl = 'https://dropapp-eq8l.onrender.com';
 
   const UserProfileRow({
     Key? key,

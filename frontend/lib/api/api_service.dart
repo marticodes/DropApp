@@ -9,7 +9,7 @@ import '../models/user_categories_model.dart';
 import '../models/chat_model.dart';
 
 class ApiService {
-  static const String _baseUrl = 'http://localhost:3001';
+  static const String _baseUrl = 'https://dropapp-eq8l.onrender.com';
 
   //SHARING
   static Future<List<SharingModel>> listAllSharing() async {

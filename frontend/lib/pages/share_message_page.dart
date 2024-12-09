@@ -12,7 +12,7 @@ import 'package:drop_app/global.dart' as globals;
 
 
 
-const serverUrl = 'http://localhost:3001/';
+const serverUrl = 'https://dropapp-eq8l.onrender.com';
 
 class ShareMessagePage extends StatefulWidget {
    final SharingModel post;

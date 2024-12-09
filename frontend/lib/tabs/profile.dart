@@ -8,7 +8,7 @@ import 'package:drop_app/models/user_model.dart';
 class UserProfilePage extends StatelessWidget {
   const UserProfilePage({Key? key}) : super(key: key);
 
-  final serverUrl = 'http://localhost:3001/';
+  final serverUrl = 'https://dropapp-eq8l.onrender.com';
 
   @override
   Widget build(BuildContext context) {

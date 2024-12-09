@@ -6,7 +6,7 @@ import 'package:drop_app/models/user_model.dart';
 class PostCard extends StatelessWidget {
   final DonationModel item;
 
-  final serverUrl = 'http://localhost:3001/';
+  final serverUrl = 'https://dropapp-eq8l.onrender.com';
 
   const PostCard({Key? key, required this.item}) : super(key: key);
 
