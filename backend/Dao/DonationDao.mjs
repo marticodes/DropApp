@@ -6,21 +6,18 @@ const { PorterStemmer } = pkg; // Extract PorterStemmer from the module
 import { compareTwoStrings } from 'string-similarity'; // Ensure the package is installed
 
 const DonationDAO = {
-    async insertDonation(product_name, product_description, product_category, product_picture, donor_id, status) {  //v
+    async insertDonation(product_name, product_description, product_category, product_picture, donor_id, status) { //V
         return new Promise((resolve, reject) => {
             try {
                 const coin_value = get_coin_value(product_name, status, product_category); 
                 const posting_time = new Date().toISOString(); 
                 const sql = 'INSERT INTO Donation (product_name, product_category, product_description, product_picture, donor_id, coin_value, active, posting_time, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
                 
-                db.run(sql, [product_name, product_category, product_description, product_picture, donor_id, coin_value, 1, posting_time, status], function(err) {
+                db.run(sql, [product_name, product_category, product_description, product_picture, donor_id, coin_value, 1, posting_time, status], (err, result) => {
                     if (err) {
                         reject(err);
-                    } else if (this.lastID) {
-                        const id = this.lastID;
-                        resolve(id);
                     } else {
-                        resolve(false);
+                        resolve(result.insertId || null);
                     }
                 });
             } catch (error) {
@@ -37,11 +34,11 @@ const DonationDAO = {
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'UPDATE Donation SET active=? WHERE product_id=?';
-                return db.run(sql, [0, product_id], function (err) {
+                return db.run(sql, [0, product_id], (err, result) => {
                     if (err) {
-                    reject(err);
+                        reject(err);
                     }else {
-                    resolve(this.changes > 0); //at least one line changed
+                        resolve(true);
                     }
                 });
             } catch (error) {
@@ -49,7 +46,7 @@ const DonationDAO = {
             }
         });
     },
-    async listActiveDonations(){   //V
+    async listActiveDonations(){ //V
         return new Promise((resolve, reject) => {
             try {         
                 const sql = 'SELECT * FROM Donation WHERE active = ?';
@@ -57,7 +54,7 @@ const DonationDAO = {
                     if (err) {
                         reject(err);
                     } else if (rows.length === 0) {
-                        resolve(false);
+                        resolve([]);
                     } else {
                         const donations= rows.map(row => new Donation(row.product_id, row.product_name, row.product_description, row.product_picture, row.donor_id, row.coin_value, row.product_category, row.active, row.posting_time, row.status));
                         resolve(donations);
@@ -69,7 +66,7 @@ const DonationDAO = {
         });
     },
 
-    async listMyActiveDonations(user_id) { //v
+    async listMyActiveDonations(user_id) { //V
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'SELECT * FROM Donation WHERE donor_id=? AND active=?';
@@ -99,9 +96,8 @@ const DonationDAO = {
             }
         });
     },
-    
 
-    async listAllMyDonations(user_id){     //V
+    async listAllMyDonations(user_id){//V
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'SELECT * FROM Donation WHERE donor_id=?';
@@ -120,8 +116,51 @@ const DonationDAO = {
             }
         });
     },
+    async filterDonations(min, max, categories) { //V
+        return new Promise((resolve, reject) => {
+            try {
+                const placeholders = categories.map(() => '?').join(', ');
+                const sql = `SELECT * FROM Donation WHERE coin_value >= ? AND coin_value <= ? AND product_category IN (${placeholders})`;
+                const params = [min, max, ...categories];
+    
+                db.all(sql, params, (err, rows) => {
+                    if (err) {
+                        reject(err);
+                    } else if (rows.length === 0) {
+                        resolve([]); 
+                    } else {
+                        const donations = rows.map(row => new Donation(
+                            row.product_id,
+                            row.product_name,
+                            row.product_description,
+                            row.product_picture,
+                            row.donor_id,
+                            row.coin_value,
+                            row.product_category,
+                            row.active,
+                            row.posting_time,
+                            row.status
+                        ));
+                        resolve(donations);
+                    }
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    },
+    /*
+    async listAllDonations(){
+        const sql = 'SELECT * FROM Donation';
+        return db.all(sql, [1]);
+    },
+    async deleteDonation(product_id){
+        const sql = 'DELETE * FROM Donation WHERE product_id'; 
+        return db.run(sql, [product_id]);
+    },
+    */
 
-    async filterDonationsByCategories(categories) {
+    async filterDonationsByCategories(categories) { //not edited
         return new Promise((resolve, reject) => {
             try {
                 const placeholders = categories.map(() => '?').join(', ');
@@ -154,7 +193,7 @@ const DonationDAO = {
     },
     
     
-    async filterDonationByCoin(min, max) {  
+    async filterDonationByCoin(min, max) {  //not edited
         return new Promise((resolve, reject) => {
             try {
                 const sql = `SELECT * FROM Donation WHERE coin_value >= ? AND coin_value <= ?`; 
@@ -185,7 +224,7 @@ const DonationDAO = {
         });
     },
     
-    async listAllDonations(){
+    async listAllDonations(){ //V
         return new Promise((resolve, reject) => {
             try {         
                 const sql = 'SELECT * FROM Donation';
@@ -204,15 +243,9 @@ const DonationDAO = {
             }
         });
     }
-
-    /*
-    async deleteDonation(product_id){
-        const sql = 'DELETE * FROM Donation WHERE product_id'; 
-        return db.run(sql, [product_id]);
-    },
-    */
 };
 
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------
 function get_coin_value(productName, productStatus, category) {
     const dbPath = './products.json'; // Update with the correct path to your file
     const rawData = readFileSync(dbPath, 'utf-8'); // Read file synchronously

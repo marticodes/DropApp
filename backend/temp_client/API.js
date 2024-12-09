@@ -218,7 +218,7 @@ const logOut = async () => {
 
 //CATEORIES API 
 const getCategoriesList = async () => {
-    const response = await fetch(SERVER_URL + `/api/categories/list`, {
+    const response = await fetch(SERVER_URL + `/api/list_categories`, {
         method: 'GET',
     });
     if (response.ok) {
@@ -253,7 +253,7 @@ const getSingleCategoryByUserId = async (user_id, category_name) => {   //does t
     }
 };
 
-const insertUserCategory = async (user_id, category_name) => {  //true if it went well
+const insertUserCategory = async (user_id, category_name) => {
     const response = await fetch(SERVER_URL + '/api/user_categories/insert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -291,7 +291,7 @@ const deleteUserCategory = async (user_id, category_name) => {  //true if it wen
 
 //CHAT API
 const getChatUsers = async (chat_id) => {   //list of both Id's
-    const response = await fetch(SERVER_URL + `/api/chat/${chat_id}/users`, {
+    const response = await fetch(SERVER_URL + `/api/users_chat/chats/${chat_id}`, {
         method: 'GET',
     });
     if (response.ok) {
@@ -305,7 +305,7 @@ const getChatUsers = async (chat_id) => {   //list of both Id's
 
 /*read DAO in Backend for more info */
 const getChatProduct = async (chat_id) => {   //2 values where one is null (one if it's product from donation and one if it's sproduct from sharing)
-    const response = await fetch(SERVER_URL + `/api/chat/${chat_id}/product`, {
+    const response = await fetch(SERVER_URL + `/api/product_chat/chats/${chat_id}`, {
         method: 'GET',
     });
     if (response.ok) {
@@ -318,12 +318,12 @@ const getChatProduct = async (chat_id) => {   //2 values where one is null (one 
 };
 
 const getChatType = async (chat_id) => { //0=donation, 1=sharing
-    const response = await fetch(SERVER_URL + `/api/chat/${chat_id}/type`, {
+    const response = await fetch(SERVER_URL + `/api/types/chat/${chat_id}`, {
         method: 'GET',
     });
     if (response.ok) {
-        const chatJson = await response.json();
-        const chatType = chatJson.type;
+        const chatType = await response.json();
+        //const chatType = chatJson.type;
         return chatType;
     } else {
         throw new Error('FE: Error getting chat type');
@@ -343,7 +343,7 @@ const getAllChatsForUser = async (user_id_1) => {    //put 0 for the other one
 };
 
 const getChatIdByUserAndProduct = async (user_id_1, user_id_2, product_id, sproduct_id) => {    //put 0 for the other one (product id or sproduct)
-    const response = await fetch(SERVER_URL + `/api/chat/all/${user_id_1}/${user_id_2}/${product_id}/${sproduct_id}`, {
+    const response = await fetch(SERVER_URL + `/api/chats/users/${user_id_1}/${user_id_2}/product/${product_id}/sproduct/${sproduct_id}`, {
         method: 'GET',
     });
     if (response.ok) {
@@ -512,7 +512,7 @@ const listMyActiveDonations = async (user_id) => {
 
 
 const listAllMyDonations = async (user_id) => {
-    const response = await fetch(SERVER_URL + `/api/donations/${user_id}`, {
+    const response = await fetch(SERVER_URL + `/api/donations/my/${user_id}`, {
         method: 'GET',
     });
     if (response.ok) {
@@ -538,6 +538,20 @@ const filterDonationsByCategory = async (categories) => {
     const response = await fetch(`${SERVER_URL}/api/donations?categories=${categories.join('&categories=')}`, {
         method: 'GET',
     });
+    if (response.ok) {
+        const donationsJson = await response.json();
+        return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time, d.status));
+    } else {
+        throw new Error('FE: Error filtering donations by categories');
+    }
+};
+
+const filterDonations = async (min, max, categories) => {
+    const queryString = categories.map(c => `categories=${encodeURIComponent(c)}`).join('&');
+    const response = await fetch(SERVER_URL + `/api/${min}/${max}/donations?${queryString}`, {
+        method: 'GET',
+    });
+
     if (response.ok) {
         const donationsJson = await response.json();
         return donationsJson.map(d => new Donation(d.product_id, d.product_name, d.product_description, d.product_picture, d.donor_id, d.coin_value, d.product_category, d.active, d.posting_time, d.status));
@@ -639,7 +653,7 @@ const listMyActiveSharing = async (user_id) => {
 };
 
 const listAllMySharing = async (user_id) => {
-    const response = await fetch(SERVER_URL + `/api/sharing/${user_id}`, {
+    const response = await fetch(SERVER_URL + `/api/sharing/my/${user_id}`, {
         method: 'GET',
     });
     if (response.ok) {
@@ -726,10 +740,8 @@ const API = {logIn, getUserInfo, logOut, handleInvalidResponse, getCategoriesLis
     getChatUsers, getChatProduct, getChatType, insertChat, getMessagesByChatId, insertMessage, insertDonation, inactiveDonation, listActiveDonations, listMyActiveDonations,
     listAllMyDonations, filterDonationsByCoin, filterDonationsByCategory, insertSharing, inactiveSharing, listActiveSharing, listMyActiveSharing, listAllMySharing,
     filterSharingByCoin, filterSharingByCategory, setUserAsGraduate, getUserProfileInfo, isUserActive, setUserAsInactive, insertUser, getAllChatsForUser, getChatIdByUserAndProduct,
-    getUserRating, addAReview, removeUserPicture, addUserPicture, donationCoinExchange, sharingCoinExchange, listSharing, listDonations};
+    getUserRating, addAReview, removeUserPicture, addUserPicture, donationCoinExchange, sharingCoinExchange, listSharing, listDonations, filterDonations};
 
-//TO DO: discuss about API for coin assignment
-//TO DO: discuss about login (Might need to change db attributes for user)
 
 export default API;
 export { UnauthorizedError };

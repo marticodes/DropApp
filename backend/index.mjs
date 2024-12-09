@@ -11,7 +11,7 @@ import LocalStrategy from 'passport-local';
 /** Creating the session */
 import session from 'express-session';
 
-import CategoriesDAO from "./Dao/CategoriesDao.mjs"
+import CategoriesDAO from "./Dao/CategoriesDAO.mjs"
 import ChatDAO from "./Dao/ChatDao.mjs"
 import DonationDAO from "./Dao/DonationDao.mjs"
 import ShareDAO from "./Dao/ShareDao.mjs"
@@ -276,16 +276,16 @@ app.delete('/api/sessions/current', (req, res) => {
 
 
 //CATEORIES API 
-app.get('/api/categories/list',
+app.get('/api/list_categories',
   async (req, res) => {
     try {
       const categoriesList = await categoriesDao.listCategories();
+      console.log(categoriesList);
       res.status(200).json(categoriesList);
     } catch (err) {
       res.status(500).json({ error: `BE: Error retrieving categories list ${err}` });
     }
   });
-
 
 //USERCATEGORIES API
 app.get('/api/user_categories/all/:user_id',
@@ -331,7 +331,7 @@ app.delete('/api/user_categories/delete',
   });
 
 //CHAT API 
-app.get('/api/chat/:chat_id/users',
+app.get('/api/users_chat/chats/:chat_id',
   async (req, res) => {
     try {
       const chatUsers = await chatDao.getUsersIdByChatId(req.params.chat_id);
@@ -341,7 +341,7 @@ app.get('/api/chat/:chat_id/users',
     }
   });
 
-app.get('/api/chat/:chat_id/product',
+app.get('/api/product_chat/chats/:chat_id',
   async (req, res) => {
     try {
       const chatProduct = await chatDao.getProductIdByChatId(req.params.chat_id);
@@ -351,7 +351,7 @@ app.get('/api/chat/:chat_id/product',
     }
   });
 
-app.get('/api/chat/:chat_id/type',
+app.get('/api/types/chat/:chat_id',
   async (req, res) => {
     try {
       const chatType = await chatDao.getChatTypeByChatId(req.params.chat_id);
@@ -371,7 +371,7 @@ app.get('/api/chat/all/:user_id_1',
     }
   });
 
-app.get('/api/chat/:user_id_1/:user_id_2/:product_id/:sproduct_id',
+app.get('/api/chats/users/:user_id_1/:user_id_2/product/:product_id/sproduct/:sproduct_id',
   async (req, res) => {
     try {
       const chatID = await chatDao.getChatIdByUserAndProduct(req.params.user_id_1, req.params.user_id_2, req.params.product_id, req.params.sproduct_id);
@@ -395,12 +395,12 @@ app.post('/api/chats/insert', /* [], */
 //MESSAGE API
 
 app.get('/api/chats/messages/:chat_id', async (req, res) => {
-  console.log("Received API request for messages");
-
   try {
       const chat_id = req.params.chat_id;
-      // Call messageDao.getMessagesByChatId and log the response
+      console.log(`Received chat_id: ${chat_id}`);
       const messages = await messageDao.getMessagesByChatId(chat_id);
+      console.log("Messages fetched from database:", messages);
+      
       res.status(200).json(messages);
   } catch (err) {
       console.error("Error in API route:", err);
@@ -439,6 +439,25 @@ app.post('/api/donation/insert', async (req, res) => {
   }
 });
 
+app.get('/api/:min/:max/donations', async (req, res) => {
+  try {
+      const categories = req.query.categories;
+      const min = parseInt(req.params.min, 10);
+      const max = parseInt(req.params.max, 10);
+      
+      if (!categories || categories.length === 0) {
+          return res.status(400).json({ error: 'Categories parameter is required and must contain at least one category.' });
+      }
+      
+      const categoriesArray = Array.isArray(categories) ? categories : [categories];
+      console.log('Categories Array:', categoriesArray);
+
+      const filtDonations = await donationDao.filterDonations(min, max, categoriesArray);
+      res.status(200).json(filtDonations);
+  } catch (err) {
+      res.status(500).json({ error: "BE: Error filtering donations ${err.message"});
+  }
+});
 
 
 
@@ -455,7 +474,7 @@ app.delete('/api/donation/delete',
   });
 */
 
-app.post('/api/donation/inactive', /* [], */
+app.post('/api/inactive/donation', /* [], */
   async (req, res) => {
     try {
       const {product_id} = req.body;
@@ -466,7 +485,7 @@ app.post('/api/donation/inactive', /* [], */
     }
   });
 
-app.get('/api/donations/all/active',
+app.get('/api/donations/all/active',  
   async (req, res) => {
     try {
       const activeDonations = await donationDao.listActiveDonations();
@@ -496,7 +515,7 @@ app.get('/api/try/all/donations',
     }
   });  
 
-app.get('/api/donations/:user_id',
+app.get('/api/donations/my/:user_id',
   async (req, res) => {
     try {
       const user_id = req.params.user_id;
@@ -600,7 +619,7 @@ app.get('/api/sharing/:user_id/active',
     }
   });
 
-app.get('/api/sharing/:user_id',
+app.get('/api/sharing/my/:user_id',
   async (req, res) => {
     try {
       const user_id = req.params.user_id;
@@ -622,7 +641,8 @@ app.get('/api/sharing/:min/:max',
       res.status(500).json({ error: `BE: Error filtering sharing quests by coin value ${err}` });
     }
   });
-
+  
+/*
 app.get('/api/sharing/:categories',
   async (req, res) => {
     try {
@@ -632,7 +652,7 @@ app.get('/api/sharing/:categories',
       res.status(500).json({ error: `BE: Error filtering sharing quests by categories ${err}` });
     }
   });
-
+*/
   app.get('/api/sharing', async (req, res) => {
     try {
         const categories = req.query.categories

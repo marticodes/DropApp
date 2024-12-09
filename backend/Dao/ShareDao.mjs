@@ -6,33 +6,23 @@ import pkg from 'natural'; // Import the entire 'natural' module
 const { PorterStemmer } = pkg; // Extract PorterStemmer from the module
 import { compareTwoStrings } from 'string-similarity'; // Ensure the package is installed
 
-/*
-- sproduct_id: id of the (sharing)product (PK)
-- sproduct_name: name of the (sharing)product 
-- sproduct_category: category of the (sharing)product (FK)
-- sproduct_start_time: starting timestamp
-- sproduct_end_time: ending timestamp 
-- borrower_id: the id of the user that is posting the request (FK)
-- coin_value: coin value of the (sharing)product 
-- active: 1=active, 0=inactive
-*/
 
 //const fetch = require('node-fetch');
 
 const ShareDAO = {
-    async insertSharingQuest(sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, status) { //Vv
+
+    async insertSharingQuest(sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, status) { //V
         return new Promise((resolve, reject) => {
             try {
                 const coin_value = get_coin_value(sproduct_name, status, sproduct_category); 
                 const posting_time = new Date().toISOString();
                 const sql = 'INSERT INTO Share (sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, coin_value, active, posting_time, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
                 
-                db.run(sql, [sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, coin_value, 1, posting_time, status], function(err) {
+                db.run(sql, [sproduct_name, sproduct_category, sproduct_description, sproduct_start_time, sproduct_end_time, borrower_id, coin_value, 1, posting_time, status], (err, result) => {
                     if (err) {
                         reject(err);
                     } else {
-                        const id = this.lastID; 
-                        resolve(id); 
+                        resolve(result.insertId || null);
                     }
                 });
             } catch (error) {
@@ -45,15 +35,15 @@ const ShareDAO = {
     this changes just the active flag (1=active, 0=inactive)
     an inactive product is similar to deleted but without consequences
     */
-    async inactiveSharingQuest(sproduct_id){    //Vv
+    async inactiveSharingQuest(sproduct_id){ //V
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'UPDATE Share SET active=? WHERE sproduct_id=?';
-                db.run(sql, [0, sproduct_id], function (err) {
+                db.run(sql, [0, sproduct_id], (err, result) => {
                     if (err) {
-                    reject(err);
+                        reject(err);
                     }else {
-                    resolve(this.changes > 0); //at least one line changed
+                        resolve(true);
                     }
                 });
             } catch (error) {
@@ -61,7 +51,7 @@ const ShareDAO = {
             }
         });
     },
-    async listActiveSharingQuest(){ //Vv
+    async listActiveSharingQuest(){ //V
         return new Promise((resolve, reject) => {
             try { 
                 const sql = 'SELECT * FROM Share WHERE active = ?';
@@ -80,7 +70,7 @@ const ShareDAO = {
             }
         });
     },
-    async listMyActiveSharingQuests(user_id){   //Vv
+    async listMyActiveSharingQuests(user_id){   //V
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'SELECT * FROM Share WHERE borrower_id=? AND active=?';
@@ -88,7 +78,7 @@ const ShareDAO = {
                     if (err) {
                         reject(err);
                     } else if (rows.length === 0) {
-                        resolve(false);
+                        resolve([]);
                     } else {
                         const sharing= rows.map(d => new Share(d.sproduct_id, d.sproduct_name, d.sproduct_category, d.sproduct_description, d.sproduct_start_time, d.sproduct_end_time, d.borrower_id, d.coin_value, d.active, d.posting_time, d.status));
                         resolve(sharing);
@@ -107,7 +97,7 @@ const ShareDAO = {
                     if (err) {
                         reject(err);
                     } else if (rows.length === 0) {
-                        resolve(false);
+                        resolve([]);
                     } else {
                         const sharing= rows.map(d => new Share(d.sproduct_id, d.sproduct_name, d.sproduct_category, d.sproduct_description, d.sproduct_start_time, d.sproduct_end_time, d.borrower_id, d.coin_value, d.active, d.posting_time, d.status));
                         resolve(sharing);
@@ -122,23 +112,17 @@ const ShareDAO = {
     Categories should be a list that is updated every time the users clicks a filter
     If the filter is pressed add the name of the category, otherwise remove it and pass again the list as input
     */
-    async filterSharingByCategories(categories) {
+    async filterSharingByCategories(categories) { //V
         return new Promise((resolve, reject) => {
             try {
-                // Costruzione dinamica dei segnaposti per ogni categoria
                 const placeholders = categories.map(() => '?').join(', ');
-    
-                // Query SQL con placeholders
                 const sql = `SELECT * FROM Share WHERE sproduct_category IN (${placeholders})`;
-    
-                // Esegui la query, passando l'array 'categories' come parametri
                 db.all(sql, categories, (err, rows) => {
                     if (err) {
-                        reject(err);  // Se c'è un errore nel database
+                        reject(err);  
                     } else if (rows.length === 0) {
-                        resolve([]);  // Se non ci sono risultati, restituisci un array vuoto
+                        resolve([]);  
                     } else {
-                        // Se ci sono righe, mappale in oggetti 'Share'
                         const sharing = rows.map(d => new Share(
                             d.sproduct_id, 
                             d.sproduct_name, 
@@ -152,15 +136,15 @@ const ShareDAO = {
                             d.posting_time, 
                             d.status
                         ));
-                        resolve(sharing);  // Risolvi con gli oggetti Share
+                        resolve(sharing);  
                     }
                 });
             } catch (error) {
-                reject(error);  // Gestisci eventuali errori
+                reject(error);  
             }
         });
     },     
-    async filterSharingByCoin(min, max){    //V
+    async filterSharingByCoin(min, max){    //not edited
         return new Promise((resolve, reject) => {
             try {
                 const sql = `SELECT * FROM Share WHERE coin_value>=? AND coin_value<=?`;
@@ -180,7 +164,7 @@ const ShareDAO = {
         });
     },
 
-    async listAllSharing(){
+    async listAllSharing(){ //V
         return new Promise((resolve, reject) => {
             try { 
                 const sql = 'SELECT * FROM Share';

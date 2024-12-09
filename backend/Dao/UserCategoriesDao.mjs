@@ -2,32 +2,15 @@ import db from '../db.mjs';
 import UserCategories from '../Models/UserCategories_model.mjs';
 
 const UserCategoriesDAO = {
-    
-    async insertCategory(userId, newCategoryName) {
+    async insertCategory(userId, newCategoryName) { //V
         return new Promise((resolve, reject) => {
             try {
-                const sql = 'INSERT INTO UserCategories (user_id, category_name) VALUES (?,?)';
-                db.run(sql, [userId, newCategoryName], function (err) {
-                    if (err) {
-                      reject(err);
-                    }else {
-                      resolve(this.changes > 0); //at least one line inserted
-                    }
-                });
-            } catch (error) {
-                reject(error);
-            }
-        });
-    },
-    async deleteCategory(userId, categoryName) {
-        return new Promise((resolve, reject) => {
-            try {
-                const sql = 'DELETE FROM UserCategories WHERE user_id = ? AND category_name = ?';
-                db.run(sql, [userId, categoryName], function (err) {
+                const sql = `INSERT INTO UserCategories (user_id, category_name) VALUES (?,?)`;
+                db.run(sql, [userId, newCategoryName], (err, result) => {
                     if (err) {
                         reject(err);
                     } else {
-                        resolve(this.changes > 0); //at least one line removed
+                        resolve(true);
                     }
                 });
             } catch (error) {
@@ -35,7 +18,23 @@ const UserCategoriesDAO = {
             }
         });
     },
-    async getAllCategoriesByUserId(userId){
+    async deleteCategory(userId, categoryName) { //V
+        return new Promise((resolve, reject) => {
+            try {
+                const sql = 'DELETE FROM UserCategories WHERE user_id = ? AND category_name = ?';
+                db.run(sql, [userId, categoryName],  (err, result) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(true);
+                    }
+                });
+            } catch (error) {
+                reject(error);
+            }
+        });
+    },
+    async getAllCategoriesByUserId(userId){ //V
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'SELECT * FROM UserCategories WHERE user_id = ?';
@@ -54,18 +53,17 @@ const UserCategoriesDAO = {
             }
         });
     },
-    async getSingleCategoryByUserId(userId, CategoryName){
+    async getSingleCategoryByUserId(userId, CategoryName){  //V
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'SELECT COUNT(*) FROM UserCategories WHERE user_id = ? AND category_name=?';
-                db.get(sql, [userId, CategoryName], (err, row) => {
+                db.all(sql, [userId, CategoryName], (err, rows) => {
                     if (err) {
                         reject(err);
-                    } else if (row.length === 0) {
+                    } else if (rows.length === 0) {
                         resolve(false);
                     } else {
-                        const count = row;
-                        resolve(count);
+                        resolve(1);
                     }
                 });
             } catch (error) {

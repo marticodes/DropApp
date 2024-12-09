@@ -2,24 +2,15 @@ import db from '../db.mjs';
 import Chat from '../Models/Chat_model.mjs';
 
 const ChatDAO = {
-    /*
-    product_id: in case of donation
-    sprodcuts_id: in case of sharing
-    since I have to select the foreign key of the product, I put both as nullable values
-    If the chat is related to a donation, put null for the sproduct_id, and viceversa.
-    */
-    async insertChat(user_id_1, user_id_2, product_id, type, sproduct_id) {
+    async insertChat(user_id_1, user_id_2, product_id, type, sproduct_id) { //V
         return new Promise((resolve, reject) => {
             try {
-                const sql = 'INSERT INTO Chat (user_id_1, user_id_2, product_id, type, sproduct_id) VALUES (?,?,?,?,?)';
-                db.run(sql, [user_id_1, user_id_2, product_id, type, sproduct_id], function(err) {
+                const sql = `INSERT INTO Chat (user_id_1, user_id_2, product_id, type, sproduct_id) VALUES (?,?,?,?,?)`;
+                db.run(sql, [user_id_1, user_id_2, product_id, type, sproduct_id], (err, result) => {
                     if (err) {
                         reject(err);
-                    } else if (this.changes > 0) {
-                        const id = this.lastID;  // Use this.lastID to get the inserted chat_id
-                        resolve(id);
                     } else {
-                        resolve(false);
+                        resolve(result.insertId || null);
                     }
                 });
             } catch (error) {
@@ -27,19 +18,19 @@ const ChatDAO = {
             }
         });
     },
-    
 
-    async getUsersIdByChatId(chatId) { //v   //returns IDs of both users
+    async getUsersIdByChatId(chatId) {  //V
         return new Promise((resolve, reject) => {
             try {
-                const sql = 'SELECT user_id_1, user_id_2 FROM Chat WHERE chat_id = ?';
-                return db.get(sql, [chatId], (err, row) => {
+                const sql = 'SELECT * FROM Chat WHERE chat_id = ?';
+                return db.all(sql, [chatId], (err, rows) => {
                     if (err) {
                         reject(err);
-                    } else if (row.length === 0) {
-                        resolve(false);
+                    } else if (rows.length === 0) {
+                        resolve([]);
                     } else {
-                        const ids = [row.user_id_1, row.user_id_2];
+                        const chats = rows.map(a => new Chat(a.chat_id, a.user_id_1, a.user_id_2, a.product_id, a.type, a.sproduct_id));
+                        const ids = [chats[0].user_id_1, chats[0].user_id_2];
                         resolve(ids);
                     }
                 });
@@ -49,17 +40,18 @@ const ChatDAO = {
         });
     },
 
-    async getProductIdByChatId(chatId){  //v //returns IDs of both products types
+    async getProductIdByChatId(chatId){ //V
         return new Promise((resolve, reject) => {
             try {
-                const sql = 'SELECT product_id, sproduct_id FROM Chat WHERE chat_id = ?';
-                db.get(sql, [chatId], (err, row) => {
+                const sql = 'SELECT * FROM Chat WHERE chat_id = ?';
+                return db.all(sql, [chatId], (err, rows) => {
                     if (err) {
                         reject(err);
-                    } else if (row.length === 0) {
-                        resolve(false);
+                    } else if (rows.length === 0) {
+                        resolve([]);
                     } else {
-                        const ids = [row.product_id, row.sproduct_id];
+                        const chats = rows.map(a => new Chat(a.chat_id, a.user_id_1, a.user_id_2, a.product_id, a.type, a.sproduct_id));
+                        const ids = [chats[0].product_id, chats[0].sproduct_id];
                         resolve(ids);
                     }
                 });
@@ -69,17 +61,18 @@ const ChatDAO = {
         });
     },
 
-    async getChatTypeByChatId(chatId){ //V //0=donation, 1=sharing
+    async getChatTypeByChatId(chatId){  //V
         return new Promise((resolve, reject) => {
             try {
-                const sql = 'SELECT type FROM Chat WHERE chat_id = ?';
-                return db.get(sql, [chatId], (err, row) => {
+                const sql = 'SELECT * FROM Chat WHERE chat_id = ?';
+                return db.all(sql, [chatId], (err, rows) => {
                     if (err) {
                         reject(err);
-                    } else if (row.length === 0) {
-                        resolve(false);
+                    } else if (rows.length === 0) {
+                        resolve([]);
                     } else {
-                        const type = row.type;
+                        const chats = rows.map(a => new Chat(a.chat_id, a.user_id_1, a.user_id_2, a.product_id, a.type, a.sproduct_id));
+                        const type = chats[0].type;
                         resolve(type); 
                     }
                 });
@@ -89,7 +82,7 @@ const ChatDAO = {
         });
     },
 
-    async getAllChatsByUser(user_id_1){ //v
+    async getAllChatsByUser(user_id_1){ //V
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'SELECT * FROM Chat WHERE (user_id_1 = ? OR user_id_2=?)';
@@ -97,7 +90,7 @@ const ChatDAO = {
                     if (err) {
                         reject(err);
                     } else if (rows.length === 0) {
-                        resolve(false);
+                        resolve([]);
                     } else {
                         const chats = rows.map(row => new Chat(row.chat_id, row.user_id_1, row.user_id_2, row.product_id, row.type, row.sproduct_id));
                         resolve(chats);
@@ -109,17 +102,18 @@ const ChatDAO = {
         });
     },
     
-    async getChatIdByUserAndProduct(user_id_1, user_id_2, product_id, sproduct_id){ //v //put 0 in the incorrect product id
+    async getChatIdByUserAndProduct(user_id_1, user_id_2, product_id, sproduct_id){ //V
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'SELECT * FROM Chat WHERE (user_id_1 = ? AND user_id_2 = ?) AND (product_id = ? OR sproduct_id = ?)'
-                return db.get(sql, [user_id_1, user_id_2, product_id, sproduct_id], (err, row) => {
+                return db.all(sql, [user_id_1, user_id_2, product_id, sproduct_id], (err, rows) => {
                     if (err) {
                         reject(err);
-                    } else if (row.length === 0) {
-                        resolve(false);
+                    } else if (rows.length === 0) {
+                        resolve([]);
                     } else {
-                        const id = row.chat_id;
+                        const chats = rows.map(a => new Chat(a.chat_id, a.user_id_1, a.user_id_2, a.product_id, a.type, a.sproduct_id));
+                        const id = chats[0].chat_id;
                         resolve(id); 
                     }
                 });

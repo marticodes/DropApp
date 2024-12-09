@@ -11,19 +11,16 @@ import Message from '../Models/Message_model.mjs';
 */
 
 const MessageDAO = {
-    async insertNewMessage(chat_id, content, image, sender_id){   //inserts new message into the db (image is nullable)
+    async insertNewMessage(chat_id, content, image, sender_id) { //V
         return new Promise((resolve, reject) => {
             try {
-                const message_time= new Date().toString();
-                const sql = 'INSERT INTO Message (chat_id, message_time, content, image, sender_id) VALUES (?,?,?,?, ?)';
-                return db.run(sql, [chat_id, message_time, content, image, sender_id], function(err) {
+                const message_time = new Date().toString();
+                const sql = `INSERT INTO Message (chat_id, message_time, content, image, sender_id) VALUES (?, ?, ?, ?, ?)`;
+                db.run(sql, [chat_id, message_time, content, image, sender_id], (err, result) => {
                     if (err) {
                         reject(err);
-                    } else if (this.changes > 0) {
-                        const id = this.lastID;  // Use this.lastID to get the inserted chat_id
-                        resolve(id);
                     } else {
-                        resolve(false);
+                        resolve(result.insertId || null); // Return the inserted ID
                     }
                 });
             } catch (error) {
@@ -32,7 +29,7 @@ const MessageDAO = {
         });
     },
     
-    async getMessagesByChatId(chat_id) {
+    async getMessagesByChatId(chat_id) { //V
         console.log("Entered messageDao.getMessagesByChatId with chat_id:", chat_id);
     
         return new Promise((resolve, reject) => {

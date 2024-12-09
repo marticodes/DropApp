@@ -3,15 +3,15 @@ import crypto from "crypto";
 import User from "../Models/User_model.mjs"
 
 export default function UserDao() {
-    this.setUserAsGraduate = (user_id) => {//V0= not graduated 1=graduated
+    this.setUserAsGraduate = (user_id) => { //V
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'UPDATE User SET user_graduated=? WHERE user_id=?';
-                db.run(sql, [1, user_id], function (err) {
+                db.run(sql, [1, user_id], (err, result) => {
                     if (err) {
-                      reject(err);
+                        reject(err);
                     }else {
-                      resolve(this.changes > 0); //at least one line changed
+                        resolve(true);
                     }
                 });
             } catch (error) {
@@ -20,15 +20,16 @@ export default function UserDao() {
         });
     };
 
-    this.addReview = (user_rating, user_id) => {
+
+    this.addReview = (user_rating, user_id) => { //V
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'UPDATE User SET user_rating = user_rating + ?, num_rev = num_rev + ? WHERE user_id = ?';
-                db.run(sql, [user_rating, 1, user_id], function (err) {
+                db.run(sql, [user_rating, 1, user_id], (err, result) => {
                     if (err) {
                       reject(err);
                     }else {
-                      resolve(this.changes > 0); //at least one line changed
+                        resolve(true);
                     }
                 });
             } catch (error) {
@@ -37,15 +38,15 @@ export default function UserDao() {
         });
     };
 
-    this.addMoneyFromUser = (user_id, coin_amount) => {
+    this.addMoneyFromUser = (user_id, coin_amount) => { //e
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'UPDATE User SET coins_num = coins_num - ?, WHERE user_id = ?';
-                db.run(sql, [coin_amount, user_id], function (err) {
+                db.run(sql, [coin_amount, user_id], (err, result) => {
                     if (err) {
-                      reject(err);
+                        reject(err);
                     }else {
-                      resolve(this.changes > 0); //at least one line changed
+                        resolve(true);
                     }
                 });
             } catch (error) {
@@ -54,15 +55,15 @@ export default function UserDao() {
         });
     };
 
-    this.removeMoneyFromUser = (user_id, coin_amount) => {
+    this.removeMoneyFromUser = (user_id, coin_amount) => { //e
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'UPDATE User SET coins_num = coins_num - ? WHERE user_id = ?';
-                db.run(sql, [coin_amount, user_id], function (err) {
+                db.run(sql, [coin_amount, user_id], (err, result) => {
                     if (err) {
-                      reject(err);
+                        reject(err);
                     }else {
-                      resolve(this.changes > 0); //at least one line changed
+                        resolve(true);
                     }
                 });
             } catch (error) {
@@ -71,17 +72,18 @@ export default function UserDao() {
         });
     };
 
-    this.getRating = (user_id) => {
+    this.getRating = (user_id) => { //V
         return new Promise((resolve, reject) => {
             try {
-                const sql = 'SELECT user_rating, num_rev FROM User WHERE user_id = ?';
-                db.get(sql, [user_id], (err, row) => {
+                const sql = 'SELECT * FROM User WHERE user_id = ?';
+                db.all(sql, [user_id], (err, rows) => {
                     if (err) {
                         reject(err); 
-                    } else if (!row) { 
-                        resolve(false);
+                    } else if (rows.length === 0) { 
+                        resolve([]);
                     } else {
-                        resolve(Math.floor(row.user_rating / row.num_rev));
+                        const user = rows.map(a => new User(a.user_id, a.user_name, a.user_surname, a.user_cardnum, a.coins_num, a.user_picture, a.user_rating, a.user_location, a.user_graduated, a.hash, a.salt, a.active, a.num_rev));
+                        resolve(Math.floor(user[0].user_rating / user[0].num_rev));
                     }
                 });
             } catch (error) {
@@ -90,18 +92,18 @@ export default function UserDao() {
         });
     };
 
-    this.getUserInfo=(user_id) => {
+    this.getUserInfo=(user_id) => { //V
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'SELECT * FROM User WHERE user_id = ?';
-                db.get(sql, [user_id], (err, row) => {
+                db.all(sql, [user_id], (err, rows) => {
                     if (err) {
                         reject(err);
-                    } else if (row.length === 0) {
-                        resolve(false);
+                    } else if (rows.length === 0) {
+                        resolve([]);
                     } else {
-                        const user = new User(row.user_id, row.user_name, row.user_surname, row.user_cardnum, row.coins_num, row.user_picture, row.user_rating, row.user_location, row.user_graduated, row.hash, row.salt, row.active, row.num_rev);
-                        resolve(user);
+                        const users = rows.map(a => new User(a.user_id, a.user_name, a.user_surname, a.user_cardnum, a.coins_num, a.user_picture, a.user_rating, a.user_location, a.user_graduated, a.hash, a.salt, a.active, a.num_rev));
+                        resolve(users[0]);
                     }
                 });
             } catch (error) {
@@ -110,15 +112,15 @@ export default function UserDao() {
         });
     };
 
-    this.inactiveUser=(user_id) => {
+    this.inactiveUser=(user_id) => { //V
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'UPDATE User SET active=? WHERE user_id=?';
-                db.run(sql, [0, user_id], function (err) {
+                db.run(sql, [0, user_id], (err, result) => {
                     if (err) {
-                    reject(err);
+                        reject(err);
                     }else {
-                    resolve(this.changes > 0); //at least one line changed
+                        resolve(true);
                     }
                 });
             } catch (error) {
@@ -127,7 +129,7 @@ export default function UserDao() {
         });
     };
       
-    this.insertUser = (user_name, user_surname, user_cardnum, user_location, hash) => {
+    this.insertUser = (user_name, user_surname, user_cardnum, user_location, hash) => { //V
         return new Promise((resolve, reject) => {
             const currentYear = new Date().getFullYear().toString();
             let coins_num = 0;
@@ -139,14 +141,11 @@ export default function UserDao() {
     
             try {
                 const sql = 'INSERT INTO User (user_name, user_surname, user_cardnum, coins_num, user_rating, user_location, user_graduated, hash, salt, active, num_rev) VALUES (?,?,?,?,?,?,?,?,?,?,?)';
-                db.run(sql, [user_name, user_surname, user_cardnum, coins_num, 0, user_location, 0, hash, null, 1, 0], function(err) { 
+                db.run(sql, [user_name, user_surname, user_cardnum, coins_num, 0, user_location, 0, hash, null, 1, 0], (err, result) => {
                     if (err) {
                         reject(err);
-                    } else if (this.changes === 0) { 
-                        resolve(false);
                     } else {
-                        const id = this.lastID; 
-                        resolve(id);
+                        resolve(result.insertId || null);
                     }
                 });
             } catch (error) {
@@ -155,15 +154,15 @@ export default function UserDao() {
         });
     };
     
-    this.addUserPicture = (user_picture, user_id) => {
+    this.addUserPicture = (user_picture, user_id) => { //V
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'UPDATE User SET user_picture=? WHERE user_id=?';
-                db.run(sql, [user_picture, user_id], function (err) {
+                db.run(sql, [user_picture, user_id], (err, result) => {
                     if (err) {
                       reject(err);
                     }else {
-                      resolve(this.changes > 0); //at least one line changed
+                      resolve(true); //at least one line changed
                     }
                 });
             } catch (error) {
@@ -172,15 +171,15 @@ export default function UserDao() {
         });
     };
 
-    this.removeUserPicture = (user_id) => {
+    this.removeUserPicture = (user_id) => { //V
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'UPDATE User SET user_picture=? WHERE user_id=?';
-                db.run(sql, [null, user_id], function (err) {
+                db.run(sql, [null, user_id], (err, result) => {
                     if (err) {
                       reject(err);
                     }else {
-                      resolve(this.changes > 0); //at least one line changed
+                      resolve(true); //at least one line changed
                     }
                 });
             } catch (error) {
@@ -189,17 +188,18 @@ export default function UserDao() {
         });
     };
 
-    this.isUserActive = (user_id) => {
+    this.isUserActive = (user_id) => { //V
         return new Promise((resolve, reject) => {
             try {
                 const sql = 'SELECT active FROM User WHERE user_id = ?';
-                db.get(sql, [user_id], (err, row) => {
+                db.all(sql, [user_id], (err, rows) => {
                     if (err) {
                         reject(err); 
-                    } else if (!row) { 
-                        resolve(false);
+                    } else if (rows.length === 0) {
+                        resolve([]);
                     } else {
-                        resolve(row.active); 
+                        const users = rows.map(a => new User(a.user_id, a.user_name, a.user_surname, a.user_cardnum, a.coins_num, a.user_picture, a.user_rating, a.user_location, a.user_graduated, a.hash, a.salt, a.active, a.num_rev));
+                        resolve(users[0].active);
                     }
                 });
             } catch (error) {
@@ -208,19 +208,18 @@ export default function UserDao() {
         });
     };
     
-    this.checkCredentials = (user_cardnum, hash) => {
+    this.checkCredentials = (user_cardnum, hash) => { //V
         return new Promise((resolve, reject) => {
-            const query = 'SELECT user_id FROM User WHERE user_cardnum=? AND hash=?';
-
+            const query = 'SELECT * FROM User WHERE user_cardnum=? AND hash=?';
             try {
-                db.get(query, [user_cardnum, hash], (err, row) => {
+                db.all(query, [user_cardnum, hash], (err, rows) => {
                     if (err) {
                         reject(err);
-                    }
-                    if (row === undefined) {
+                    }if (rows.length === 0) {
                         resolve(false);
                     } else {
-                        resolve(row.user_id);
+                        const users = rows.map(a => new User(a.user_id, a.user_name, a.user_surname, a.user_cardnum, a.coins_num, a.user_picture, a.user_rating, a.user_location, a.user_graduated, a.hash, a.salt, a.active, a.num_rev));
+                        resolve(users[0].user_id);
                     }
                 });
             } catch (err) { reject({ error: err.message }) }
@@ -228,7 +227,7 @@ export default function UserDao() {
         });
     }
 
-    //this 2 following functions are from my old project - I will leave them since they are required for the login
+    //this 2 following functions are from my old project - I will leave them since they are required for the login ---------------------------------------------
     this.getUserById = (id) => {
         return new Promise((resolve, reject) => {
             const query = 'SELECT * FROM users WHERE id=?';
@@ -274,6 +273,7 @@ export default function UserDao() {
         });
     };
 
+    //---------------------------------------------------------------------------------------------------------------------------------------------------------------
     this.donation_money_update = (product_id, coin_value, user_id) => {
         // Start a transaction manually
         return new Promise((resolve, reject) => {
@@ -295,12 +295,12 @@ export default function UserDao() {
 
                         // Step 2: Fetch donor_id
                         const query = 'SELECT donor_id FROM Donation WHERE product_id = ?';
-                        db.get(query, [product_id], (err, row) => {
-                            if (err || !row) {
+                        db.all(query, [product_id], (err, rows) => {
+                            if (err || rows.length===0) {
                                 reject(err || 'Donation not found');
                                 return;
                             }
-                            const donor_id = row.donor_id;
+                            const donor_id = rows[0].donor_id;
 
                             // Step 3: Update coins for both users
                             const updateUserQuery = 'UPDATE User SET coins_num = coins_num - ? WHERE user_id = ?';
