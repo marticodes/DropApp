@@ -5,7 +5,7 @@ import 'package:drop_app/models/message_model.dart';
 import 'package:drop_app/models/sharing_post_model.dart';
 import 'package:drop_app/models/user_model.dart';
 import 'package:flutter/material.dart';
-import 'package:drop_app/top_bar/top_bar_go_back.dart';
+import 'package:drop_app/top_bar/top_bar_go_back_chat.dart';
 import 'package:drop_app/components/rating.dart';
 import 'package:intl/intl.dart';
 import 'package:drop_app/global.dart' as globals;
@@ -306,4 +306,3 @@ void initState() {
     }
   }
 }
-

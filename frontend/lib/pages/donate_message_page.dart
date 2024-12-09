@@ -5,7 +5,7 @@ import 'package:drop_app/models/message_model.dart';
 import 'package:drop_app/models/sharing_post_model.dart';
 import 'package:drop_app/models/user_model.dart';
 import 'package:flutter/material.dart';
-import 'package:drop_app/top_bar/top_bar_go_back.dart';
+import 'package:drop_app/top_bar/top_bar_go_back_chat.dart';
 import 'package:drop_app/components/rating.dart';
 import 'package:intl/intl.dart';
 import 'package:drop_app/global.dart' as globals;
@@ -18,7 +18,6 @@ class DonationMessagePage extends StatefulWidget {
    final DonationModel post;
    final ChatModel chat;
    final UserModel user;
-   final GlobalKey<BackTopBarState> _appBarKey = GlobalKey<BackTopBarState>();
 
  DonationMessagePage({super.key, required this.post, required this.chat, required this.user});
 
@@ -52,7 +51,7 @@ Future<void> updateDonationMoney(productId, coinValue,userId) async {
     final msg = await ApiService.donationCoinExchange(productId, coinValue, userId);
     setState(() {
     });
-    widget._appBarKey.currentState?.refreshCoins();
+    // widget._appBarKey.currentState?.refreshCoins();
   }
 
  Future<int> insertMessage(
@@ -96,7 +95,7 @@ Future<void> updateDonationMoney(productId, coinValue,userId) async {
 }
 
     return Scaffold(
-      appBar: BackTopBar(key: widget._appBarKey),
+      appBar: BackTopBar(),
       body: Column(
         children: [
           // User Banner
@@ -291,4 +290,3 @@ Future<void> updateDonationMoney(productId, coinValue,userId) async {
             });
   }
 }
-

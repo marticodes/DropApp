@@ -75,7 +75,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Category', style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
+                        Text('Category', style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold)),
                         Text(item.productCategory, style: TextStyle(fontSize: 16)),
                       ],
                     ),
@@ -101,10 +101,10 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                   ],
                 ),
                 SizedBox(height: 8),
-                Text('Item Condition', style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
-                Text('Good', style: TextStyle(fontSize: 16)),
+                Text('Item Condition', style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold)),
+                Text(item.status, style: TextStyle(fontSize: 16)),
                 SizedBox(height: 8),
-                Text('Description', style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w500)),
+                Text('Description', style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold)),
                 Text( item.productDescription, style: TextStyle(fontSize: 16, color: Colors.black87),
                 ),
               ],
@@ -113,7 +113,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
           Spacer(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: ElevatedButton(
+            child: (item.donorId==globals.userData)? null: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 108, 106, 157),
                 padding: EdgeInsets.symmetric(vertical: 12),

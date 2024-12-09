@@ -155,7 +155,7 @@ class ShareDetailPage extends StatefulWidget {
           // Chat button above the navigation bar
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: ElevatedButton(
+            child: (sharepost.borrowerID==globals.userData)?null:ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 108, 106, 157), 
                 foregroundColor: Colors.white, 

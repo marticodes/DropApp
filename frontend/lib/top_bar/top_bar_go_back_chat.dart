@@ -5,15 +5,40 @@ import 'package:drop_app/models/user_model.dart';
 import 'package:drop_app/global.dart' as globals;
 import 'package:flutter/material.dart';
 
-class BackTopBar extends StatelessWidget implements PreferredSizeWidget {
-  final int moneyCount;
-
+class BackTopBar extends StatefulWidget implements PreferredSizeWidget {
   @override
   final Size preferredSize;
 
-  BackTopBar({Key? key, this.moneyCount = 7})
+  const BackTopBar({Key? key})
       : preferredSize = const Size.fromHeight(64.0),
         super(key: key);
+
+  @override
+  _BackTopBarrState createState() => _BackTopBarrState();
+}
+
+class _BackTopBarrState extends State<BackTopBar> {
+  int? _moneyCount; // To store the coinsNum value
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserCoins(); // Fetch coins when the widget initializes
+  }
+
+  Future<void> _fetchUserCoins() async {
+    try {
+      final user = await ApiService.fetchUserById(globals.userData); // Fetch user data
+      setState(() {
+        _moneyCount = user.coinsNum; // Update the state with fetched coinsNum
+      });
+    } catch (error) {
+      setState(() {
+        _moneyCount = 0; // Fallback to 0 on error
+      });
+      debugPrint('Error fetching user coins: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +49,10 @@ class BackTopBar extends StatelessWidget implements PreferredSizeWidget {
         icon: Icon(Icons.arrow_back, color: const Color.fromARGB(255, 30, 30, 30)),
         onPressed: () {
           // ChatListPage();
-          Navigator.pushReplacement(
+          Navigator.pop(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MyHomePage(title: 'Home', initialTabIndex: 3), // Set the Profile tab index
+                      builder: (context) => MyHomePage(title: 'Home', initialTabIndex: 2), // Set the Profile tab index
                     ),
                   );
         },
@@ -49,7 +74,7 @@ class BackTopBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             const SizedBox(width: 4),
             Text(
-              '$moneyCount', // Display the money count
+              '$_moneyCount', // Display the money count
               style: TextStyle(color: Colors.black, fontSize: 16),
             ),
             const SizedBox(width: 16),
