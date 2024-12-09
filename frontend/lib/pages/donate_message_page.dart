@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:drop_app/api/api_service.dart';
 import 'package:drop_app/models/chat_model.dart';
 import 'package:drop_app/models/donation_post_model.dart';
@@ -28,13 +30,28 @@ class DonationMessagePage extends StatefulWidget {
 class _DonationMessagePageState extends State<DonationMessagePage> {
   int moneycount = 7;
   final List<MessageModel> _messageModelPosts = [];
+  late Timer timer; // Declare a Timer variable
 
-    @override
-void initState() {
-  fetchMessagesByChatId(widget.chat.chatId);
-  super.initState();
+  @override
+  void initState() {
+    super.initState();
+    fetchMessagesByChatId(widget.chat.chatId);
 
-}
+    // Start a timer to call setState every 10 seconds
+    timer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      setState(() {
+        // This will trigger a rebuild of the widget
+        // Optionally, you can fetch updated data here if needed
+        fetchMessagesByChatId(widget.chat.chatId);
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    timer.cancel(); // Cancel the timer when the widget is disposed
+    super.dispose();
+  }
 
   Future<void> fetchMessagesByChatId(int chatId) async {
     List<MessageModel> posts = await ApiService.fetchMessagesByChatId(chatId);
@@ -49,8 +66,7 @@ void initState() {
 
 Future<void> updateDonationMoney(productId, coinValue,userId) async {
     final msg = await ApiService.donationCoinExchange(productId, coinValue, userId);
-    setState(() {
-    });
+    print(msg);
     // widget._appBarKey.currentState?.refreshCoins();
   }
 
