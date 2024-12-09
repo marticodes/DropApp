@@ -48,8 +48,7 @@ void initState() {
 
   Future<void> updateSharingMoney(sproductId, coinValue,userId) async {
     int sId = (await ApiService.sharingCoinExchange(sproductId, coinValue, userId)) as int;
-    setState(() {
-    });
+    print(sId);
   }
 
 
