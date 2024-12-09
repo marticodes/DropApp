@@ -15,6 +15,6 @@
     "string-similarity": "^4.0.4"
   },
   "scripts": {
-    "start": "node index.mjs"
+    "start": "rm -rf node_modules && npm install && npm rebuild sqlite3 && node index.mjs"
   }
 }
