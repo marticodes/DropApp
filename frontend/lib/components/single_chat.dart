@@ -42,7 +42,7 @@ class ChatItem extends StatelessWidget {
         child: Row(
           children: [
             // Conditional image display
-            chat.type == 1
+            chat.type == 0
                 ? Stack(
                     clipBehavior: Clip.none, // Allows the circle to overflow the stack
                     children: [

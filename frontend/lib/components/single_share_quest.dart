@@ -13,11 +13,13 @@ class ShareQuestItem extends StatefulWidget {
   ShareQuestItemState createState() => ShareQuestItemState();}
   
   class  ShareQuestItemState extends State< ShareQuestItem> {
+  bool _isLoading = true;
 
     String formatDuration(Duration duration){
       int days = duration.inDays;
       int hours = duration.inHours % 24;
       int minutes = duration.inMinutes % 60;
+      
 
       String result = '';
       if (days > 0) result += '$days day${days > 1 ? 's' : ''}';
@@ -33,7 +35,7 @@ class ShareQuestItem extends StatefulWidget {
       return result.isNotEmpty ? result : 'Less than a minute';
     }
 
-    UserModel usery = UserModel(userId: 3, userName: 'Conan', userSurname: 'Gray', userCardNum: 20200888, coinsNum: 9, userPicture: 'userPicture', userRating: 5, userLocation: 'Areum Hall', userGraduated: 0, hash: '123', salt: '123', active: 1, numRev: 2);
+    UserModel usery = UserModel(userId: 3, userName: 'Loading', userSurname: 'Loading', userCardNum: 20200888, coinsNum: 9, userPicture: 'userPicture', userRating: 5, userLocation: 'Areum Hall', userGraduated: 0, hash: '123', salt: '123', active: 1, numRev: 2);
   
   @override
   Widget build(BuildContext context) {
@@ -64,13 +66,34 @@ class ShareQuestItem extends StatefulWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
            ClipOval(
-                  child: Image.network(
-                    user.userPicture!,
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+  child: Image.network(
+    user.userPicture!,
+    width: 25,
+    height: 25,
+    fit: BoxFit.cover,
+    loadingBuilder: (context, child, loadingProgress) {
+      if (loadingProgress == null) {
+        // Image has finished loading
+        return child;
+      } else {
+        // Show a loading indicator
+        return const Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 2.0,
+          ),
+        );
+      }
+    },
+    errorBuilder: (context, error, stackTrace) {
+      // Fallback for when the image fails to load
+      return const Icon(
+        Icons.person,
+        size: 25,
+        color: Colors.grey,
+      );
+    },
+  ),
+),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
