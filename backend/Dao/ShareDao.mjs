@@ -129,10 +129,10 @@ const ShareDAO = {
                 const placeholders = categories.map(() => '?').join(', ');
     
                 // Query SQL con placeholders
-                const sql = `SELECT * FROM Share WHERE sproduct_category IN (${placeholders})`;
+                const sql = `SELECT * FROM Share WHERE active = ? AND sproduct_category IN (${placeholders})`;
     
                 // Esegui la query, passando l'array 'categories' come parametri
-                db.all(sql, categories, (err, rows) => {
+                db.all(sql, [1, categories], (err, rows) => {
                     if (err) {
                         reject(err);  // Se c'è un errore nel database
                     } else if (rows.length === 0) {
