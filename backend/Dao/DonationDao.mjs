@@ -190,8 +190,8 @@ const DonationDAO = {
         return new Promise((resolve, reject) => {
             try {
                 const placeholders = categories.map(() => '?').join(', ');
-                const sql = `SELECT * FROM Donation WHERE coin_value >= ? AND coin_value <= ? AND product_category IN (${placeholders})`;
-                const params = [min, max, ...categories];
+                const sql = `SELECT * FROM Donation WHERE active = ? AND coin_value >= ? AND coin_value <= ? AND product_category IN (${placeholders})`;
+                const params = [1, min, max, ...categories];
     
                 db.all(sql, params, (err, rows) => {
                     if (err) {
