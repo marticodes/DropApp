@@ -67,11 +67,11 @@ Other features we aim to consider for future implementation are:
 
 1. Open the Github page of the project and copy the link. 
     
-    ![git 2.png](git_2.png)
+    ![git 2.png](ReadMEimages/git_2.png)
     
 2. Create a new folder into your computer. Open the folder, press the right button of your mouse and press “Open Git Bash”.
     
-    ![git.png](git.png)
+    ![git.png](ReadMEimages/git.png)
     
 3. In the terminal write the following:
 
@@ -85,20 +85,20 @@ If git is not installed in your computer, you can download the zipped folder dir
 
 1. Open a project and open the “Extensions” section of VScode.
     
-    ![drop.png](drop.png)
+    ![drop.png](ReadMEimages/drop.png)
     
 2. Type “Flutter”, open the first result and install it.
     
-    ![flutter.png](flutter.png)
+    ![flutter.png](ReadMEimages/flutter.png)
     
 
 1. VSCode will display an alert about the missing SDK. Click 'Download.' ATTENTION: Be sure to remember the folder where you are downloading Flutter. It will be useful for the next step.
     
-    ![sdk.png](sdk.png)
+    ![sdk.png](ReadMEimages/sdk.png)
     
 2. Open the System Variable and add the path of the flutter/bin folder to the Path section.
     
-    ![Variables.png](Variables.png)
+    ![Variables.png](ReadMEimages/Variables.png)
     
 3. Open a second terminal in VSCode and execute the following commands:
 
