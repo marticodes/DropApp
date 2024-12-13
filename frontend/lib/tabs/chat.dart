@@ -131,7 +131,9 @@ class _ChatListPageState extends State<ChatListPage> {
 
     return Scaffold(
       appBar: CustomTopBar(onSearchChanged: _onSearchChanged),
-      body: Column(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
               children: [
                 // Filter Row
                 Padding(

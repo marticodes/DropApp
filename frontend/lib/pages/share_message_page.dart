@@ -102,10 +102,13 @@ void initState() {
             padding: const EdgeInsets.all(10.0),
             child: Row(
               children: [
-                CircleAvatar(
-                  backgroundColor: Colors.grey[300],
-                  radius: 25,
-                  child: Image.network(serverUrl+user.userPicture)
+                ClipOval(
+                  child: Image.network(
+                    user.userPicture!,
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 const SizedBox(width: 12),
                  Column(

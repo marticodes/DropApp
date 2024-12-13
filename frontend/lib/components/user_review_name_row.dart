@@ -49,7 +49,7 @@ class UserProfileRow extends StatelessWidget {
 
         String userName = user.userName;
         String userSurname = user.userSurname;
-        String userPicture = serverUrl + user.userPicture;
+        String userPicture = user.userPicture;
         String userLocation = user.userLocation ?? 'Unknown';
         int rating = user.userRating;
 
@@ -58,14 +58,14 @@ class UserProfileRow extends StatelessWidget {
           padding: const EdgeInsets.all(10.0),
           child: Row(
             children: [
-              CircleAvatar(
-                backgroundColor: Colors.grey[300],
-                radius: 25,
-                child: Image.network(
-                userPicture, // Add your image in the assets folder and update pubspec.yaml
-                height: 35,
-              ),
-              ),
+              ClipOval(
+                  child: Image.network(
+                    user.userPicture!,
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

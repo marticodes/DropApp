@@ -34,7 +34,7 @@ class UserProfilePage extends StatelessWidget {
                   CircleAvatar(
                     radius: 50,
                     backgroundImage: user.userPicture != null && user.userPicture!.isNotEmpty
-                        ? NetworkImage(serverUrl + user.userPicture!) // Display user's profile picture
+                        ? NetworkImage(user.userPicture!) // Display user's profile picture
                         : null,
                     backgroundColor: Colors.grey[300],
                     child: user.userPicture == null || user.userPicture!.isEmpty
