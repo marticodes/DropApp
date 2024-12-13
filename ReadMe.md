@@ -30,6 +30,8 @@ The backend of the application is divided into four main sections: **Database**,
 
 We decided for a local SQLite database during development to avoid the restrictions of an online solution like Firebase, like daily interaction limits. This implies that the changes are only visible locally, so for the final version of the app, we plan to transition to an online database to support scalability and real-world usage.
 
+UPDATE: a new branch of the project (’online-db’), contains the edited functions and the connection with a free online db.
+
 ### Models
 
 Models are used to define the data structures within the application, representing each table in the database. These models act as the blueprint for organizing and validating the data.
@@ -44,15 +46,20 @@ APIs are responsible for enabling data exchange between the frontend and backend
 
 The login system is currently a simplified version, but both the database and backend code are prepared for an upgrade to a more secure structure using libraries like Passport and LocalStrategy.
 
-# Considerations
+# Considerations and Future Improvements
 
-Thanks to the user study conducted before coding the application, we gained valuable insights into the usability of our interface. We observed how users interacted with filters, which led us to decide on leaving all filters unchecked by default.
+Thanks to insights from our user study, we made several improvements to the application's usability:
 
-Additionally, we addded the user's location information based on feedback received during the interviews.
+- Filters are now left unchecked by default based on user interaction observations. A issue that is the process of fixing is the persistence of the filters selection.
+- Location information is included.
+- A "Loading" indicator enhances user understanding.
 
-We decided for a local SQLite database during development to avoid the restrictions of an online solution like Firebase, like daily interaction limits. This implies that the changes are only visible locally, so for the final version of the app, we plan to transition to an online database to support scalability and real-world usage.
+Other features we aim to consider for future implementation are:
 
-The login system is currently a simplified version, but both the database and backend code are prepared for an upgrade to a more secure structure using libraries like Passport and LocalStrategy. We plan to make this change for the final version of the app.
+- Tutorial dialog boxes guide users through the app, to better familiarize the users.
+- The login system  using libraries like Passport and LocalStrategy.
+- A user profile page allows users to track answered posts.
+- Users can now delete or modify their posts.
 
 # Instructions
 
@@ -60,76 +67,45 @@ The login system is currently a simplified version, but both the database and ba
 
 1. Open the Github page of the project and copy the link. 
     
-    ![git 2.png](ReadMEimages/git_2.png)
+    ![git 2.png](git_2.png)
     
 2. Create a new folder into your computer. Open the folder, press the right button of your mouse and press “Open Git Bash”.
     
-    ![git.png](ReadMEimages/git.png)
+    ![git.png](git.png)
     
 3. In the terminal write the following:
 
 ```jsx
-git clone repository_url
+git clone <repository-url>
 ```
 
 If git is not installed in your computer, you can download the zipped folder directly from the Github page.
-
-## Node
-
-1. Install Node [1] following the instructions on the website.
-2. To check if Node has been correctly installed, type this command into the terminal of your pc:
-
-```jsx
-node -v
-```
-
-## Npm
-
-1. npm is installed automatically when you download Node, but in case of errors you can type:
-
-```jsx
-Set-ExecutionPolicy Unrestricted
-```
 
 ### VSCode
 
 1. Open a project and open the “Extensions” section of VScode.
     
-    ![drop.png](ReadMEimages/extensions.png)
+    ![drop.png](drop.png)
     
 2. Type “Flutter”, open the first result and install it.
     
-    ![flutter.png](ReadMEimages/flutter.png)
+    ![flutter.png](flutter.png)
     
 
 1. VSCode will display an alert about the missing SDK. Click 'Download.' ATTENTION: Be sure to remember the folder where you are downloading Flutter. It will be useful for the next step.
     
-    ![sdk.png](ReadMEimages/sdk.png)
+    ![sdk.png](sdk.png)
     
 2. Open the System Variable and add the path of the flutter/bin folder to the Path section.
     
-    ![Variables.png](ReadMEimages/Variables.png)
+    ![Variables.png](Variables.png)
     
-3. Open the VSCode terminal and execute the following commands:
-
-```jsx
-cd backend
-rm -rf node_modules
-npm install
-npm rebuild sqlite3
-node index.mjs
-```
-
-1. Open a second terminal in VSCode and execute the following commands:
+3. Open a second terminal in VSCode and execute the following commands:
 
 ```jsx
 cd frontend
 flutter run -d chrome --web-browser-flag "--disable-web-security"
 ```
-
-## References
-
-[1]: [https://nodejs.org/en/download/package-manager](https://nodejs.org/en/download/package-manager)
 
 # Libraries and Frameworks
 
