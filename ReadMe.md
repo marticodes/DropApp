@@ -1,3 +1,9 @@
+# Project Overview
+
+This project is a full-stack mobile and web application designed to support item sharing and donation within a university community. The platform enables users to post items, search through listings, communicate via chat, and participate in a coin-based economy that incentivizes sharing and responsible behavior.
+
+The application is built with a Flutter frontend and a JavaScript-based backend, connected through RESTful APIs. During development, a local SQLite database was used to facilitate rapid iteration, with a later transition to an online database to support scalability and real-world deployment. The system emphasizes usability, social interaction, and trust through features such as filtering, reputation ratings, and a transparent coin assignment mechanism.
+
 # Frontend
 
 The lib folder contains api, components, models, pages, tabs and top_bar. 
